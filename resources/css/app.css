@@ -1,0 +1,10 @@
+/* Exemple dans app.css */
+.btn-outline-success {
+    background-color: #ff5722;
+    border-color: #ff5722;
+}
+
+.btn-outline-success:hover {
+    background-color: #e64a19;
+    border-color: #d84315;
+}

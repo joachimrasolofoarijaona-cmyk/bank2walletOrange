@@ -1,0 +1,14 @@
+/* Exemple dans app.css */
+.btn-outline-success-acep {
+    background-color: #ff5722;
+    border-color: #ff5722;
+}
+
+.btn-outline-success:hover {
+    background-color: #e64a19;
+    border-color: #d84315;
+}
+
+i{
+    color: #4FC9C0;
+}
