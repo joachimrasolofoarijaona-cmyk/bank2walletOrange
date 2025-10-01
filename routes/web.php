@@ -28,6 +28,8 @@ use App\Http\Controllers\AnalyticsController;
 Route::get('/', function () {
     return view('authentication');
 });
+
+# __Login routes 
 Route::get('/login', [AuthenticationController::class, 'login']);
 Route::post('/login', [AuthenticationController::class, 'authentication'])->name('login');
 
@@ -35,11 +37,11 @@ Route::post('/login', [AuthenticationController::class, 'authentication'])->name
 Route::post('/logout', [AuthenticationController::class, 'destroy'])->name('logout');
 
 # __Orange sandbox request route__
-# Route::post('/omrequest', [OMRequestController::class, 'handle']);
+# __Route::post('/omrequest', [OMRequestController::class, 'handle']);
+
 Route::post('/omrequest', [OMRequestController::class, 'handle'])
     ->withoutMiddleware('check.session')
     ->withoutMiddleware('auth');
-
 
 # __Route de test temporaire sans middleware__
 Route::get('/test-accueil', [IndexController::class, 'showIndex'])->name('test.accueil');
