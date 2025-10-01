@@ -82,36 +82,36 @@ use Illuminate\Support\Facades\DB;
                                         <label for="accounts"><small>Liste des comptes à lier :</small></label>
 
                                         @if(isset($customer_account) && count($customer_account) > 0)
-                                        @foreach($customer_account as $account)
-                                        @php
-                                        $account_subscribed = DB::table('subscription')
-                                        ->select('account_status')
-                                        ->where('account_no', $account['accountNo'])
-                                        ->first();
+                                            @foreach($customer_account as $account)
+                                                @php
+                                                    $account_subscribed = DB::table('subscription')
+                                                    ->select('account_status')
+                                                    ->where('account_no', $account['accountNo'])
+                                                    ->first();
 
-                                        // Si la ligne existe et que account_status vaut 1, on désactive
-                                        $disable = ($account_subscribed && $account_subscribed->account_status === "1") ? 'disabled' : '';
-                                        @endphp
+                                                // Si la ligne existe et que account_status vaut 1, on désactive
+                                                $disable = ($account_subscribed && $account_subscribed->account_status === "1") ? 'disabled' : '';
+                                                @endphp
 
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="accounts" id="account-{{ $account['accountNo'] }}" value="{{ $account['accountNo'] }}" {{ $disable }}>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="accounts" id="account-{{ $account['accountNo'] }}" value="{{ $account['accountNo'] }}" {{ $disable }}>
 
-                                            <label class="form-check-label" for="account-{{ $account['accountNo'] }}">
-                                                @if($account_subscribed && $account_subscribed->account_status === "1")
-                                                <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }}<span class="badge bg-warning "> Compte déjà lié</span>
-                                                @elseif($account_subscribed && $account_subscribed->account_status === "0")
-                                                <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-danger "> Compte résilié</span>
-                                                @else
-                                                <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-success "> Disponible</span>
-                                                @endif
-                                            </label>
-                                        </div>
-                                        @endforeach
+                                                <label class="form-check-label" for="account-{{ $account['accountNo'] }}">
+                                                    @if($account_subscribed && $account_subscribed->account_status === "1")
+                                                    <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }}<span class="badge bg-warning "> Compte déjà lié</span>
+                                                    @elseif($account_subscribed && $account_subscribed->account_status === "0")
+                                                    <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-danger "> Compte résilié</span>
+                                                    @else
+                                                    <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-success "> Disponible</span>
+                                                    @endif
+                                                </label>
+                                            </div>
+                                            @endforeach
                                         @else
-                                        <div class="alert alert-warning">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                            Aucun compte disponible pour ce client.
-                                        </div>
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Aucun compte disponible pour ce client.
+                                            </div>
                                         @endif
                                     </div>
                                     <div class="col-12 mt-2">

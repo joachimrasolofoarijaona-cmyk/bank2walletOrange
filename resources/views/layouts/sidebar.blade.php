@@ -370,7 +370,7 @@
                 <button class="sidebar-toggle me-3" id="sidebarToggle">
                     <i class="ri-menu-line"></i>
                 </button>
-                <a class="navbar-brand ps-3" href="">
+                <a class="navbar-brand ps-3 " href="">
                     <img src="{{ asset('/images/logos/acep-logo.png') }}" width="150" height="35" alt="" class="img-fluid">
                 </a>
             </div>
