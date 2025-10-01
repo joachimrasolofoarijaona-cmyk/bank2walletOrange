@@ -35,9 +35,8 @@ Route::post('/login', [AuthenticationController::class, 'authentication'])->name
 Route::post('/logout', [AuthenticationController::class, 'destroy'])->name('logout');
 
 # __Orange sandbox request route__
-# Route::post('/omrequest', [OMRequestController::class, 'handle']);
-Route::post('/omrequest', [OMRequestController::class, 'handle'])
-    ->withoutMiddleware(['auth']);
+Route::post('/omrequest', [OMRequestController::class, 'handle']);
+
 
 # __Route de test temporaire sans middleware__
 Route::get('/test-accueil', [IndexController::class, 'showIndex'])->name('test.accueil');
