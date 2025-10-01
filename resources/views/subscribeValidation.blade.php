@@ -90,25 +90,26 @@ foreach (session('selectedRoles') as $role) {
             <div class="card">
                 {{-- session error --}}
                 @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Erreur !</strong> {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-                </div>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Erreur !</strong> {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
                 @endif
-                {{-- session error --}}
 
+                {{-- session error --}}
                 @if($access === 3)
-                <div class="card-header bg-dark text-center d-flex align-content-center">
-                    <i class="ri-file-list-line fs-4"></i>
-                    <h4 class="text-uppercase mb-0 px-3 pt-1">validations</h4>
-                </div>
+                    <div class="card-header bg-dark text-center d-flex align-content-center">
+                        <i class="ri-file-list-line fs-4"></i>
+                        <h4 class="text-uppercase mb-0 px-3 pt-1">validations</h4>
+                    </div>
                 @else
-                <div class="card-header bg-dark text-center d-flex align-content-center">
-                    <i class="ri-file-list-line fs-4"></i>
-                    <h4 class="text-uppercase mb-0 px-3 pt-1">Mes Demandes</h4>
-                </div>
+                    <div class="card-header bg-dark text-center d-flex align-content-center">
+                        <i class="ri-file-list-line fs-4"></i>
+                        <h4 class="text-uppercase mb-0 px-3 pt-1">Mes Demandes</h4>
+                    </div>
                 @endif
                 <div class="card-body bg-dark text-white">
+
                     {{-- if user is VALIDATOR --}}
                     @if($access === 3)
                     <div class="container-fluid table-responsive">
@@ -127,6 +128,7 @@ foreach (session('selectedRoles') as $role) {
                                     <th scope="col">Commentaires</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 @foreach($validations as $validation)
                                     {{-- php for hidden --}}
@@ -134,23 +136,24 @@ foreach (session('selectedRoles') as $role) {
                                         $hidden = $validation->office_name ? '' : 'hidden';
                                         $modalId = 'modal_' . $validation->ticket;
                                         $isRefused = $validation->status === "2";
-                                @endphp
+                                    @endphp
+
                                 <tr {{$hidden}}>
                                     @if(\Carbon\Carbon::parse($validation->created_at)->format('Y-m-d') === $current_date)
-                                    <td>
-                                        <strong>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <a href="" class="nav-link mb-0 p-0"> {{$validation->ticket}}</a>
-                                                <span class="badge bg-success">New</span>
-                                            </div>
-                                        </strong>
-                                    </td>
+                                        <td>
+                                            <strong>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <a href="" class="nav-link mb-0 p-0"> {{$validation->ticket}}</a>
+                                                    <span class="badge bg-success">New</span>
+                                                </div>
+                                            </strong>
+                                        </td>
                                     @else
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <strong><a href="" class="nav-link">{{$validation->ticket}} - test</a></strong>
-                                        </div>
-                                    </td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <strong><a href="" class="nav-link">{{$validation->ticket}} - test</a></strong>
+                                            </div>
+                                        </td>
                                     @endif
 
                                     <td>{{$validation->created_at}}</td>
@@ -162,6 +165,7 @@ foreach (session('selectedRoles') as $role) {
                                     <td>{{$validation->bank_agent}}</td>
                                     
                                     @if($validation->status === "0")
+                                    {{-- Activate modal --}}
                                         <td>
                                             <!-- Bouton pour ouvrir le modal -->
                                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
@@ -239,7 +243,7 @@ foreach (session('selectedRoles') as $role) {
                             </tbody>
                         </table>
 
-                        {{-- Modal générique // popup validation --}}
+                        {{-- Modal générique // popup after validation --}}
                         <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -281,8 +285,8 @@ foreach (session('selectedRoles') as $role) {
                         @endif
                     </div>
 
-                    {{-- if user is CC --}}
-                    @elseif($access === 1)
+                    {{-- if user is SUPER ADMIN --}}
+                    @elseif($access === 2)
                     <div class="container-fluid table-responsive">
                         <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
                             <thead>
@@ -348,7 +352,7 @@ foreach (session('selectedRoles') as $role) {
                         </table>
                     </div>
 
-                    {{-- if user is SUPER ADMIN --}}
+                    {{-- if user is CC --}}
                     @else
                     <div class="container-fluid table-responsive">
                         <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
