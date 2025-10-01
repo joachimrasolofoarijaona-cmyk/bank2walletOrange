@@ -94,6 +94,8 @@ class OMRequestController extends Controller
             </S:Body> 
         </S:Envelope>';
 
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
+
         // Sauvegarde en base
         try {
             $balance = new AccountBalance();
@@ -116,28 +118,26 @@ class OMRequestController extends Controller
             $balance->office_name = $get_account->officeName;
             $balance->save();
 
-            if($responseCode === "000" ){
+            if ($responseCode === "000") {
                 $status = '1';
-            }else{
+            } else {
                 $status = '0';
             }
 
             transactionLogActivity(
-                $data['requestId'],                       
-                $data['requestType'],                     
-                $get_account->libelle,                    
-                $get_account->account_no,                 
-                $status,                                     
-                100.0,                                    
-                'MGA',                                    
-                'Consultation solde ' . $get_account->account_no . ' / ' . $get_account->libelle,  
-                json_encode(['msisdn' => $get_account->msisdn]),                                  
-                json_encode(['code' => $responseCode, 'message' => $responseMessage])            
+                $data['requestId'],
+                $data['requestType'],
+                $get_account->libelle,
+                $get_account->account_no,
+                $status,
+                100.0,
+                'MGA',
+                'Consultation solde ' . $get_account->account_no . ' / ' . $get_account->libelle,
+                json_encode(['msisdn' => $get_account->msisdn]),
+                json_encode(['code' => $responseCode, 'message' => $responseMessage])
             );
-            
-
         } catch (\Exception $e) {
-            
+
             Log::error("Erreur lors de l'insertion : " . $e->getMessage());
         }
 
@@ -240,6 +240,8 @@ class OMRequestController extends Controller
             </soap:Body> 
         </soap:Envelope>';
 
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
+
         try {
             $balance = new AccountBalance();
             $balance->client_id = $get_account->client_id;
@@ -261,26 +263,25 @@ class OMRequestController extends Controller
             $balance->office_name = $get_account->officeName;
             $balance->save();
 
-            if($responseCode === "000" ){
+            if ($responseCode === "000") {
                 $status = '1';
-            }else{
+            } else {
                 $status = '0';
             }
 
             #Log statement request
             transactionLogActivity(
-                $data['requestId'],                       
-                $data['requestType'],                     
-                $get_account->libelle,                    
-                $get_account->account_no,                 
-                $status,                                      
-                500.0,                                    
-                'MGA',                                    
-                '5 dernièrees transactions ' . $get_account->account_no . ' / ' . $get_account->libelle,  
-                json_encode(['msisdn' => $get_account->msisdn]),                                  
-                json_encode(['code' => $responseCode, 'message' => $responseMessage])            
+                $data['requestId'],
+                $data['requestType'],
+                $get_account->libelle,
+                $get_account->account_no,
+                $status,
+                500.0,
+                'MGA',
+                '5 dernièrees transactions ' . $get_account->account_no . ' / ' . $get_account->libelle,
+                json_encode(['msisdn' => $get_account->msisdn]),
+                json_encode(['code' => $responseCode, 'message' => $responseMessage])
             );
-
         } catch (\Exception $e) {
             Log::error("Erreur lors de l'insertion : " . $e->getMessage());
         }
@@ -368,24 +369,26 @@ class OMRequestController extends Controller
             </S:Body> 
         </S:Envelope>';
 
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
+
         #Log statement request
-        if($responseCode === "000" ){
+        if ($responseCode === "000") {
             $status = '1';
-        }else{
+        } else {
             $status = '0';
         }
 
         transactionLogActivity(
-            $data['requestId'],                       
-            $data['requestType'],                     
-            $get_account->libelle,                    
-            $get_account->account_no,                 
-            $status,                                      
-            $data['amount'],                                
-            'MGA',                                    
-            'Withdrawal operation ' . $get_account->account_no . ' / ' . $get_account->libelle,  
-            json_encode(['msisdn' => $get_account->msisdn]),                                  
-            json_encode(['code' => $responseCode, 'message' => $responseMessage])            
+            $data['requestId'],
+            $data['requestType'],
+            $get_account->libelle,
+            $get_account->account_no,
+            $status,
+            $data['amount'],
+            'MGA',
+            'Withdrawal operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            json_encode(['msisdn' => $get_account->msisdn]),
+            json_encode(['code' => $responseCode, 'message' => $responseMessage])
         );
 
         return response($orangeResponse, 200)
@@ -462,26 +465,26 @@ class OMRequestController extends Controller
                 </S:Body> 
             </S:Envelope> ';
 
-        Log::info($orangeResponse);
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
 
         #Log deposit
-        if($responseCode === "000" ){
+        if ($responseCode === "000") {
             $status = '1';
-        }else{
+        } else {
             $status = '0';
         }
 
         transactionLogActivity(
-            $data['requestId'],                       
-            $data['requestType'],                     
-            $get_account->libelle,                    
-            $get_account->account_no,                 
-            $status,                                      
-            $data['amount'],                                
-            'MGA',                                    
-            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,  
-            json_encode(['msisdn' => $get_account->msisdn]),                                  
-            json_encode(['code' => $responseCode, 'message' => $responseMessage])            
+            $data['requestId'],
+            $data['requestType'],
+            $get_account->libelle,
+            $get_account->account_no,
+            $status,
+            $data['amount'],
+            'MGA',
+            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            json_encode(['msisdn' => $get_account->msisdn]),
+            json_encode(['code' => $responseCode, 'message' => $responseMessage])
         );
 
 
@@ -511,7 +514,7 @@ class OMRequestController extends Controller
                 </S:Body> 
             </S:Envelope>';
 
-        Log::info($orangeResponse);
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
 
         // save to table cancel_transfert
         try {
@@ -537,24 +540,24 @@ class OMRequestController extends Controller
         } catch (\Exception $e) {
             Log::error("Erreur lors de l'insertion : " . $e->getMessage());
         }
-         #Log cancel transfert
-         if($responseCode === "000" ){
+        #Log cancel transfert
+        if ($responseCode === "000") {
             $status = '1';
-        }else{
+        } else {
             $status = '0';
         }
 
         transactionLogActivity(
-            $data['requestId'],                       
-            $data['requestType'],                     
-            $get_account->libelle,                    
-            $get_account->account_no,                 
-            $status,                                      
-            $get_account->amount,                                
-            'MGA',                                    
-            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,  
-            json_encode(['msisdn' => $get_account->msisdn]),                                  
-            json_encode(['code' => $responseCode, 'message' => $responseMessage])            
+            $data['requestId'],
+            $data['requestType'],
+            $get_account->libelle,
+            $get_account->account_no,
+            $status,
+            $get_account->amount,
+            'MGA',
+            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            json_encode(['msisdn' => $get_account->msisdn]),
+            json_encode(['code' => $responseCode, 'message' => $responseMessage])
         );
 
         return response($orangeResponse, 200)
@@ -564,7 +567,8 @@ class OMRequestController extends Controller
     // Principal function
     public function handle(Request $request)
     {
-        Log::info('La requête reçue est : ' . $request->getContent());
+        Log::info('THE REQUEST SUBMITED BY ORANGE IS : ' . $request->getContent());
+
         // Les dates pour les différentes transactions dans MUSONI
         $withdraw_dateNow = Carbon::now()->format('d m Y');
         $deposit_dateNow = Carbon::now()->format('d M Y');
@@ -603,10 +607,16 @@ class OMRequestController extends Controller
             $elementRequest = explode(":", $elements)[1];
         }
 
+        Log::info('The element request recieved is : ' . $elementRequest);
+
         $get_account = "";
 
         // Si $elementRequest === "CancelTransfert" annulation du dernier transfert après erreur côté Orange
         if ($elementRequest === "CancelTransfer") {
+
+            Log::info('the Element Request sent is : ' . $elementRequest);
+
+            
             $testNode = $xpath->query("//soapenv:Body/*[local-name()='CancelTransfer']");
             if ($testNode->length == 0) {
                 Log::info('Une erreur est survenue : ' . $testNode);
