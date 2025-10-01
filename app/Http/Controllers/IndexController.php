@@ -15,47 +15,47 @@ class IndexController extends Controller
             logActivity(
                 session('username'),
                 'index',
-                'index_visit_page',
+                'index_visit_',
             );
             
             // Total des souscriptions (account_status = 1)
             $total_subscriptions = DB::table('subscription')
                 ->where('account_status', 1)
                 ->count();
-            Log::info('Requête subscription réussie', ['count' => $total_subscriptions]);
+            #Loginfo('Requête subscription réussie', ['count' => $total_subscriptions]);
             
             $daily_subscriptions = DB::table('subscription')
                 ->where('account_status', 1)
                 ->whereDate('created_at', Carbon::today())
                 ->count();
-            Log::info('Requête daily_subscriptions réussie', ['count' => $daily_subscriptions]);
+            #Loginfo('Requête daily_subscriptions réussie', ['count' => $daily_subscriptions]);
 
             // Total des désabonnements
             $total_unsubscriptions = DB::table('unsubscription')->count();
-            Log::info('Requête unsubscription réussie', ['count' => $total_unsubscriptions]);
+            #Loginfo('Requête unsubscription réussie', ['count' => $total_unsubscriptions]);
             
             $daily_unsubscriptions = DB::table('unsubscription')
                 ->whereDate('created_at', Carbon::today())
                 ->count();
-            Log::info('Requête daily_unsubscriptions réussie', ['count' => $daily_unsubscriptions]);
+            #Loginfo('Requête daily_unsubscriptions réussie', ['count' => $daily_unsubscriptions]);
 
             // Total des consultations de solde (get_balance)
             $total_transactions = DB::table('get_balance')->count();
-            Log::info('Requête get_balance réussie', ['count' => $total_transactions]);
+            #Loginfo('Requête get_balance réussie', ['count' => $total_transactions]);
             
             $daily_transactions = DB::table('get_balance')
                 ->whereDate('created_at', Carbon::today())
                 ->count();
-            Log::info('Requête daily_get_balance réussie', ['count' => $daily_transactions]);
+            #Loginfo('Requête daily_get_balance réussie', ['count' => $daily_transactions]);
 
             // Total des mini relevés (mini_statement)
             $total_balance = DB::table('mini_statement')->count();
-            Log::info('Requête mini_statement réussie', ['count' => $total_balance]);
+            #Loginfo('Requête mini_statement réussie', ['count' => $total_balance]);
             
             $daily_balance = DB::table('mini_statement')
                 ->whereDate('created_at', Carbon::today())
                 ->count();
-            Log::info('Requête daily_mini_statement réussie', ['count' => $daily_balance]);
+            #Loginfo('Requête daily_mini_statement réussie', ['count' => $daily_balance]);
 
             // Données pour le graphique mensuel (6 derniers mois) - INCHANGÉ
             $monthly_data = [];
@@ -87,11 +87,11 @@ class IndexController extends Controller
                     'transactions' => $monthly_transactions
                 ];
             }
-            Log::info('Requêtes mensuelles réussies', ['monthly_data' => $monthly_data]);
+            #Loginfo('Requêtes mensuelles réussies', ['monthly_data' => $monthly_data]);
 
             // Calcul du nombre de transactions et de la somme des charges par type
             try {
-                Log::info('Début du calcul du nombre de transactions et des charges');
+                #Loginfo('Début du calcul du nombre de transactions et des charges');
                 
                 // Nombre de retraits (A2W = Account to Wallet)
                 $current_month_withdrawals = DB::table('transaction')
@@ -142,16 +142,16 @@ class IndexController extends Controller
                 // Total général des transactions
                 $total_all_transactions = DB::table('transaction')->count();
                 
-                Log::info('Résultats des transactions', [
-                    'deposits_w2a_count' => $current_month_deposits,
-                    'withdrawals_a2w_count' => $current_month_withdrawals,
-                    'deposits_w2a_charges' => $current_month_deposits_charges,
-                    'withdrawals_a2w_charges' => $current_month_withdrawals_charges,
-                    'total_charges' => $current_month_charges,
-                    'office_data_count' => $office_data->count(),
-                    'libelle_count' => $account_names->count(),
-                    'total_all_transactions' => $total_all_transactions
-                ]);
+                #Loginfo('Résultats des transactions', [
+                //     'deposits_w2a_count' => $current_month_deposits,
+                //     'withdrawals_a2w_count' => $current_month_withdrawals,
+                //     'deposits_w2a_charges' => $current_month_deposits_charges,
+                //     'withdrawals_a2w_charges' => $current_month_withdrawals_charges,
+                //     'total_charges' => $current_month_charges,
+                //     'office_data_count' => $office_data->count(),
+                //     'libelle_count' => $account_names->count(),
+                //     'total_all_transactions' => $total_all_transactions
+                // ]);
             } catch (\Exception $e) {
                 $current_month_deposits = 0;
                 $current_month_withdrawals = 0;
@@ -159,33 +159,33 @@ class IndexController extends Controller
                 $office_data = collect();
                 $account_names = collect();
                 $total_all_transactions = 0;
-                Log::warning('Erreur calcul transactions et charges', ['error' => $e->getMessage()]);
+                #Logwarning('Erreur calcul transactions et charges', ['error' => $e->getMessage()]);
             }
 
             // Debug: vérifier que toutes les variables sont définies
-            Log::info('Variables du dashboard:', [
-                'total_subscriptions' => $total_subscriptions,
-                'daily_subscriptions' => $daily_subscriptions,
-                'total_unsubscriptions' => $total_unsubscriptions,
-                'daily_unsubscriptions' => $daily_unsubscriptions,
-                'total_transactions' => $total_transactions,
-                'daily_transactions' => $daily_transactions,
-                'total_balance' => $total_balance,
-                'daily_balance' => $daily_balance,
-                'monthly_data' => $monthly_data,
-                'current_month_deposits' => $current_month_deposits ?? 0,
-                'current_month_withdrawals' => $current_month_withdrawals ?? 0,
-                'current_month_charges' => $current_month_charges ?? 0,
-                'office_data_count' => $office_data->count() ?? 0,
-                'account_names_count' => $account_names->count() ?? 0,
-                'total_all_transactions' => $total_all_transactions ?? 0
-            ]);
+            #Loginfo('Variables du dashboard:', [
+            //     'total_subscriptions' => $total_subscriptions,
+            //     'daily_subscriptions' => $daily_subscriptions,
+            //     'total_unsubscriptions' => $total_unsubscriptions,
+            //     'daily_unsubscriptions' => $daily_unsubscriptions,
+            //     'total_transactions' => $total_transactions,
+            //     'daily_transactions' => $daily_transactions,
+            //     'total_balance' => $total_balance,
+            //     'daily_balance' => $daily_balance,
+            //     'monthly_data' => $monthly_data,
+            //     'current_month_deposits' => $current_month_deposits ?? 0,
+            //     'current_month_withdrawals' => $current_month_withdrawals ?? 0,
+            //     'current_month_charges' => $current_month_charges ?? 0,
+            //     'office_data_count' => $office_data->count() ?? 0,
+            //     'account_names_count' => $account_names->count() ?? 0,
+            //     'total_all_transactions' => $total_all_transactions ?? 0
+            // ]);
 
-            Log::info('IndexController showIndex appelé avec succès');
+            #Loginfo('IndexController showIndex appelé avec succès');
             
         } catch (\Exception $e) {
             // En cas d'erreur, utiliser des valeurs par défaut
-            Log::error('Erreur générale dans IndexController: ' . $e->getMessage());
+            #Logerror('Erreur générale dans IndexController: ' . $e->getMessage());
             $total_subscriptions = 0;
             $daily_subscriptions = 0;
             $total_unsubscriptions = 0;

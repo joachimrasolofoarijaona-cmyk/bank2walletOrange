@@ -97,7 +97,7 @@ foreach (session('selectedRoles') as $role) {
                 @endif
                 {{-- session error --}}
 
-                @if($access === 1)
+                @if($access === 3)
                 <div class="card-header bg-dark text-center d-flex align-content-center">
                     <i class="ri-file-list-line fs-4"></i>
                     <h4 class="text-uppercase mb-0 px-3 pt-1">validations</h4>
@@ -109,7 +109,7 @@ foreach (session('selectedRoles') as $role) {
                 </div>
                 @endif
                 <div class="card-body bg-dark text-white">
-                    {{-- if user is CC --}}
+                    {{-- if user is VALIDATOR --}}
                     @if($access === 3)
                     <div class="container-fluid table-responsive">
                         <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
@@ -129,11 +129,11 @@ foreach (session('selectedRoles') as $role) {
                             </thead>
                             <tbody>
                                 @foreach($validations as $validation)
-                                {{-- php for hidden --}}
-                                @php
-                                $hidden = $validation->office_name ? '' : 'hidden';
-                                $modalId = 'modal_' . $validation->ticket;
-                                $isRefused = $validation->status === "2";
+                                    {{-- php for hidden --}}
+                                    @php
+                                        $hidden = $validation->office_name ? '' : 'hidden';
+                                        $modalId = 'modal_' . $validation->ticket;
+                                        $isRefused = $validation->status === "2";
                                 @endphp
                                 <tr {{$hidden}}>
                                     @if(\Carbon\Carbon::parse($validation->created_at)->format('Y-m-d') === $current_date)
@@ -160,77 +160,79 @@ foreach (session('selectedRoles') as $role) {
                                     <td>{{$validation->key}}</td>
                                     <td>{{$validation->office_name}}</td>
                                     <td>{{$validation->bank_agent}}</td>
+                                    
                                     @if($validation->status === "0")
-                                    <td>
-                                        <!-- Bouton pour ouvrir le modal -->
-                                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
-                                            Détails
-                                        </button>
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="{{ $modalId }}" tabindex="-1" role="dialog" aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-dark">
-                                                        <h5 class="modal-title" id="{{ $modalId }}Label">Détails de la demande</h5>
-                                                        <button type="button" class="btn-close " data-dismiss="modal" aria-label="Fermer" style="color:white;">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <form action="{{route('do.validation')}}" method="POST">
-                                                        @csrf
-                                                        <div class="modal-body bg-dark">
-                                                            <div class="alert alert-warning" role="alert">
-                                                                <i class="ri-alert-line"></i>
-                                                                Merci de revérifier les informations client avant toute validation
-                                                            </div>
-                                                            <div class="text-left">
-                                                                <small>Demande</small>
-                                                                <ul class="list-group">
-                                                                    <li class="list-group-item list-group-item-secondary"><strong>Type de demande : </strong> {{$validation->request_type}}</li>
-                                                                    <li class="list-group-item list-group-item-secondary"><strong>Référence : </strong>{{ $validation->ticket }}</li>
-                                                                    <li class="list-group-item list-group-item-secondary"><strong>Demandeur : </strong>{{$validation->bank_agent}}</li>
-                                                                    @if($validation->request_type === 'RESILIATION')
-                                                                    <li class="list-group-item list-group-item-secondary"><strong>Motif de la demande : </strong>{{ $validation->motif }}</li>
-                                                                    @endif
-                                                                </ul>
+                                        <td>
+                                            <!-- Bouton pour ouvrir le modal -->
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
+                                                Détails
+                                            </button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="{{ $modalId }}" tabindex="-1" role="dialog" aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header bg-dark">
+                                                            <h5 class="modal-title" id="{{ $modalId }}Label">Détails de la demande</h5>
+                                                            <button type="button" class="btn-close " data-dismiss="modal" aria-label="Fermer" style="color:white;">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form action="{{route('do.validation')}}" method="POST">
+                                                            @csrf
+                                                            <div class="modal-body bg-dark">
+                                                                <div class="alert alert-warning" role="alert">
+                                                                    <i class="ri-alert-line"></i>
+                                                                    Merci de revérifier les informations client avant toute validation
+                                                                </div>
+                                                                <div class="text-left">
+                                                                    <small>Demande</small>
+                                                                    <ul class="list-group">
+                                                                        <li class="list-group-item list-group-item-secondary"><strong>Type de demande : </strong> {{$validation->request_type}}</li>
+                                                                        <li class="list-group-item list-group-item-secondary"><strong>Référence : </strong>{{ $validation->ticket }}</li>
+                                                                        <li class="list-group-item list-group-item-secondary"><strong>Demandeur : </strong>{{$validation->bank_agent}}</li>
+                                                                        @if($validation->request_type === 'RESILIATION')
+                                                                        <li class="list-group-item list-group-item-secondary"><strong>Motif de la demande : </strong>{{ $validation->motif }}</li>
+                                                                        @endif
+                                                                    </ul>
+                                                                    <hr>
+                                                                    <small>Détails client</small>
+                                                                    <ul class="list-group">
+                                                                        <li class="list-group-item list-group-item-primary"><strong>N° Mobile :</strong> {{$validation->mobile_no}}</li>
+                                                                        <li class="list-group-item list-group-item-primary"><strong>Nom et prénoms : </strong>{{$validation->om_lastname}} {{$validation->om_firstname}}</li>
+                                                                        <li class="list-group-item list-group-item-primary"><strong>Date de naissance : </strong>{{$validation->client_dob}}</li>
+                                                                        <li class="list-group-item list-group-item-primary"><strong>Carte d'identité : </strong>{{$validation->om_cin}}</li>
+                                                                    </ul>
+                                                                </div>
                                                                 <hr>
-                                                                <small>Détails client</small>
-                                                                <ul class="list-group">
-                                                                    <li class="list-group-item list-group-item-primary"><strong>N° Mobile :</strong> {{$validation->mobile_no}}</li>
-                                                                    <li class="list-group-item list-group-item-primary"><strong>Nom et prénoms : </strong>{{$validation->om_lastname}} {{$validation->om_firstname}}</li>
-                                                                    <li class="list-group-item list-group-item-primary"><strong>Date de naissance : </strong>{{$validation->client_dob}}</li>
-                                                                    <li class="list-group-item list-group-item-primary"><strong>Carte d'identité : </strong>{{$validation->om_cin}}</li>
-                                                                </ul>
+                                                                <div class="form-group text-left">
+                                                                    <label for="validation"><small>État de validation</small></label>
+                                                                    <select name="validation" id="validation" class="form-select" required>
+                                                                        <option value="1">Validé</option>
+                                                                        <option value="2">Refusé</option>
+                                                                    </select>
+                                                                </div>
+                                                                <hr>
+                                                                <div class="form-group text-left">
+                                                                    <label for="commentaire"><small>Commentaires <i><strong>(10 caractères min)</strong></i></small></label>
+                                                                    <textarea class="form-control" name="commentaire" rows="3" minlength="10" required></textarea>
+                                                                </div>
                                                             </div>
-                                                            <hr>
-                                                            <div class="form-group text-left">
-                                                                <label for="validation"><small>État de validation</small></label>
-                                                                <select name="validation" id="validation" class="form-select" required>
-                                                                    <option value="1">Validé</option>
-                                                                    <option value="2">Refusé</option>
-                                                                </select>
+                                                            <div class="modal-footer bg-dark">
+                                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                                <input type="hidden" name="ticket" value="{{$validation->ticket}}">
+                                                                <button type="submit" class="btn btn-outline-danger">Valider</button>
                                                             </div>
-                                                            <hr>
-                                                            <div class="form-group text-left">
-                                                                <label for="commentaire"><small>Commentaires <i><strong>(10 caractères min)</strong></i></small></label>
-                                                                <textarea class="form-control" name="commentaire" rows="3" minlength="10" required></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer bg-dark">
-                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
-                                                            <input type="hidden" name="ticket" value="{{$validation->ticket}}">
-                                                            <button type="submit" class="btn btn-outline-danger">Valider</button>
-                                                        </div>
-                                                    </form>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
                                     @elseif($validation->status === "3")
-                                    <td style="color : red;"><span class="badge bg-danger">Refusé</span></td>
+                                        <td style="color : red;"><span class="badge bg-danger">Refusé</span></td>
                                     @else
-                                    <td style="color : red;"><span class="badge bg-success">Validé</span></td>
+                                        <td style="color : red;"><span class="badge bg-success">Validé</span></td>
                                     @endif
+
                                     <td>{{ $validation->motif_validation }}</td>
                                 </tr>
                                 @endforeach
@@ -279,8 +281,8 @@ foreach (session('selectedRoles') as $role) {
                         @endif
                     </div>
 
-                    {{-- if user is VALIDATOR --}}
-                    @elseif($access === 2)
+                    {{-- if user is CC --}}
+                    @elseif($access === 1)
                     <div class="container-fluid table-responsive">
                         <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
                             <thead>
