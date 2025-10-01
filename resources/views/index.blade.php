@@ -213,7 +213,7 @@
 
                 <!-- Mini graphique en anneau -->
                     <div class="mt-4" style="width: 140px; height: 140px; margin: 0 auto;">
-                        <canvas id="miniDonut-1" style="width: 140px !important; height: 140px !important;"></canvas>
+                        <canvas id="miniDonut" style="width: 140px !important; height: 140px !important;"></canvas>
                     </div>
             </div>
         </div>
