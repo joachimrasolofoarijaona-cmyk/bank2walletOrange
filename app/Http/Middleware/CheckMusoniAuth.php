@@ -11,19 +11,23 @@ class CheckMusoniAuth
 {
     public function handle(Request $request, Closure $next): Response
     {
-        Log::info('CheckMusoniAuth middleware appelé', [
-            'url' => $request->url(),
-            'has_username' => session()->has('username'),
-            'username' => session('username'),
-            'all_session' => session()->all()
-        ]);
+        Log::info('=== CheckMusoniAuth MIDDLEWARE APPELÉ ===');
+        Log::info('URL: ' . $request->url());
+        Log::info('Méthode: ' . $request->method());
+        Log::info('Headers: ', $request->headers->all());
+        Log::info('Session ID: ' . $request->session()->getId());
+        Log::info('Has username: ' . (session()->has('username') ? 'OUI' : 'NON'));
+        Log::info('Username: ' . session('username'));
+        Log::info('All session data: ', session()->all());
+        Log::info('=== FIN CheckMusoniAuth ===');
 
         if (!session()->has('username')) {
-            Log::warning('Session username manquante, redirection vers /login');
+            Log::warning('❌ Session username manquante, redirection vers /login');
+            Log::warning('URL qui a causé la redirection: ' . $request->fullUrl());
             return redirect('/login');
         }
 
-        Log::info('Session valide, passage au contrôleur');
+        Log::info('✅ Session valide, passage au contrôleur');
         return $next($request);
     }
 }

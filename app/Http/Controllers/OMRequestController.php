@@ -567,6 +567,19 @@ class OMRequestController extends Controller
     // Principal function
     public function handle(Request $request)
     {
+        // === LOGS DE DIAGNOSTIC ===
+        Log::info('=== OMRequestController::handle DÉBUT ===');
+        Log::info('Méthode HTTP: ' . $request->method());
+        Log::info('URL complète: ' . $request->fullUrl());
+        Log::info('Headers reçus:', $request->headers->all());
+        Log::info('IP du client: ' . $request->ip());
+        Log::info('User-Agent: ' . $request->userAgent());
+        Log::info('Contenu brut de la requête: ' . $request->getContent());
+        Log::info('Données POST: ', $request->all());
+        Log::info('Session ID: ' . $request->session()->getId());
+        Log::info('Session data: ', session()->all());
+        Log::info('=== OMRequestController::handle FIN DIAGNOSTIC ===');
+        
         Log::info('THE REQUEST SUBMITED BY ORANGE IS : ' . $request->getContent());
 
         // Les dates pour les différentes transactions dans MUSONI
