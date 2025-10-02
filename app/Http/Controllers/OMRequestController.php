@@ -577,7 +577,7 @@ class OMRequestController extends Controller
         Log::info('Contenu brut de la requête: ' . $request->getContent());
         Log::info('Données POST: ', $request->all());
         Log::info('=== OMRequestController::handle FIN DIAGNOSTIC ===');
-        
+
         Log::info('THE REQUEST SUBMITED BY ORANGE IS : ' . $request->getContent());
 
         // Les dates pour les différentes transactions dans MUSONI
@@ -588,6 +588,14 @@ class OMRequestController extends Controller
         $username = env('N8N_USERNAME');
         $password = env('N8N_PASSWORD');
         $balance_charges = 100;
+
+
+        Log::info('Contenu brut de la requête SOAP : ' . $soapRequest);
+
+        if (empty($soapRequest)) {
+            Log::error('Le contenu SOAP est vide !');
+            return response('Empty request', 400);
+        }
 
         // Test de la requête SOAP reçu par l'opérateur partenaire
         try {
@@ -627,7 +635,7 @@ class OMRequestController extends Controller
 
             Log::info('the Element Request sent is : ' . $elementRequest);
 
-            
+
             $testNode = $xpath->query("//soapenv:Body/*[local-name()='CancelTransfer']");
             if ($testNode->length == 0) {
                 Log::info('Une erreur est survenue : ' . $testNode);
