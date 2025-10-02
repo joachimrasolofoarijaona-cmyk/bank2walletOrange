@@ -438,6 +438,10 @@
                     </a>
                 </div>
             </div>
+            <a class="nav-link" href="{{ route('documentation.user.guide') }}">
+                <i class="ri-book-open-line"></i>
+                <span class="nav-text">Documentation</span>
+            </a>
         </nav>
 
         @elseif($permission === 'val')
@@ -449,6 +453,10 @@
             <a class="nav-link" href="{{ route('sub.validation') }}">
                 <i class="ri-shield-check-line"></i>
                 <span class="nav-text">Validations</span>
+            </a>
+            <a class="nav-link" href="{{ route('documentation.user.guide') }}">
+                <i class="ri-book-open-line"></i>
+                <span class="nav-text">Documentation</span>
             </a>
         </nav>
 
