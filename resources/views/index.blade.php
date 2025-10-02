@@ -32,80 +32,72 @@
     <div class="row pt-1">
         {{-- subs chart --}}
         <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card border-0 shadow-md metric-card">
-                <div class="card-body d-flex align-items-center p-4">
-                    <div class="me-3">
-                        <div class="bg-opacity-10 rounded-pill p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                            <i class="ri-login-circle-line fs-1 text-primary"></i>
-                        </div>
+            <div class="card bg-light metric-card card-fade-in">
+                <div class="card-body d-flex align-items-center">
+                    <div class="icon-container icon-primary me-3">
+                        <i class="ri-login-circle-line fs-4"></i>
                     </div>
-                    <div>
+                    <div class="flex-grow-1">
                         <h3 class="fw-bold text-dark mb-1">{{ number_format($total_subscriptions) }}</h3>
                         <p class="text-muted mb-0 fs-6">Souscriptions</p>
-                        <small class="text-success">+{{ $daily_subscriptions }} aujourd'hui</small>
+                        <small class="text-success fw-semibold">+{{ $daily_subscriptions }} aujourd'hui</small>
                     </div>
                     <div class="ms-auto">
-                        <i class="fas fa-ellipsis-h text-muted"></i>
+                        <i class="ri-more-2-line text-muted fs-5"></i>
                     </div>
                 </div>
             </div>
         </div>
         {{-- balance chart --}}
         <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card border-0 shadow-md metric-card">
-                <div class="card-body d-flex align-items-center p-4">
-                    <div class="me-3">
-                        <div class="bg-opacity-10 rounded-pill p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                            <i class="ri-file-list-line fs-1 text-primary"></i>
-                        </div>
+            <div class=card bg-light "metric-card card-fade-in">
+                <div class="card-body d-flex align-items-center">
+                    <div class="icon-container icon-info me-3">
+                        <i class="ri-file-list-line fs-4"></i>
                     </div>
-                    <div>
+                    <div class="flex-grow-1">
                         <h3 class="fw-bold text-dark mb-1">{{ number_format($total_balance) }}</h3>
                         <p class="text-muted mb-0 fs-6">Mini Relevés</p>
-                        <small class="text-success">+{{ number_format($daily_balance) }} aujourd'hui</small>
+                        <small class="text-success fw-semibold">+{{ number_format($daily_balance) }} aujourd'hui</small>
                     </div>
                     <div class="ms-auto">
-                        <i class="fas fa-ellipsis-h text-muted"></i>
+                        <i class="ri-more-2-line text-muted fs-5"></i>
                     </div>
                 </div>
             </div>
         </div>
         {{-- statement chart --}}
         <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card border-0 shadow-md metric-card">
-                <div class="card-body d-flex align-items-center p-4">
-                    <div class="me-3">
-                        <div class="bg-opacity-10 rounded-pill p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                            <i class="ri-logout-circle-line fs-1 text-warning"></i>
-                        </div>
+            <div class="card bg-light metric-card card-fade-in">
+                <div class="card-body d-flex align-items-center">
+                    <div class="icon-container icon-danger me-3">
+                        <i class="ri-logout-circle-line fs-4"></i>
                     </div>
-                    <div>
+                    <div class="flex-grow-1">
                         <h3 class="fw-bold text-dark mb-1">{{ number_format($total_unsubscriptions) }}</h3>
                         <p class="text-muted mb-0 fs-6">Désabonnements</p>
-                        <small class="text-warning">+{{ $daily_unsubscriptions }} aujourd'hui</small>
+                        <small class="text-danger fw-semibold">+{{ $daily_unsubscriptions }} aujourd'hui</small>
                     </div>
                     <div class="ms-auto">
-                        <i class="fas fa-ellipsis-h text-muted"></i>
+                        <i class="ri-more-2-line text-muted fs-5"></i>
                     </div>
                 </div>
             </div>
         </div>
         {{-- transactions chart --}}
         <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card border-0 shadow-md metric-card">
-                <div class="card-body d-flex align-items-center p-4">
-                    <div class="me-3">
-                        <div class="bg-opacity-10 rounded-pill p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                            <i class="ri-eye-line fs-1 text-info"></i>
-                        </div>
+            <div class="card bg-light metric-card card-fade-in">
+                <div class="card-body d-flex align-items-center">
+                    <div class="icon-container icon-success me-3">
+                        <i class="ri-eye-line fs-4"></i>
                     </div>
-                    <div>
+                    <div class="flex-grow-1">
                         <h3 class="fw-bold text-dark mb-1">{{ number_format($total_transactions) }}</h3>
                         <p class="text-muted mb-0 fs-6">Consultations Solde</p>
-                        <small class="text-info">+{{ $daily_transactions }} aujourd'hui</small>
+                        <small class="text-success fw-semibold">+{{ $daily_transactions }} aujourd'hui</small>
                     </div>
                     <div class="ms-auto">
-                        <i class="fas fa-ellipsis-h text-muted"></i>
+                        <i class="ri-more-2-line text-muted fs-5"></i>
                     </div>
                 </div>
             </div>
@@ -149,11 +141,14 @@
 
 <!-- Nouvelles sections -->
 <div class="row mt-4">
-    <!-- Graphique par office_name (copié exactement du style monthly_subs) -->
+    <!-- Graphique par office_name -->
     <div class="col-lg-3">
-        <div class="card border-0 shadow-md" style="height: 300px;">
+        <div class="card bg-light content-card card-fade-in" style="height: 300px;">
+            <div class="card-header bg-light fw-bold">
+                <i class="ri-building-line me-2"></i>
+                <span>Transactions par Office</span>
+            </div>
             <div class="card-body d-flex flex-column">
-                <h6 class="fw-bold text-dark mb-3">Transactions par Office</h6>
                 <div class="flex-grow-1 overflow-auto" style="max-height: 250px;">
                     <div id="officeContent">
                         <!-- Le contenu sera inséré ici par JavaScript -->
@@ -165,9 +160,12 @@
 
     <!-- Liste des libelle -->
     <div class="col-lg-3">
-        <div class="card border-0 shadow-md" style="height: 300px;">
+        <div class="card bg-light content-card card-fade-in" style="height: 300px;">
+            <div class="card-header bg-light fw-bold">
+                <i class="ri-list-check me-2"></i>
+                <span>Top Libellés</span>
+            </div>
             <div class="card-body d-flex flex-column">
-                <h6 class="fw-bold text-dark mb-3">Top Libellés</h6>
                 <div class="flex-grow-1 overflow-auto" style="max-height: 250px;">
                     <div class="account-list">
                         @if(isset($account_names) && count($account_names) > 0)

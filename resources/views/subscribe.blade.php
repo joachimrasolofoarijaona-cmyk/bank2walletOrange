@@ -7,17 +7,17 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12">
             <div class="card">
-                <div class="card-header bg-dark d-flex align-items-left">
+                <div class="card-header bg-light d-flex align-items-left">
                     <i class="ri-links-line fs-4"></i>
                     <h4 class="text-uppercase mb-0 px-3 pt-1">Souscription</h4>
                 </div>
-                <div class="card-body bg-dark">
+                <div class="card-body bg-light">
                     <div class="container pb-3">
                         <div class="row">
                             {{-- about subscriptions --}}
                             <div class="col-lg-6 col-md-12 col-xs-12">
                                 <div class="card">
-                                    <div class="card-header bg-dark">
+                                    <div class="card-header bg-light">
                                         <div class="d-flex align-items-center gap-3">
                                             <i class="ri-bookmark-line"></i>
                                             <h4 class="text-uppercase mb-0 px-3">conditions de souscription</h4>
@@ -64,7 +64,7 @@
                             {{-- form for subscriptions --}}
                             <div class="col-lg-6 col-md-12 col-xs-12">
                                 <div class="card">
-                                    <div class="card-header bg-dark">
+                                    <div class="card-header bg-light">
                                         <div class="d-flex align-items-center gap-3">
                                             <i class="ri-survey-line"></i>
                                             <h4 class="text-uppercase mb-0 px-3">formulaire de souscription</h4>

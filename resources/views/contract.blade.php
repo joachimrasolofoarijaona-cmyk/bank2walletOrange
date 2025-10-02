@@ -99,22 +99,22 @@
     <div class="row">
         {{-- filter by number and the conctract type / Subscription or Unsubscription --}}
         <div class="col-lg-4 col-md-6 col-xs-12 fixed">
-            <div class="card text-white bg-dark">
+            <div class="card text-dark bg-light">
                 <div class="card-header d-flex align-items-start ">
                     <i class="ri-filter-line fs-5 me-2"></i>
                     <h4 class="card-title text-uppercase">Filtre</h4>
                 </div>
-                <div class="card-body text-white">
+                <div class="card-body text-dark">
                     <form action="{{ route('generate.contract') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label for="msisdn" class="form-label">Numéro de ligne</label>
-                            <input type="text" class="form-control bg-secondary text-white" id="msisdn" name="msisdn" placeholder="Numéro Orange ..." required>
+                            <input type="text" class="form-control text-dark" id="msisdn" name="msisdn" placeholder="Numéro Orange ..." required>
                         </div>
                         <div class="mb-3">
                             {{-- dropdown for contract type --}}
                             <label for="contract_type" class="form-label">Type de contrat</label>
-                            <select class="form-select bg-secondary text-white" id="contract_type" name="contract_type" required>
+                            <select class="form-select text-dark" id="contract_type" name="contract_type" required>
                                 <option value="" disabled selected>Choisissez le type de contrat</option>
                                 <option value="1">Souscription</option>
                                 <option value="0">Résiliation</option>
@@ -162,7 +162,7 @@
                 </script>
             </div>
 
-            <div class="navbar navbar-dark bg-dark px-4">
+            <div class="navbar navbar-light bg-light px-4">
                 <div class="d-flex align-items-start ">
                     <i class="ri-file-add-line fs-5 me-2"></i>
                     <h4 class="card-title text-uppercase">Contrat</h4>

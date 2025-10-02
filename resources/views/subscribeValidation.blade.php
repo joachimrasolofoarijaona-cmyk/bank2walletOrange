@@ -98,23 +98,23 @@ foreach (session('selectedRoles') as $role) {
 
                 {{-- session error --}}
                 @if($access === 3)
-                    <div class="card-header bg-dark text-center d-flex align-content-center">
+                    <div class="card-header bg-gradient-primary text-white text-center d-flex align-content-center">
                         <i class="ri-file-list-line fs-4"></i>
-                        <h4 class="text-uppercase mb-0 px-3 pt-1">validations</h4>
+                        <h4 class="text-uppercase mb-0 px-3 pt-1 fw-bold">validations</h4>
                     </div>
                 @else
-                    <div class="card-header bg-dark text-center d-flex align-content-center">
+                    <div class="card-header bg-gradient-primary text-white text-center d-flex align-content-center">
                         <i class="ri-file-list-line fs-4"></i>
-                        <h4 class="text-uppercase mb-0 px-3 pt-1">Mes Demandes</h4>
+                        <h4 class="text-uppercase mb-0 px-3 pt-1 fw-bold">Mes Demandes</h4>
                     </div>
                 @endif
-                <div class="card-body bg-dark text-white">
+                <div class="card-body bg-light">
 
                     {{-- if user is VALIDATOR --}}
                     @if($access === 3)
                     <div class="container-fluid table-responsive">
-                        <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
-                            <thead>
+                        <table class="table table-hover" id="validation_table" style="font-size: 9pt;">
+                            <thead class="table-light">
                                 <tr>
                                     <th scope="col"><strong>N° Demande</strong></th>
                                     <th scope="col">Date demande</th>
@@ -288,8 +288,8 @@ foreach (session('selectedRoles') as $role) {
                     {{-- if user is SUPER ADMIN --}}
                     @elseif($access === 2)
                     <div class="container-fluid table-responsive">
-                        <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
-                            <thead>
+                        <table class="table table-hover" id="validation_table" style="font-size: 9pt;">
+                            <thead class="table-light">
                                 <tr>
                                     <th scope="col"><strong>N° Demande</strong></th>
                                     <th scope="col">Date demande</th>
@@ -355,8 +355,8 @@ foreach (session('selectedRoles') as $role) {
                     {{-- if user is CC --}}
                     @else
                     <div class="container-fluid table-responsive">
-                        <table class="table text-left text-white" id="validation_table" style="font-size: 9pt;">
-                            <thead class="bg-dark">
+                        <table class="table table-hover" id="validation_table" style="font-size: 9pt;">
+                            <thead class="bg-light">
                                 <tr>
                                     <th scope="col"><strong>N° Demande</strong></th>
                                     <th scope="col">Date demande</th>
@@ -493,7 +493,7 @@ foreach (session('selectedRoles') as $role) {
                         </table>
                     </div>
                     @endif
-                    <div class="pt-3 bg-dark">
+                    <div class="pt-3 bg-light">
                         {{ $validations->links() }}
                     </div>
                 </div>

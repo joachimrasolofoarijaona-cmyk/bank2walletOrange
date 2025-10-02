@@ -8,20 +8,20 @@
         {{-- Search bar to find msisdn --}}
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card bg-dark text-dark">
+                <div class="card  bg-lilght text-dark">
                     {{-- Card header with search icon and title --}}
-                    <div class="card-header bg-dark text-white d-flex align-items-center">
+                    <div class="card-header  bg-lilght  text-dark d-flex align-items-center">
                         <i class="ri-search-line fs-4"></i>
                         <h4 class="text-uppercase mb-0 px-3">Trouver un client</h4>
                     </div>
-                    <div class="card-body bg-dark text-white">
+                    <div class="card-body  bg-lilght  text-dark">
                         {{-- Form to search for a customer by msisdn --}}
                         <form method="POST" action="{{ route('search.customer') }}">
                             {{-- CSRF token for form submission --}}
                             @csrf
                             <div class="mb-3">
-                                <label for="msisdn" class="form-label">Numéro de téléphone</label>
-                                <input type="text" class="form-control" id="msisdn" name="msisdn" placeholder="Entrez le numéro" required>
+                                <label for="msisdn" class="form-label">Numéro Orange</label>
+                                <input type="text" class="form-control" id="msisdn" name="msisdn" placeholder="032**** ou 037****" required>
                             </div>
                             <button type="submit" class="btn btn-outline-success w-100">
                                 <i class="ri-search-line"></i> Chercher Numéro
@@ -52,9 +52,9 @@
     {{-- Display a responsive table if customer is found --}}
     @if(isset($customer) && !$customer->isEmpty())
     <div class="container mt-5">
-        <div class="table-responsive text-white">
-            <table class="table">
-                <thead class="table-success text-center">
+        <div class="table-responsive  text-dark">
+            <table class="table  table-hover">
+                <thead class="table-light text-start text-uppercase">
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Ligne</th>
@@ -66,10 +66,10 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     @foreach($customer as $cust)
 
-                    <tr class="text-center text-dark">
+                    <tr class="bg-white text-start text-dark">
                         <td>{{ $cust->id }}</td>
                         <td>{{ $cust->msisdn }}</td>
                         <td>{{ $cust->client_lastname }} {{ $cust->client_firstname }}</td>
@@ -90,10 +90,27 @@
                         @if($cust->account_status === "1")
                         <td>
                             <!-- Bouton ouverture modal -->
-                            <button type="button" class="btn btn-outline-danger btn-sm"
-                                data-bs-toggle="modal" data-bs-target="#modal-{{ $cust->id }}">
-                                <i class="ri-delete-bin-line"></i>
+                            <button type="button"
+                                class="btn btn-outline-danger btn-sm delete-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modal-{{ $cust->id }}">
+                                <i class="ri-delete-bin-line text-danger"></i>
                             </button>
+
+                            <style>
+                                .delete-btn:hover {
+                                    background-color: #dc3545 !important;
+                                    /* rouge bootstrap */
+                                    color: white !important;
+                                    /* texte/icône deviennent blancs */
+                                }
+
+                                .delete-btn:hover i {
+                                    color: white !important;
+                                    /* icône en blanc */
+                                }
+                            </style>
+
                         </td>
                         @else
                         <td><strong><span class="badge bg-danger">Compte Résilié</span></strong></td>
@@ -103,11 +120,11 @@
                     <div class="modal fade" id="modal-{{ $cust->id }}" tabindex="-1" aria-labelledby="ModalLabel-{{ $cust->id }}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header bg-dark text-uppercase">
+                                <div class="modal-header  bg-lilght text-uppercase">
                                     <h6 class="modal-title" id="ModalLabel-{{ $cust->id }}">Résilier un client</h6>
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body bg-dark text-white">
+                                <div class="modal-body  bg-lilght  text-dark">
                                     <form action="{{ route('send.unsubscribe.validation') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="msisdn" value="{{ $cust->msisdn }}">
@@ -158,7 +175,7 @@
                                         </button>
                                     </form>
                                 </div>
-                                <div class="modal-footer bg-dark">
+                                <div class="modal-footer  bg-lilght">
                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
                                 </div>
                             </div>

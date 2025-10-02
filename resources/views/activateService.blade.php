@@ -1,4 +1,4 @@
-@extends('layouts.sidebar')
+#Log@extends('layouts.sidebar')
 
 @section('title', ':: Service Actif ::')
 
@@ -10,11 +10,11 @@
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12">
             <div class="card">
-                <div class="card-header bg-dark d-flex align-items-left">
+                <div class="card-header bg-light d-flex align-items-left">
                     <i class="ri-check-double-line fs-5"></i>
                     <h4 class="text-uppercase mb-0 px-3">Service Actif</h4>
                 </div>
-                <div class="card-body bg-dark">
+                <div class="card-body bg-light">
                     <div class="container">
                         
                         @if(isset($msisdn))

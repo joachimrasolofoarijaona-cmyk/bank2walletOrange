@@ -33,20 +33,21 @@ use Illuminate\Support\Facades\DB;
 @else
 
 <div class="container-fluid">
-    <div class="card m-0 text-white">
-        <div class="card-header bg-dark d-flex align-items-left">
-            <i class="ri-send-plane-line fs-4 pt-1"></i>
-            <h4 class="text-uppercase mb-0 px-3 pt-2">Envoie pour validation</h4>
+    <div class="form-card">
+        <div class="card-header d-flex align-items-center">
+            <i class="ri-send-plane-line fs-4 me-2"></i>
+            <h4 class="text-uppercase mb-0 fw-bold">Envoie pour validation</h4>
         </div>
-        <div class="card-body bg-dark">
+        <div class="card-body">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-5">
-                        <div class="card">
-                            <div class="card-header bg-dark elevation-2 text-center">
-                                FOMRULAIRE DE SOUSCRIPTION
+                        <div class="form-card">
+                            <div class="card-header text-center">
+                                <i class="ri-file-text-line me-2"></i>
+                                FORMULAIRE DE SOUSCRIPTION
                             </div>
-                            <div class="card-body bg-dark">
+                            <div class="card-body">
                                 <style>
                                     small {
                                         color: #4FC9C0;

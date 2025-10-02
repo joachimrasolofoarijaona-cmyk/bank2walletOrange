@@ -2,41 +2,45 @@
 
 @section('title', ':: Documentation technique ::')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/documentation.css') }}">
+@endpush
+
 @section('content')
 <div class="container-fluid pt-0">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12">
-            <div class="card">
-                <div class="card-header bg-dark text-center d-flex align-content-center">
+            <div class="card shadow-lg border-0 card-hover fade-in">
+                <div class="card-header bg-gradient-dark text-white text-center d-flex align-content-center">
                     <i class="ri-code-s-slash-line fs-4"></i>
-                    <h4 class="text-uppercase mb-0 px-3 pt-1">Documentation technique</h4>
+                    <h4 class="text-uppercase mb-0 px-3 pt-1 fw-bold">Documentation technique</h4>
                 </div>
-                <div class="card-body bg-dark text-white">
+                <div class="card-body bg-light">
                     
                     <!-- Navigation par onglets -->
-                    <ul class="nav nav-tabs nav-fill mb-4" id="technicalGuideTabs" role="tablist">
+                    <ul class="nav nav-pills nav-fill mb-4 bg-white rounded-3 p-2 shadow-sm" id="technicalGuideTabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="architecture-tab" data-bs-toggle="tab" data-bs-target="#architecture" type="button" role="tab">
+                            <button class="nav-link active rounded-pill" id="architecture-tab" data-bs-toggle="tab" data-bs-target="#architecture" type="button" role="tab">
                                 <i class="ri-building-line me-2"></i>Architecture
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button" role="tab">
                                 <i class="ri-api-line me-2"></i>API & Intégrations
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="database-tab" data-bs-toggle="tab" data-bs-target="#database" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="database-tab" data-bs-toggle="tab" data-bs-target="#database" type="button" role="tab">
                                 <i class="ri-database-2-line me-2"></i>Base de données
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
                                 <i class="ri-shield-line me-2"></i>Sécurité
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="troubleshooting-tab" data-bs-toggle="tab" data-bs-target="#troubleshooting" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="troubleshooting-tab" data-bs-toggle="tab" data-bs-target="#troubleshooting" type="button" role="tab">
                                 <i class="ri-bug-line me-2"></i>Dépannage
                             </button>
                         </li>

@@ -2,36 +2,40 @@
 
 @section('title', ':: Guide d\'utilisation ::')
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/documentation.css') }}">
+@endpush
+
 @section('content')
 <div class="container-fluid pt-0">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12">
-            <div class="card">
-                <div class="card-header bg-dark text-center d-flex align-content-center">
+            <div class="card shadow-lg border-0 card-hover fade-in">
+                <div class="card-header bg-gradient-primary text-white text-center d-flex align-content-center">
                     <i class="ri-book-open-line fs-4"></i>
-                    <h4 class="text-uppercase mb-0 px-3 pt-1">Guide d'utilisation</h4>
+                    <h4 class="text-uppercase mb-0 px-3 pt-1 fw-bold">Guide d'utilisation</h4>
                 </div>
-                <div class="card-body bg-dark text-white">
+                <div class="card-body bg-light">
                     
                     <!-- Navigation par onglets -->
-                    <ul class="nav nav-tabs nav-fill mb-4" id="userGuideTabs" role="tablist">
+                    <ul class="nav nav-pills nav-fill mb-4 bg-white rounded-3 p-2 shadow-sm" id="userGuideTabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="subscription-tab" data-bs-toggle="tab" data-bs-target="#subscription" type="button" role="tab">
+                            <button class="nav-link active rounded-pill" id="subscription-tab" data-bs-toggle="tab" data-bs-target="#subscription" type="button" role="tab">
                                 <i class="ri-login-circle-line me-2"></i>Souscription
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="unsubscription-tab" data-bs-toggle="tab" data-bs-target="#unsubscription" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="unsubscription-tab" data-bs-toggle="tab" data-bs-target="#unsubscription" type="button" role="tab">
                                 <i class="ri-logout-circle-line me-2"></i>Résiliation
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="validation-tab" data-bs-toggle="tab" data-bs-target="#validation" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="validation-tab" data-bs-toggle="tab" data-bs-target="#validation" type="button" role="tab">
                                 <i class="ri-shield-check-line me-2"></i>Validation
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="contract-tab" data-bs-toggle="tab" data-bs-target="#contract" type="button" role="tab">
+                            <button class="nav-link rounded-pill" id="contract-tab" data-bs-toggle="tab" data-bs-target="#contract" type="button" role="tab">
                                 <i class="ri-file-add-line me-2"></i>Contrats
                             </button>
                         </li>
@@ -44,68 +48,117 @@
                         <div class="tab-pane fade show active" id="subscription" role="tabpanel">
                             <div class="row">
                                 <div class="col-12">
-                                    <h5 class="text-warning mb-3">
-                                        <i class="ri-login-circle-line me-2"></i>Processus de souscription
-                                    </h5>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="bg-primary bg-gradient rounded-circle p-3 me-3">
+                                            <i class="ri-login-circle-line text-white fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-dark mb-1 fw-bold">Processus de souscription</h5>
+                                            <p class="text-muted mb-0">Guide complet pour souscrire un client au service Bank-to-Wallet</p>
+                                        </div>
+                                    </div>
                                     
-                                    <div class="alert alert-info">
-                                        <h6><i class="ri-information-line me-2"></i>Prérequis</h6>
-                                        <ul class="mb-0">
-                                            <li>Le client doit avoir un compte bancaire actif chez ACEP</li>
-                                            <li>Le numéro de téléphone doit être enregistré chez Orange Money</li>
-                                            <li>Le client doit être présent physiquement avec sa pièce d'identité</li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary">Étape 1 : Recherche du client</h6>
-                                            <ol>
-                                                <li>Accédez à la section <strong>Services > Souscription</strong></li>
-                                                <li>Saisissez le numéro de téléphone du client</li>
-                                                <li>Cliquez sur <strong>"Vérifier"</strong></li>
-                                                <li>Le système vérifiera l'existence du client chez Orange Money</li>
-                                            </ol>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h6 class="text-primary">Étape 2 : Vérification KYC</h6>
-                                            <ol>
-                                                <li>Comparez les informations Orange Money avec la pièce d'identité</li>
-                                                <li>Vérifiez la cohérence des données bancaires</li>
-                                                <li>Confirmez l'identité du client</li>
-                                                <li>Cliquez sur <strong>"Continuer"</strong></li>
-                                            </ol>
+                                    <div class="alert alert-info border-0 shadow-sm">
+                                        <div class="d-flex align-items-start">
+                                            <i class="ri-information-line fs-5 text-info me-3 mt-1"></i>
+                                            <div>
+                                                <h6 class="alert-heading fw-bold mb-2">Prérequis</h6>
+                                                <ul class="mb-0">
+                                                    <li>Le client doit avoir un compte bancaire actif chez ACEP</li>
+                                                    <li>Le numéro de téléphone doit être enregistré chez Orange Money</li>
+                                                    <li>Le client doit être présent physiquement avec sa pièce d'identité</li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="row mt-3">
+                                    <div class="row g-4">
                                         <div class="col-md-6">
-                                            <h6 class="text-primary">Étape 3 : Souscription</h6>
-                                            <ol>
-                                                <li>Remplissez le formulaire de souscription</li>
-                                                <li>Générez la clé d'activation</li>
-                                                <li>Enregistrez la demande</li>
-                                                <li>La demande sera soumise à validation</li>
-                                            </ol>
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="bg-primary bg-gradient rounded-circle p-2 me-3">
+                                                            <span class="text-white fw-bold">1</span>
+                                                        </div>
+                                                        <h6 class="text-primary mb-0 fw-bold">Recherche du client</h6>
+                                                    </div>
+                                                    <ol class="mb-0">
+                                                        <li>Accédez à la section <strong>Services > Souscription</strong></li>
+                                                        <li>Saisissez le numéro de téléphone du client</li>
+                                                        <li>Cliquez sur <strong>"Vérifier"</strong></li>
+                                                        <li>Le système vérifiera l'existence du client chez Orange Money</li>
+                                                    </ol>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <h6 class="text-primary">Étape 4 : Activation</h6>
-                                            <ol>
-                                                <li>Une fois validée, activez le service</li>
-                                                <li>Le client recevra un SMS de confirmation</li>
-                                                <li>Le service sera opérationnel</li>
-                                                <li>Un contrat sera généré automatiquement</li>
-                                            </ol>
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="bg-success bg-gradient rounded-circle p-2 me-3">
+                                                            <span class="text-white fw-bold">2</span>
+                                                        </div>
+                                                        <h6 class="text-success mb-0 fw-bold">Vérification KYC</h6>
+                                                    </div>
+                                                    <ol class="mb-0">
+                                                        <li>Comparez les informations Orange Money avec la pièce d'identité</li>
+                                                        <li>Vérifiez la cohérence des données bancaires</li>
+                                                        <li>Confirmez l'identité du client</li>
+                                                        <li>Cliquez sur <strong>"Continuer"</strong></li>
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="bg-warning bg-gradient rounded-circle p-2 me-3">
+                                                            <span class="text-white fw-bold">3</span>
+                                                        </div>
+                                                        <h6 class="text-warning mb-0 fw-bold">Souscription</h6>
+                                                    </div>
+                                                    <ol class="mb-0">
+                                                        <li>Remplissez le formulaire de souscription</li>
+                                                        <li>Générez la clé d'activation</li>
+                                                        <li>Enregistrez la demande</li>
+                                                        <li>La demande sera soumise à validation</li>
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card h-100 border-0 shadow-sm">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="bg-info bg-gradient rounded-circle p-2 me-3">
+                                                            <span class="text-white fw-bold">4</span>
+                                                        </div>
+                                                        <h6 class="text-info mb-0 fw-bold">Activation</h6>
+                                                    </div>
+                                                    <ol class="mb-0">
+                                                        <li>Une fois validée, activez le service</li>
+                                                        <li>Le client recevra un SMS de confirmation</li>
+                                                        <li>Le service sera opérationnel</li>
+                                                        <li>Un contrat sera généré automatiquement</li>
+                                                    </ol>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="alert alert-warning mt-3">
-                                        <h6><i class="ri-error-warning-line me-2"></i>Points d'attention</h6>
-                                        <ul class="mb-0">
-                                            <li>Vérifiez toujours l'identité du client</li>
-                                            <li>Assurez-vous que le numéro de téléphone est correct</li>
-                                            <li>Ne souscrivez pas si les données ne correspondent pas</li>
-                                        </ul>
+                                    <div class="alert alert-warning border-0 shadow-sm mt-4">
+                                        <div class="d-flex align-items-start">
+                                            <i class="ri-error-warning-line fs-5 text-warning me-3 mt-1"></i>
+                                            <div>
+                                                <h6 class="alert-heading fw-bold mb-2">Points d'attention</h6>
+                                                <ul class="mb-0">
+                                                    <li>Vérifiez toujours l'identité du client</li>
+                                                    <li>Assurez-vous que le numéro de téléphone est correct</li>
+                                                    <li>Ne souscrivez pas si les données ne correspondent pas</li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
