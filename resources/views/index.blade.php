@@ -50,7 +50,7 @@
         </div>
         {{-- balance chart --}}
         <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class=card bg-light "metric-card card-fade-in">
+            <div class="card bg-light metric-card card-fade-in">
                 <div class="card-body d-flex align-items-center">
                     <div class="icon-container icon-info me-3">
                         <i class="ri-file-list-line fs-4"></i>
