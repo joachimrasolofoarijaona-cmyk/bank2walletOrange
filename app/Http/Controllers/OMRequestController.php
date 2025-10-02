@@ -571,9 +571,6 @@ class OMRequestController extends Controller
         Log::info('=== OMRequestController::handle DÉBUT ===');
         Log::info('Méthode HTTP: ' . $request->method());
         Log::info('URL complète: ' . $request->fullUrl());
-        Log::info('Headers reçus:', $request->headers->all());
-        Log::info('IP du client: ' . $request->ip());
-        Log::info('User-Agent: ' . $request->userAgent());
         Log::info('Contenu brut de la requête: ' . $request->getContent());
         Log::info('Données POST: ', $request->all());
         Log::info('=== OMRequestController::handle FIN DIAGNOSTIC ===');
