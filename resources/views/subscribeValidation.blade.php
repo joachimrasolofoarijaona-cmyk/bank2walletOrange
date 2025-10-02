@@ -390,6 +390,7 @@ foreach (session('selectedRoles') as $role) {
                                 ->select('account_status')
                                 ->where('account_no', $validation->account_no)
                                 ->where('msisdn', $validation->mobile_no)
+                                ->where('account_status', '1')
                                 ->first();
                                 @endphp
 
