@@ -487,6 +487,34 @@
                 <i class="ri-dashboard-2-line"></i>
                 <span class="nav-text">Analytics</span>
             </a>
+            <div class="nav-submenu">
+                <a class="submenu-toggle" href="#" onclick="toggleSubmenu(this)">
+                    <i class="ri-book-open-line"></i>
+                    <span class="nav-text">Documentation</span>
+                    <i class="ri-arrow-down-s-line submenu-arrow"></i>
+                </a>
+                <div class="submenu-content">
+                    <a class="submenu-link" href="{{ route('documentation.user.guide') }}">
+                        <i class="ri-user-book-line"></i>
+                        <span>Guide utilisateur</span>
+                    </a>
+                    @php
+                        $hasInformatiquePermission = false;
+                        foreach (session('selectedRoles') as $role) {
+                            if ($role['name'] === 'INFORMATIQUE' || $role['name'] === 'SUPER ADMIN') {
+                                $hasInformatiquePermission = true;
+                                break;
+                            }
+                        }
+                    @endphp
+                    @if($hasInformatiquePermission)
+                    <a class="submenu-link" href="{{ route('documentation.technical.guide') }}">
+                        <i class="ri-code-s-slash-line"></i>
+                        <span>Documentation technique</span>
+                    </a>
+                    @endif
+                </div>
+            </div>
         </nav>
         @endif
 

@@ -13,6 +13,7 @@ use App\Http\Controllers\IndexController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\OMRequestController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\DocumentationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,9 +40,9 @@ Route::post('/logout', [AuthenticationController::class, 'destroy'])->name('logo
 # __Orange sandbox request route__
 # __Route::post('/omrequest', [OMRequestController::class, 'handle']);
 
-Route::post('/omrequest', [OMRequestController::class, 'handle'])
-    ->withoutMiddleware('check.session')
-    ->withoutMiddleware('auth');
+// Route::post('/omrequest', [OMRequestController::class, 'handle'])
+//     ->withoutMiddleware('check.session')
+//     ->withoutMiddleware('auth');
 
 # __Route de test temporaire sans middleware__
 Route::get('/test-accueil', [IndexController::class, 'showIndex'])->name('test.accueil');
@@ -97,4 +98,8 @@ Route::middleware(['check.session'])->group(function () {
     Route::get('/analytics/export/top-offices-count', [AnalyticsController::class, 'exportTopOfficesCount'])->name('analytics.export.top.offices.count');
     Route::get('/analytics/export/top-offices-amount', [AnalyticsController::class, 'exportTopOfficesAmount'])->name('analytics.export.top.offices.amount');
     Route::get('/analytics/export/top-libelles', [AnalyticsController::class, 'exportTopLibelles'])->name('analytics.export.top.libelles');
+
+    # __Documentation__
+    Route::get('/documentation/user-guide', [DocumentationController::class, 'userGuide'])->name('documentation.user.guide');
+    Route::get('/documentation/technical-guide', [DocumentationController::class, 'technicalGuide'])->name('documentation.technical.guide');
 });
