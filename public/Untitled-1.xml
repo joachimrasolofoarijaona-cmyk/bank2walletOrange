@@ -1,0 +1,70 @@
+[2025-09-23 12:50:19] local.INFO: La requête reçue est :
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns2:AccountToWalletTransfer xmlns:ns2="http://b2w.banktowallet.com/b2w">
+            <MobileTransferRequest>
+                <mmHeaderInfo>
+                    <operatorCode>ORANGEMONEYSX</operatorCode>
+                    <requestId>OR2509235YMNWK</requestId>
+                    <requestToken>70f8df3e0e2824b7ee94c5478da581619220cdce73a2a5bdc15ddb9aa6367b1720bb286399b87dfe6b300d89551b69a2e1572c9ac521b190e1b676d7eb826911</requestToken>
+                    <requestType>A2W</requestType>
+                    <affiliateCode>OSX</affiliateCode>
+                </mmHeaderInfo>
+                <externalRefNo>OR2509235YMNWK</externalRefNo>
+                <mobileNo></mobileNo>
+                <mobileName></mobileName>
+                <mobileAlias></mobileAlias>
+                <accountNo></accountNo>
+                <accountAlias>BNKSBLCC00000000000123</accountAlias>
+                <accountName></accountName>
+                <transferDescription></transferDescription>
+                <ccy>OUV</ccy>
+                <amount>125</amount>
+                <charge>0</charge>
+                <tranDate>2025-09-23</tranDate>
+                <udf1></udf1>
+                <udf2></udf2>
+                <udf3></udf3>
+            </MobileTransferRequest>
+        </ns2:AccountToWalletTransfer>
+    </soap:Body>
+</soap:Envelope>  
+[2025-09-23 12:50:19] local.ERROR: Attempt to read property "account_no" on null {"exception":"[object] (ErrorException(code: 0): Attempt to read property \"account_no\" on null at C:\\xampp2\\htdocs\\bank-to-wallet\\app\\Http\\Controllers\\OMRequestController.php:705)
+[stacktrace]
+
+[2025-09-23 12:50:25] local.INFO: La requête reçue est :
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns2:TransferStatusInquiry xmlns:ns2="http://b2w.banktowallet.com/b2w">
+            <TranRequestInfo>
+                <mmHeaderInfo>
+                    <operatorCode>ORANGEMONEYSX</operatorCode>
+                    <requestId>OR2509235YMNWL</requestId>
+                    <requestToken></requestToken>
+                    <requestType>TRANINQ</requestType>
+                    <affiliateCode>OSX</affiliateCode>
+                </mmHeaderInfo>
+                <externalRefNo>OR2509235YMNWK</externalRefNo>
+            </TranRequestInfo>
+        </ns2:TransferStatusInquiry>
+    </soap:Body>
+</soap:Envelope>  
+[2025-09-23 12:50:25] local.INFO: La requete est : TransferStatusInquiry  
+[2025-09-23 12:50:25] local.INFO: Transaction ID récupéré :  {"data":null} 
+[2025-09-23 12:50:25] local.INFO: Response to orange is :
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Body>
+        <ns2:TransferStatusInquiryResponse xmlns:ns2="http://b2w.banktowallet.com/b2w">
+            <return>
+                <mmHeaderInfo>
+                    <operatorCode>ORANGEMONEYSX</operatorCode>
+                    <requestId>OR2509235YMNWL</requestId>
+                    <affiliateCode>OSX</affiliateCode>
+                    <responseCode>E01</responseCode>
+                    <responseMessage>Transaction not found</responseMessage>
+                </mmHeaderInfo>
+            </return>
+        </ns2:TransferStatusInquiryResponse>
+    </S:Body>
+</S:Envelope>

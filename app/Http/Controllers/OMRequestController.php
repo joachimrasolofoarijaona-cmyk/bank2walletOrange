@@ -576,8 +576,6 @@ class OMRequestController extends Controller
         Log::info('User-Agent: ' . $request->userAgent());
         Log::info('Contenu brut de la requête: ' . $request->getContent());
         Log::info('Données POST: ', $request->all());
-        Log::info('Session ID: ' . $request->session()->getId());
-        Log::info('Session data: ', session()->all());
         Log::info('=== OMRequestController::handle FIN DIAGNOSTIC ===');
         
         Log::info('THE REQUEST SUBMITED BY ORANGE IS : ' . $request->getContent());
