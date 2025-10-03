@@ -264,6 +264,8 @@ class OMRequestController extends Controller
 
             $statement->save();
 
+            Log::info('Successfully saved statement for account: ' . $get_account->account_no);
+
             if ($responseCode === "000") {
                 $status = '1';
             } else {
