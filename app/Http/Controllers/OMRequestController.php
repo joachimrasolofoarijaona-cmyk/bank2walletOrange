@@ -255,11 +255,12 @@ class OMRequestController extends Controller
             $statement->request_token = $data['requestToken'] ?? "";
             $statement->request_type = $data['requestType'];
             $statement->affiliate_code = $data['affiliateCode'];
+            $statement->orange_account_no = $data['orangeAccountNo'] ?? '';
             $statement->reason = $data['reason'] ?? "";
             $statement->acep_responde_code = $responseCode;
             $statement->acep_responde_message = $responseMessage;
             $statement->office_name = $get_account->officeName;
-            $statement->orange_account_no = $data['orangeAccountNo'] ?? '';
+            $statement->bank_agent = 'system';
             $statement->save();
 
             if ($responseCode === "000") {
