@@ -243,25 +243,26 @@ class OMRequestController extends Controller
         Log::info('Orange Sent Response is : ' . $orangeResponse);
 
         try {
-            $balance = new AccountBalance();
-            $balance->client_id = $get_account->client_id;
-            $balance->client_lastname = $get_account->client_lastname;
-            $balance->client_firstname = $get_account->client_firstname;
-            $balance->musoni_account_no = $get_account->account_no;
-            $balance->libelle = $get_account->libelle;
-            $balance->alias = $get_account->alias;
-            $balance->msisdn = $get_account->msisdn;
-            $balance->operator_code = $data['operatorCode'];
-            $balance->request_id = $data['requestId'];
-            $balance->requestToken = $data['requestToken'] ?? "";
-            $balance->request_type = $data['requestType'];
-            $balance->affiliate_code = $data['affiliateCode'];
-            $balance->reason = $data['reason'] ?? "";
-            $balance->transaction_date = Carbon::now()->format('Y-m-d\TH:i:s');
-            $balance->acep_responde_code = $responseCode;
-            $balance->acep_responde_message = $responseMessage;
-            $balance->office_name = $get_account->officeName;
-            $balance->save();
+            $statement = new MiniStatement();
+            $statement->client_id = $get_account->client_id;
+            $statement->client_lastname = $get_account->client_lastname;
+            $statement->client_firstname = $get_account->client_firstname;
+            $statement->musoni_account_no = $get_account->account_no;
+            $statement->libelle = $get_account->libelle;
+            $statement->alias = $get_account->alias;
+            $statement->msisdn = $get_account->msisdn;
+            $statement->operator_code = $data['operatorCode'];
+            $statement->request_id = $data['requestId'];
+            $statement->request_token = $data['requestToken'] ?? "";
+            $statement->request_type = $data['requestType'];
+            $statement->affiliate_code = $data['affiliateCode'];
+            $statement->reason = $data['reason'] ?? "";
+            $statement->acep_responde_code = $responseCode;
+            $statement->acep_responde_message = $responseMessage;
+            $statement->office_name = $get_account->officeName;
+            $statement->orange_account_no = $data['orangeAccountNo'] ?? '';
+
+            $statement->save();
 
             if ($responseCode === "000") {
                 $status = '1';
