@@ -118,6 +118,8 @@ class OMRequestController extends Controller
             $balance->office_name = $get_account->officeName;
             $balance->save();
 
+            Log::info('BALANCE REQUEST SUCCESSFULLY SAVED WITH ACCOUNT : ' . $get_account->account_no);
+
             if ($responseCode === "000") {
                 $status = '1';
             } else {
@@ -261,7 +263,6 @@ class OMRequestController extends Controller
             $statement->acep_responde_message = $responseMessage;
             $statement->office_name = $get_account->officeName;
             $statement->orange_account_no = $data['orangeAccountNo'] ?? '';
-
             $statement->save();
 
             Log::info('Successfully saved statement for account: ' . $get_account->account_no);
