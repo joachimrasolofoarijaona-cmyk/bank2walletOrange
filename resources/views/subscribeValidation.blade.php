@@ -393,7 +393,7 @@ foreach (session('selectedRoles') as $role) {
                                         ->where('account_status', '1')
                                         ->first();
                                     
-                                    dd($hidden, $validation->office_name, $allowed_offices, $account_subscribed, $validation->request_type);
+                                    #dd($hidden, $validation->office_name, $allowed_offices, $account_subscribed, $validation->request_type);
                                     
                                 @endphp
 
@@ -413,7 +413,7 @@ foreach (session('selectedRoles') as $role) {
                                 </tr>
 
                                 {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée --}}
-                                @elseif($validation->request_type === 'SOUSCRIPTION' && $validation->status === "1"  && $account_subscribed === null && $hidden === '')
+                                @elseif($validation->request_type === 'SOUSCRIPTION' && $validation->status === "1"  && $account_subscribed === null && $hidden === "")
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
