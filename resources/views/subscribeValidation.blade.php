@@ -411,20 +411,7 @@ break;
                                 </tr>
 
                                 {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée --}}
-                                @php
-                                Log::info('DEBUG Cas 2', [
-                                'ticket' => $validation->ticket ?? null,
-                                'active_keys' => $active_keys,
-                                'key' => $validation->key,
-                                'validation_active' => $validation->active,
-                                'account_subscribed' => $account_subscribed,
-                                ]);
-                                @endphp
-
                                 @elseif($validation->request_type === 'SOUSCRIPTION' && $validation->status === "1" && $account_subscribed === null && $hidden === "")
-                                @php Log::info('Bloc SOUSCRIPTION affiché', ['ticket' => $validation->ticket ?? null]); @endphp
-
-
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
