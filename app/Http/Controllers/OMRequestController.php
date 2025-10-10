@@ -219,6 +219,7 @@ class OMRequestController extends Controller
         }
 
         $allTransactionXml = implode("", $transaction_table);
+        Log::info('le code de réponse est : ' . $response_code);
 
         $orangeResponse =
             '<?xml version="1.0" encoding="UTF-8"?> 
