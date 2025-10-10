@@ -374,7 +374,7 @@ foreach (session('selectedRoles') as $role) {
                                 @foreach($validations as $validation)
                                 @php
                                     $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
-                                    dd($hidden);
+                                    
 
                                     $isSouscription = $validation->request_type === 'SOUSCRIPTION';
                                     $isResiliation = $validation->request_type === 'RESILIATION';
@@ -393,6 +393,8 @@ foreach (session('selectedRoles') as $role) {
                                         ->where('msisdn', $validation->mobile_no)
                                         ->where('account_status', '1')
                                         ->first();
+                                    
+                                    dd($hidden, $validation->office_name, $allowed_offices, $account_subscribed);
                                     
                                 @endphp
 
