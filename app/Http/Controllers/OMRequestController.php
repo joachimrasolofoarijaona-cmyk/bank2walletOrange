@@ -151,6 +151,8 @@ class OMRequestController extends Controller
         $filteredTransactions = [];
         $transaction_table = [];
 
+        Log::info('le code de réponse est : ' . $responseCode);
+
         if ($responseCode === '000') {
             foreach ($transactions as $transaction) {
                 $reversed = $transaction['reversed'];
@@ -198,6 +200,7 @@ class OMRequestController extends Controller
                 $response_message = $responseMessage;
                 $transaction_table[] = $transaction_list;
             }
+
         } elseif ($responseCode === 'E16') {
             for ($i = 0; $i <= 4; $i++) {
                 $format_date = Carbon::now('Europe/Paris');
@@ -219,7 +222,6 @@ class OMRequestController extends Controller
         }
 
         $allTransactionXml = implode("", $transaction_table);
-        Log::info('le code de réponse est : ' . $response_code);
 
         $orangeResponse =
             '<?xml version="1.0" encoding="UTF-8"?> 
