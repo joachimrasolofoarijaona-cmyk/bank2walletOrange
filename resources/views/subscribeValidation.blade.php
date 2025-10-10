@@ -373,32 +373,32 @@ foreach (session('selectedRoles') as $role) {
                             <tbody>
                                 @foreach($validations as $validation)
                                 @php
-                                $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
+                                    $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
 
-                                $isSouscription = $validation->request_type === 'SOUSCRIPTION';
-                                $isResiliation = $validation->request_type === 'RESILIATION';
+                                    $isSouscription = $validation->request_type === 'SOUSCRIPTION';
+                                    $isResiliation = $validation->request_type === 'RESILIATION';
 
-                                $isValidationPending = $validation->status === "0"; // demande en attente de validation
-                                $isValidated = $validation->status === "1"; // demande validée
-                                $isRefused = $validation->status === "2"; // Demande refusée
-                                $validation->active = in_array($validation->key, $active_keys);
+                                    $isValidationPending = $validation->status === "0"; // demande en attente de validation
+                                    $isValidated = $validation->status === "1"; // demande validée
+                                    $isRefused = $validation->status === "2"; // Demande refusée
+                                    $validation->active = in_array($validation->key, $active_keys);
 
-                                $isActiveInSubscription = $validation->active;
+                                    $isActiveInSubscription = $validation->active;
 
-                                # function to check if account already subscribed
-                                $account_subscribed = DB::table('subscription')
-                                    ->select('account_status')
-                                    ->where('account_no', $validation->account_no)
-                                    ->where('msisdn', $validation->mobile_no)
-                                    ->where('account_status', '1')
-                                    ->first();
-                                
+                                    # function to check if account already subscribed
+                                    $account_subscribed = DB::table('subscription')
+                                        ->select('account_status')
+                                        ->where('account_no', $validation->account_no)
+                                        ->where('msisdn', $validation->mobile_no)
+                                        ->where('account_status', '1')
+                                        ->first();
+                                    
                                 @endphp
 
                                 {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
                                 @if($validation->request_type === 'SOUSCRIPTION' && $validation->status === "0" && $hidden === '')
                                 <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
+                                    <td><strong>{{ $validation->ticket }}</strong></td> 
                                     <td>{{ $validation->created_at }}</td>
                                     <td>{{ $validation->mobile_no }}</td>
                                     <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
@@ -411,7 +411,7 @@ foreach (session('selectedRoles') as $role) {
                                 </tr>
 
                                 {{-- Cas 2 : si SOUSCRIPTION validée mais pas encore activée --}}
-                                @elseif($validation->request_type === 'SOUSCRIPTION' && $account_subscribed === null && $hidden === '')
+                                @elseif($isSouscription && $isValidated && $account_subscribed === null && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
@@ -436,7 +436,7 @@ foreach (session('selectedRoles') as $role) {
                                 </tr>
 
                                 {{-- Cas 3 : RESILIATION en attente de validation --}}
-                                @elseif($validation->request_type === 'RESILIATION' && $isValidationPending && $hidden === '')
+                                @elseif($isResiliation && $isValidationPending && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
@@ -451,7 +451,7 @@ foreach (session('selectedRoles') as $role) {
                                 </tr>
 
                                 {{-- Cas 4 : RESILIATION validée mais pas encore exécutée --}}
-                                @elseif($validation->request_type === 'RESILIATION' && $validation->status === "1" && $validation->active && $hidden === '')
+                                @elseif($isResiliation && $isValidated && $validation->active && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
@@ -475,7 +475,7 @@ foreach (session('selectedRoles') as $role) {
                                 </tr>
 
                                 {{-- Cas 5 : SOUSCRIT ET REFUSE --}}
-                                @elseif($validation->request_type === "SOUSCRIPTION" && $validation->status === "2" && $hidden === '')
+                                @elseif($isSouscription && $isRefused && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
