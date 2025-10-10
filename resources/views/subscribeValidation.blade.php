@@ -392,7 +392,7 @@ foreach (session('selectedRoles') as $role) {
                                     ->where('msisdn', $validation->mobile_no)
                                     ->where('account_status', '1')
                                     ->first();
-                                dd($account_subscribed);
+                                
                                 @endphp
 
                                 {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
@@ -411,7 +411,7 @@ foreach (session('selectedRoles') as $role) {
                                 </tr>
 
                                 {{-- Cas 2 : si SOUSCRIPTION validée mais pas encore activée --}}
-                                @elseif($validation->request_type === 'SOUSCRIPTION' && $account_subscribed === null && $hidden === '')
+                                @elseif($validation->request_type === 'SOUSCRIPTION' && $account_subscribed === "0" && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
