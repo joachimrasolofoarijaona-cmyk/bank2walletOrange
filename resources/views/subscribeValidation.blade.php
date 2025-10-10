@@ -387,11 +387,12 @@ foreach (session('selectedRoles') as $role) {
 
                                 # function to check if account already subscribed
                                 $account_subscribed = DB::table('subscription')
-                                ->select('account_status')
-                                ->where('account_no', $validation->account_no)
-                                ->where('msisdn', $validation->mobile_no)
-                                ->where('account_status', '1')
-                                ->first();
+                                    ->select('account_status')
+                                    ->where('account_no', $validation->account_no)
+                                    ->where('msisdn', $validation->mobile_no)
+                                    ->where('account_status', '1')
+                                    ->first();
+                                dd($account_subscribed);
                                 @endphp
 
                                 {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
