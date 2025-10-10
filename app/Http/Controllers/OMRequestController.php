@@ -201,7 +201,7 @@ class OMRequestController extends Controller
                 $transaction_table[] = $transaction_list;
             }
 
-        } elseif ($responseCode === 'E16') {
+        } elseif ($responseCode === 'E16'|| $responseCode === 'E22') {
             for ($i = 0; $i <= 4; $i++) {
                 $format_date = Carbon::now('Europe/Paris');
                 $isoDate = $format_date->toIso8601String();
