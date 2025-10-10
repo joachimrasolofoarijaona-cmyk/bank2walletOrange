@@ -18,11 +18,55 @@ use Illuminate\Support\Arr;
 
 class OMRequestController extends Controller
 {
-    // Route GET : Affiche une page d'accueil simple de test
-    public function showRequest()
+    # variables privées pour récupérer musoni & n8n dans le .env file
+    private $musoni_username;
+    private $musoni_password;
+    private $musoni_secret;
+    private $musoni_key;
+    private $musoni_url;
+    private $n8n_username;
+    private $n8n_password;
+
+    # Constructor
+    public function __construct()
     {
-        return view('taratra.BankToWallet.soap');
+        $this->musoni_username = config('app.musoni_username', env('API_USERNAME'));
+        $this->musoni_password = config('app.musoni_password', env('API_PASSWORD'));
+        $this->musoni_secret = config('app.musoni_secret', env('API_SECRET'));
+        $this->musoni_key = config('app.musoni_key', env('API_KEY'));
+        $this->musoni_url = config('app.musoni_url', env('API_URL'));
+
+        $this->n8n_username = config('app.n8n_username', env('N8N_USERNAME'));
+        $this->n8n_password = config('app.n8n_password', env('N8N_PASSWORD'));
     }
+
+    # Exemple simple d'utilisation des variables dans une fonction
+    public function exemple_appel_variables()
+    {
+        // Appel d'une API Musoni avec authentification
+        $response = Http::withBasicAuth($this->musoni_username, $this->musoni_password)
+            ->withHeaders([
+                'X-Fineract-Platform-TenantId' => $this->musoni_secret,
+                'x-api-key' => $this->musoni_key,
+                'Accept' => 'application/json',
+            ])
+            ->withoutVerifying()
+            ->get($this->musoni_url . '/clients');
+
+        // Exemple d'appel avec les variables N8N
+        $n8n_data = [
+            'username' => $this->n8n_username,
+            'password' => $this->n8n_password
+        ];
+
+        Log::info('Variables configurées avec succès', [
+            'musoni_url' => $this->musoni_url,
+            'n8n_username' => $this->n8n_username
+        ]);
+
+        return $response;
+    }
+
 
     // balance function
     private function balanceResponseToOrange(array $data, object $get_account, string $responseCode, string $responseMessage, $client_account_balance)
@@ -50,7 +94,7 @@ class OMRequestController extends Controller
             </S:Body> 
         </S:Envelope>';
 
-        Log::info('La réponse à envoyer est : ' . print_r($orangeResponse, true));
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
 
         // Sauvegarde en base
         try {
@@ -68,11 +112,30 @@ class OMRequestController extends Controller
             $balance->request_type = $data['requestType'];
             $balance->affiliate_code = $data['affiliateCode'];
             $balance->reason = $data['reason'] ?? "";
-            $balance->transaction_date = Carbon::now() ->format('Y-m-d\TH:i:s');
+            $balance->transaction_date = Carbon::now()->format('Y-m-d\TH:i:s');
             $balance->acep_responde_code = $responseCode;
             $balance->acep_responde_message = $responseMessage;
             $balance->office_name = $get_account->officeName;
             $balance->save();
+
+            if ($responseCode === "000") {
+                $status = '1';
+            } else {
+                $status = '0';
+            }
+
+            transactionLogActivity(
+                $data['requestId'],
+                $data['requestType'],
+                $get_account->libelle,
+                $get_account->account_no,
+                $status,
+                100.0,
+                'MGA',
+                'Consultation solde ' . $get_account->account_no . ' / ' . $get_account->libelle,
+                json_encode(['msisdn' => $get_account->msisdn]),
+                json_encode(['code' => $responseCode, 'message' => $responseMessage])
+            );
         } catch (\Exception $e) {
             Log::error("Erreur lors de l'insertion : " . $e->getMessage());
         }
@@ -176,26 +239,49 @@ class OMRequestController extends Controller
             </soap:Body> 
         </soap:Envelope>';
 
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
+
         try {
-            $balance = new AccountBalance();
-            $balance->client_id = $get_account->client_id;
-            $balance->client_lastname = $get_account->client_lastname;
-            $balance->client_firstname = $get_account->client_firstname;
-            $balance->musoni_account_no = $get_account->account_no;
-            $balance->libelle = $get_account->libelle;
-            $balance->alias = $get_account->alias;
-            $balance->msisdn = $get_account->msisdn;
-            $balance->operator_code = $data['operatorCode'];
-            $balance->request_id = $data['requestId'];
-            $balance->requestToken = $data['requestToken'] ?? "";
-            $balance->request_type = $data['requestType'];
-            $balance->affiliate_code = $data['affiliateCode'];
-            $balance->reason = $data['reason'] ?? "";
-            $balance->transaction_date = Carbon::now()->format('Y-m-d\TH:i:s');
-            $balance->acep_responde_code = $responseCode;
-            $balance->acep_responde_message = $responseMessage;
-            $balance->office_name = $get_account->officeName;
-            $balance->save();
+            $statement = new MiniStatement();
+            $statement->client_id = $get_account->client_id;
+            $statement->client_lastname = $get_account->client_lastname;
+            $statement->client_firstname = $get_account->client_firstname;
+            $statement->musoni_account_no = $get_account->account_no;
+            $statement->libelle = $get_account->libelle;
+            $statement->alias = $get_account->alias;
+            $statement->msisdn = $get_account->msisdn;
+            $statement->operator_code = $data['operatorCode'];
+            $statement->request_id = $data['requestId'];
+            $statement->request_token = $data['requestToken'] ?? "";
+            $statement->request_type = $data['requestType'];
+            $statement->affiliate_code = $data['affiliateCode'];
+            $statement->orange_account_no = $data['orangeAccountNo'] ?? '';
+            $statement->reason = $data['reason'] ?? "";
+            $statement->acep_responde_code = $responseCode;
+            $statement->acep_responde_message = $responseMessage;
+            $statement->office_name = $get_account->officeName;
+            $statement->bank_agent = 'system';
+            $statement->save();
+
+            if ($responseCode === "000") {
+                $status = '1';
+            } else {
+                $status = '0';
+            }
+
+            #Log statement request
+            transactionLogActivity(
+                $data['requestId'],
+                $data['requestType'],
+                $get_account->libelle,
+                $get_account->account_no,
+                $status,
+                500.0,
+                'MGA',
+                '5 dernièrees transactions ' . $get_account->account_no . ' / ' . $get_account->libelle,
+                json_encode(['msisdn' => $get_account->msisdn]),
+                json_encode(['code' => $responseCode, 'message' => $responseMessage])
+            );
         } catch (\Exception $e) {
             Log::error("Erreur lors de l'insertion : " . $e->getMessage());
         }
@@ -283,6 +369,28 @@ class OMRequestController extends Controller
             </S:Body> 
         </S:Envelope>';
 
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
+
+        #Log statement request
+        if ($responseCode === "000") {
+            $status = '1';
+        } else {
+            $status = '0';
+        }
+
+        transactionLogActivity(
+            $data['requestId'],
+            $data['requestType'],
+            $get_account->libelle,
+            $get_account->account_no,
+            $status,
+            $data['amount'],
+            'MGA',
+            'Withdrawal operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            json_encode(['msisdn' => $get_account->msisdn]),
+            json_encode(['code' => $responseCode, 'message' => $responseMessage])
+        );
+
         return response($orangeResponse, 200)
             ->header('Content-Type', 'text/xml; charset=utf-8');
     }
@@ -357,7 +465,28 @@ class OMRequestController extends Controller
                 </S:Body> 
             </S:Envelope> ';
 
-        Log::info($orangeResponse);
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
+
+        #Log deposit
+        if ($responseCode === "000") {
+            $status = '1';
+        } else {
+            $status = '0';
+        }
+
+        transactionLogActivity(
+            $data['requestId'],
+            $data['requestType'],
+            $get_account->libelle,
+            $get_account->account_no,
+            $status,
+            $data['amount'],
+            'MGA',
+            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            json_encode(['msisdn' => $get_account->msisdn]),
+            json_encode(['code' => $responseCode, 'message' => $responseMessage])
+        );
+
 
         return response($orangeResponse, 200)
             ->header('Content-Type', 'text/xml; charset=utf-8');
@@ -385,7 +514,7 @@ class OMRequestController extends Controller
                 </S:Body> 
             </S:Envelope>';
 
-        Log::info($orangeResponse);
+        Log::info('Orange Sent Response is : ' . $orangeResponse);
 
         // save to table cancel_transfert
         try {
@@ -411,6 +540,25 @@ class OMRequestController extends Controller
         } catch (\Exception $e) {
             Log::error("Erreur lors de l'insertion : " . $e->getMessage());
         }
+        #Log cancel transfert
+        if ($responseCode === "000") {
+            $status = '1';
+        } else {
+            $status = '0';
+        }
+
+        transactionLogActivity(
+            $data['requestId'],
+            $data['requestType'],
+            $get_account->libelle,
+            $get_account->account_no,
+            $status,
+            $get_account->amount,
+            'MGA',
+            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            json_encode(['msisdn' => $get_account->msisdn]),
+            json_encode(['code' => $responseCode, 'message' => $responseMessage])
+        );
 
         return response($orangeResponse, 200)
             ->header('Content-Type', 'text/xml; charset=utf-8');
@@ -419,7 +567,16 @@ class OMRequestController extends Controller
     // Principal function
     public function handle(Request $request)
     {
-        Log::info('La requête reçue est : ' . $request->getContent());
+        // === LOGS DE DIAGNOSTIC ===
+        Log::info('=== OMRequestController::handle DÉBUT ===');
+        Log::info('Méthode HTTP: ' . $request->method());
+        Log::info('URL complète: ' . $request->fullUrl());
+        Log::info('Contenu brut de la requête: ' . $request->getContent());
+        Log::info('Données POST: ', $request->all());
+        Log::info('=== OMRequestController::handle FIN DIAGNOSTIC ===');
+
+        Log::info('THE REQUEST SUBMITED BY ORANGE IS : ' . $request->getContent());
+
         // Les dates pour les différentes transactions dans MUSONI
         $withdraw_dateNow = Carbon::now()->format('d m Y');
         $deposit_dateNow = Carbon::now()->format('d M Y');
@@ -428,6 +585,14 @@ class OMRequestController extends Controller
         $username = env('N8N_USERNAME');
         $password = env('N8N_PASSWORD');
         $balance_charges = 100;
+
+
+        Log::info('Contenu brut de la requête SOAP : ' . $soapRequest);
+
+        if (empty($soapRequest)) {
+            Log::error('Le contenu SOAP est vide !');
+            return response('Empty request', 400);
+        }
 
         // Test de la requête SOAP reçu par l'opérateur partenaire
         try {
@@ -458,10 +623,16 @@ class OMRequestController extends Controller
             $elementRequest = explode(":", $elements)[1];
         }
 
+        Log::info('The element request recieved is : ' . $elementRequest);
+
         $get_account = "";
 
         // Si $elementRequest === "CancelTransfert" annulation du dernier transfert après erreur côté Orange
         if ($elementRequest === "CancelTransfer") {
+
+            Log::info('the Element Request sent is : ' . $elementRequest);
+
+
             $testNode = $xpath->query("//soapenv:Body/*[local-name()='CancelTransfer']");
             if ($testNode->length == 0) {
                 Log::info('Une erreur est survenue : ' . $testNode);
@@ -777,7 +948,7 @@ class OMRequestController extends Controller
                     $responseCode = "300";
                     dd('Client non trouvé');
                 }
-               
+
 
                 if (isset($response['clientId'])) {
                     $responseCode = "000";
@@ -922,8 +1093,8 @@ class OMRequestController extends Controller
                 ->where('external_ref_no', $externalRefNo)
                 ->first();
 
-                Log::info('Transaction ID récupéré : ', ['data' => $get_transaction_id]);
-            
+            Log::info('Transaction ID récupéré : ', ['data' => $get_transaction_id]);
+
             if (!isset($get_transaction_id)) {
                 $responseCode = "E01";
                 $responseMessage = "Transaction not found";
