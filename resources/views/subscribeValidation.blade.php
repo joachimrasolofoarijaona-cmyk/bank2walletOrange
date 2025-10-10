@@ -374,6 +374,7 @@ foreach (session('selectedRoles') as $role) {
                                 @foreach($validations as $validation)
                                 @php
                                     $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
+                                    dd($hidden);
 
                                     $isSouscription = $validation->request_type === 'SOUSCRIPTION';
                                     $isResiliation = $validation->request_type === 'RESILIATION';
