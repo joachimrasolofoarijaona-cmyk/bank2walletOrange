@@ -558,7 +558,7 @@ class OMRequestController extends Controller
             $status,
             $get_account->amount,
             'MGA',
-            'Deposit operation ' . $get_account->account_no . ' / ' . $get_account->libelle,
+            'Deposit operation ' . $get_account->musoni_account_no . ' / ' . $get_account->libelle,
             json_encode(['msisdn' => $get_account->msisdn]),
             json_encode(['code' => $responseCode, 'message' => $responseMessage])
         );
