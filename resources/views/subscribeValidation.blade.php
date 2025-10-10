@@ -410,8 +410,8 @@ foreach (session('selectedRoles') as $role) {
                                     <td>{{ $validation->motif_validation }}</td>
                                 </tr>
 
-                                {{-- Cas 2 : si SOUSCRIPTION validée mais pas encore activée --}}
-                                @elseif($isSouscription && $isValidated && $account_subscribed === null && $hidden === '')
+                                {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée --}}
+                                @elseif($validation->request_type === 'SOUSCRIPTION' && $validation->status === "1"  && $account_subscribed === null && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
