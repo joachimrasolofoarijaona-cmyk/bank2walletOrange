@@ -554,7 +554,7 @@ class OMRequestController extends Controller
             $data['requestId'],
             $data['requestType'],
             $get_account->libelle,
-            $get_account->account_no,
+            $get_account->musoni_account_no,
             $status,
             $get_account->amount,
             'MGA',
