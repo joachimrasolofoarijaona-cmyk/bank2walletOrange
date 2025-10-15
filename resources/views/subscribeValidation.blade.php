@@ -397,6 +397,7 @@ break;
                                         if($account_subscribed === null || $account_subscribed === '0'){
                                             $not_subscribed = true;
                                         }
+                                        dd($not_subscribed);
                                     @endphp
 
                                     {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
