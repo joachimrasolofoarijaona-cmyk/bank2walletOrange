@@ -409,7 +409,7 @@ break;
                                 </tr>
 
                                 {{-- === CAS 2 : SOUSCRIPTION validée mais pas encore activée === --}}
-                                @elseif($isSouscription && $isValidated && $validation->final_status !== 'activated' && ($account_status === null || $account_status === '0') && $hidden === '')
+                                @elseif($isSouscription && $isValidated && $validation->final_status !== '' && ($account_status === null || $account_status === '0') && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
@@ -478,7 +478,7 @@ break;
                                 </tr>
 
                                 {{-- === CAS 6 : RESILIATION en attente === --}}
-                                @elseif($isResiliation && $isPending && $hidden === '')
+                                @elseif($isResiliation && $isPending && $hidden === '' )
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
