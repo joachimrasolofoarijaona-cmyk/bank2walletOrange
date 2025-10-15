@@ -389,9 +389,7 @@ break;
                                         $account_subscribed = DB::table('subscription')
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
-                                            ->get();
-
-                                        dd($account_subscribed, $validation->account_no);
+                                            ->first();
 
                                     @endphp
 
