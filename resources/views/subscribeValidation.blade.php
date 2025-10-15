@@ -382,9 +382,10 @@ break;
                                         $isValidated = $validation->status === "1"; // demande validée
                                         $isRefused = $validation->status === "2"; // Demande refusée
                                         $validation->active = in_array($validation->key, $active_keys);
-                                        
+                                        $not_subscribed = true;
+
                                         if($account_subscribed === null || $account_subscribed === '0'){
-                                            $not_subscribed = '';
+                                            $not_subscribed = false;
                                         }
 
                                         $isActiveInSubscription = $validation->active;
@@ -412,7 +413,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
-                                    @elseif($isSouscription && $isValidated && $not_subscribed && $validation->final_status === '' && $hidden === "")  
+                                    @elseif($isSouscription && $isValidated && $not_subscribed === 'false' && $validation->final_status === '' && $hidden === "")  
                                         <tr>    
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
