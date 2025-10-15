@@ -372,127 +372,152 @@ break;
                             </thead>
                             <tbody>
                                 @foreach($validations as $validation)
-                                @php
-                                // Filtrage par agence
-                                $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
+                                    @php
+                                        $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
 
-                                // Types de demande
-                                $isSouscription = $validation->request_type === 'SOUSCRIPTION';
-                                $isResiliation = $validation->request_type === 'RESILIATION';
+                                        $isSouscription = $validation->request_type === 'SOUSCRIPTION';
+                                        $isResiliation = $validation->request_type === 'RESILIATION';
 
-                                // Statuts
-                                $isPending = $validation->status === "0"; // en attente de validation
-                                $isValidated = $validation->status === "1"; // validée
-                                $isRefused = $validation->status === "2"; // refusée
+                                        $isValidationPending = $validation->status === "0"; // demande en attente de validation
+                                        $isValidated = $validation->status === "1"; // demande validée
+                                        $isRefused = $validation->status === "2"; // Demande refusée
+                                        $validation->active = in_array($validation->key, $active_keys);
 
-                                // Vérifie si le compte est activé dans subscription
-                                $account_subscribed = DB::table('subscription')
-                                ->select('account_status')
-                                ->where('account_no', $validation->account_no)
-                                ->first();
-                                $account_status = $account_subscribed ? $account_subscribed->account_status : null;
-                                @endphp
+                                        $isActiveInSubscription = $validation->active;
 
-                                {{-- === CAS 1 : SOUSCRIPTION en attente === --}}
-                                @if($isSouscription && $isPending && $hidden === '')
-                                <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
-                                    <td>{{ $validation->created_at }}</td>
-                                    <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-success">{{ $validation->request_type }}</span></td>
-                                    <td>{{ $validation->account_no }}</td>
-                                    <td>{{ $validation->key }}</td>
-                                    <td>{{ $validation->office_name }}</td>
-                                    <td>{{ $validation->validator }}</td>
-                                    <td><span class="badge bg-warning text-dark">En attente validation</span></td>
-                                    <td>{{ $validation->motif_validation }}</td>
-                                </tr>
+                                        # function to check if account already subscribed
+                                        $account_subscribed = DB::table('subscription')
+                                            ->select('account_status')
+                                            ->where('account_no', $validation->account_no)
+                                            ->first();
+                                        
 
-                                {{-- === CAS 2 : SOUSCRIPTION validée mais pas encore activée === --}}
-                                @elseif($isSouscription && $isValidated && $validation->final_status !== '' && ($account_status === null || $account_status === '0') && $hidden === '')
-                                <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
-                                    <td>{{ $validation->created_at }}</td>
-                                    <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-success">{{ $validation->request_type }}</span></td>
-                                    <td>{{ $validation->account_no }}</td>
-                                    <td>{{ $validation->key }}</td>
-                                    <td>{{ $validation->office_name }}</td>
-                                    <td>{{ $validation->validator }}</td>
-                                    <td>
-                                        <form action="{{ route('activate.service') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
-                                            <input type="hidden" name="mobile_no" value="{{ $validation->mobile_no }}">
-                                            <input type="hidden" name="key" value="{{ $validation->key }}">
-                                            <input type="hidden" name="account_no" value="{{ $validation->account_no }}">
-                                            <button type="submit" class="btn btn-outline-success btn-sm">Activer</button>
-                                        </form>
-                                    </td>
-                                    <td>{{ $validation->motif_validation }}</td>
-                                </tr>
+                                    @endphp
 
-                                {{-- === CAS 3 : SOUSCRIPTION validée et activée === --}}
-                                @elseif($isSouscription && $isValidated && $validation->final_status === 'activated' && $hidden === '')
-                                <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
-                                    <td>{{ $validation->created_at }}</td>
-                                    <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-success">{{ $validation->request_type }}</span></td>
-                                    <td>{{ $validation->account_no }}</td>
-                                    <td>{{ $validation->key }}</td>
-                                    <td>{{ $validation->office_name }}</td>
-                                    <td>{{ $validation->validator }}</td>
-                                    <td><span class="badge bg-success">Souscrit</span></td>
-                                    <td>{{ $validation->motif_validation }}</td>
-                                </tr>
+                                    {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
+                                    @if($validation->request_type === 'SOUSCRIPTION' && $validation->status === "0" && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td><span class="badge bg-warning text-dark">En attente validation</span></td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
 
-                                {{-- === CAS 4 : RESILIATION validée et résiliée === --}}
-                                @elseif($isResiliation && $isValidated && $validation->final_status === 'resiliated' && $hidden === '')
-                                <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
-                                    <td>{{ $validation->created_at }}</td>
-                                    <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-danger">{{ $validation->request_type }}</span></td>
-                                    <td>{{ $validation->account_no }}</td>
-                                    <td>{{ $validation->key }}</td>
-                                    <td>{{ $validation->office_name }}</td>
-                                    <td>{{ $validation->validator }}</td>
-                                    <td><span class="badge bg-danger">Résilié</span></td>
-                                    <td>{{ $validation->motif_validation }}</td>
-                                </tr>
+                                    {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
+                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed === '0' && $hidden === "")  
+                                        <tr>    
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td>
+                                                <form action="{{ route('activate.service') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
+                                                    <input type="hidden" name="mobile_no" value="{{ $validation->mobile_no }}">
+                                                    <input type="hidden" name="key" value="{{ $validation->key }}">
+                                                    <input type="hidden" name="account_no" value="{{ $validation->account_no }}">
 
-                                {{-- === CAS 5 : SOUSCRIPTION refusée === --}}
-                                @elseif($isSouscription && $isRefused && $hidden === '')
-                                <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
-                                    <td>{{ $validation->created_at }}</td>
-                                    <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-secondary">{{ $validation->request_type }}</span></td>
-                                    <td>{{ $validation->account_no }}</td>
-                                    <td>{{ $validation->key }}</td>
-                                    <td>{{ $validation->office_name }}</td>
-                                    <td>{{ $validation->validator }}</td>
-                                    <td><span class="badge bg-danger">Refusée</span></td>
-                                    <td>{{ $validation->motif_validation }}</td>
-                                </tr>
+                                                    <button type="submit" class="btn btn-outline-success">Activer</button>
+                                                </form>
+                                            </td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
 
-                                {{-- === CAS 6 : RESILIATION en attente === --}}
-                                @elseif($isResiliation && $isPending && $hidden === '' )
-                                <tr>
-                                    <td><strong>{{ $validation->ticket }}</strong></td>
-                                    <td>{{ $validation->created_at }}</td>
-                                    <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-danger">{{ $validation->request_type }}</span></td>
-                                    <td>{{ $validation->account_no }}</td>
-                                    <td>{{ $validation->key }}</td>
-                                    <td>{{ $validation->office_name }}</td>
-                                    <td>{{ $validation->validator }}</td>
-                                    <td><span class="badge bg-warning text-dark">En attente validation</span></td>
-                                    <td>{{ $validation->motif_validation }}</td>
-                                </tr>
+                                    {{-- Cas 3 : RESILIATION en attente de validation --}}
+                                    @elseif($isResiliation && $isValidationPending && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td><span class="badge bg-warning text-dark">En attente validation</span></td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
 
-                                @endif
+                                    {{-- Cas 4 : RESILIATION validée mais pas encore exécutée --}}
+                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed->account_status === '1' && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td>
+                                                <form action="{{route('do.unsubscribe')}}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
+                                                    <input type="hidden" name="key" value="{{ $validation->key }}">
+                                                    <input type="hidden" name="account_no" value="{{ $validation->account_no }}">
+                                                    <input type="hidden" name="msisdn" value="{{ $validation->mobile_no }}">
+                                                    <button type="submit" class="btn btn-outline-danger">Résilier</button>
+                                                </form>
+                                            </td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
+
+                                    {{-- Cas 5 : SOUSCRIT ET REFUSE --}}
+                                    @elseif($isSouscription && $isRefused && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong>{{ $validation->request_type }}</strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td style="color: red;">Refusé</td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
+                                  
+                                    {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
+                                    @elseif($isSouscription && $isValidated && $account_subscribed && $account_subscribed->account_status === '1' && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td><span class="badge bg-success">Souscrit</span></td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
+
+                                    {{-- Cas 7 : VALIDEE et RESILIEE --}}
+                                    @elseif($isResiliation && $isValidated && $account_subscribed && $account_subscribed->account_status === '0' && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td><span class="badge bg-danger">Résilié</span></td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
 
