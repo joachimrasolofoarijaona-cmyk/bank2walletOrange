@@ -134,9 +134,8 @@ class UnsubscribeController extends Controller
                 ->where('account_no', $account_no)
                 ->where('status', '1')
                 ->first();
-            dd($exists);
 
-            if ($exists) {
+            if (!$exists) {
                 $validation = new Validation();
                 $validation->client_id = $get_sub_client->client_id;
                 $validation->mobile_no = $get_sub_client->msisdn;
