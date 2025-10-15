@@ -495,7 +495,7 @@ break;
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
                                         {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIF --}}
-                                    @elseif($isSouscription && $isValidated && $account_subscribed && $account_subscribed->account_status === '1' &&  $validation->final_status === 'activated' && $hidden === '')
+                                    @elseif($isSouscription && $isValidated && $not_subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
                                         <tr>
                                             ty ve no mi s'affiche ao ? 
                                             <td><strong>{{ $validation->ticket }}</strong></td>
