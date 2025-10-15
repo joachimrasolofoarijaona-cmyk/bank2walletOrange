@@ -360,8 +360,8 @@ break;
                                 <tr>
                                     <th scope="col"><strong>N° Demande</strong></th>
                                     <th scope="col">Date demande</th>
-                                    <th scope="col">Type de Demande</th>
                                     <th scope="col">Numéro de ligne</th>
+                                    <th scope="col">Type de Demande</th>                                   
                                     <th scope="col">Compte</th>
                                     <th scope="col">Clé d'activation</th>
                                     <th scope="col">Agence de validation</th>
