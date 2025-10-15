@@ -408,7 +408,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
-                                    @elseif($isSouscription && $isValidated && ($account_subscribed === null || $account_subscribed === '0') && $hidden === "")  
+                                    @elseif($isSouscription && $isValidated && ($account_subscribed === null || $account_subscribed === '0') && $validation->final_status === '' && $hidden === "")  
                                         <tr>    
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
