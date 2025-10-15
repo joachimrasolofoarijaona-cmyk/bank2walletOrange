@@ -498,7 +498,7 @@ break;
                                             <td>{{ $validation->key }}</td>
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
-                                            <td><span class="badge bg-success">Validé</span></td>
+                                            <td><span class="badge bg-success">Souscrit</span></td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
 
@@ -513,7 +513,7 @@ break;
                                             <td>{{ $validation->key }}</td>
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
-                                            <td><span class="badge bg-success">Validé</span></td>
+                                            <td><span class="badge bg-danger">Résilié</span></td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
                                     @endif
