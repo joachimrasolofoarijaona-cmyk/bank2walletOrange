@@ -390,7 +390,7 @@ break;
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
                                             ->first();
-                                       
+                                        dd($account_subscribed->account_status);
 
                                     @endphp
 
@@ -504,8 +504,8 @@ break;
                                         </tr>
 
                                     {{-- Cas 7 : VALIDEE et RESILIEE --}}
-                                    @elseif($isResiliation && $isValidated && $validation->active || $account_subscribed === '0' && $hidden === '')
-                                    {{$account_subscribed->account_status}}
+                                    @elseif($isResiliation && $isValidated && $validation->active || $account_subscribed->account_status === '0' && $hidden === '')
+                                    
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -515,6 +515,7 @@ break;
                                             <td>{{ $validation->key }}</td>
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
+
                                             <td><span class="badge bg-danger">Résilié</span></td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
