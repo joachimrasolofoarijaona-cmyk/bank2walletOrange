@@ -424,9 +424,9 @@ break;
                                             <td>{{ $validation->validator }}</td>
                                             <td>
                                                 @if($account_subscribed === null)
-                                                    account is null
+                                                    account {{ $validation->account_no}} is null 
                                                 @else
-                                                    account is not null
+                                                    account {{ $validation->account_no}} is not null
                                                 @endif
                                                 <form action="{{ route('activate.service') }}" method="POST">
                                                     @csrf
