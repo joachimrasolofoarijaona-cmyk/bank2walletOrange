@@ -382,11 +382,7 @@ break;
                                         $isValidated = $validation->status === "1"; // demande validée
                                         $isRefused = $validation->status === "2"; // Demande refusée
                                         $validation->active = in_array($validation->key, $active_keys);
-                                        $not_subscribed = true;
-
-                                        if($account_subscribed === null || $account_subscribed === '0'){
-                                            $not_subscribed = false;
-                                        }
+                                        
 
                                         $isActiveInSubscription = $validation->active;
 
@@ -395,6 +391,12 @@ break;
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
                                             ->first();
+                                        
+                                        $not_subscribed = true;
+
+                                        if($account_subscribed === null || $account_subscribed === '0'){
+                                            $not_subscribed = false;
+                                        }
                                     @endphp
 
                                     {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
