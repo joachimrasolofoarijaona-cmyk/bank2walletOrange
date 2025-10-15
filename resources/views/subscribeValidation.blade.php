@@ -390,8 +390,7 @@ break;
                                 ->where('account_no', $validation->account_no)
                                 ->first();
 
-                                $account_status = isset($account_subscribed->account_status)
-                                ? (string) $account_subscribed->account_status;
+                                $account_status = account_subscribed->account_status;
 
                                 @endphp
 
@@ -411,7 +410,7 @@ break;
                                 </tr>
 
                                 {{-- === CAS 2 : SOUSCRIPTION validée mais pas encore activée === --}}
-                                @elseif($isSouscription && $isValidated && $validation->final_status !== '' && ($account_subscribed === null || account_status === '0') && $hidden === '')
+                                @elseif($isSouscription && $isValidated && $validation->final_status !== '' && ($account_subscribed === null || $account_status === '0') && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
