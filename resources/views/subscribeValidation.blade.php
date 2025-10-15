@@ -384,6 +384,15 @@ break;
                                 $isPending = $validation->status === "0"; // en attente de validation
                                 $isValidated = $validation->status === "1"; // validée
                                 $isRefused = $validation->status === "2"; // refusée
+
+                                $account_subscribed = DB::table('subscription')
+                                ->select('account_status')
+                                ->where('account_no', $validation->account_no)
+                                ->first();
+
+                                $account_status = isset($account_subscribed->account_status)
+                                ? (string) $account_subscribed->account_status
+
                                 @endphp
 
                                 {{-- === CAS 1 : SOUSCRIPTION en attente === --}}
@@ -402,7 +411,7 @@ break;
                                 </tr>
 
                                 {{-- === CAS 2 : SOUSCRIPTION validée mais pas encore activée === --}}
-                                @elseif($isSouscription && $isValidated && $validation->final_status !== 'activated' && $hidden === '')
+                                @elseif($isSouscription && $isValidated && $validation->final_status !== '' && ($account_subscribed === null || account_status === '0') && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
