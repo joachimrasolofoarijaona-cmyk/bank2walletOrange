@@ -395,7 +395,7 @@ break;
                                         # Check if sub or not
                                         $subscribed = true;
 
-                                        if($account_subscribed === null || $account_subscribed->account_status === '0'){
+                                        if($account_subscribed === null || $account_subscribed === '0'){
                                             $subscribed = false;
                                         }
                                         
