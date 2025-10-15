@@ -478,37 +478,29 @@ break;
                                     <td>{{ $validation->motif_validation }}</td>
                                 </tr>
 
-                                {{-- === CAS 6 : RESILIATION validée mais non encore résiliée === --}}
-                                @elseif($isResiliation && $isValidated && $validation->final_status !== 'resiliated' && $hidden === '')
+                                {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
+                                @elseif($isSouscription && $isValidated && $validation->final_status === 'activated' && $hidden === '')
+                                @php dd($account_subscribed, $hidden); @endphp
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
                                     <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-danger">{{ $validation->request_type }}</span></td>
+                                    <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
                                     <td>{{ $validation->account_no }}</td>
                                     <td>{{ $validation->key }}</td>
                                     <td>{{ $validation->office_name }}</td>
                                     <td>{{ $validation->validator }}</td>
-                                    <td>
-                                        <form action="{{ route('do.unsubscribe') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
-                                            <input type="hidden" name="key" value="{{ $validation->key }}">
-                                            <input type="hidden" name="account_no" value="{{ $validation->account_no }}">
-                                            <input type="hidden" name="msisdn" value="{{ $validation->mobile_no }}">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Résilier</button>
-                                        </form>
-                                    </td>
+                                    <td><span class="badge bg-success">Souscrit</span></td>
                                     <td>{{ $validation->motif_validation }}</td>
                                 </tr>
 
-                                {{-- === CAS 7 : RESILIATION terminée === --}}
+                                {{-- Cas 7 : VALIDEE et RESILIEE --}}
                                 @elseif($isResiliation && $isValidated && $validation->final_status === 'resiliated' && $hidden === '')
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
                                     <td>{{ $validation->mobile_no }}</td>
-                                    <td><span class="badge bg-danger">{{ $validation->request_type }}</span></td>
+                                    <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
                                     <td>{{ $validation->account_no }}</td>
                                     <td>{{ $validation->key }}</td>
                                     <td>{{ $validation->office_name }}</td>
