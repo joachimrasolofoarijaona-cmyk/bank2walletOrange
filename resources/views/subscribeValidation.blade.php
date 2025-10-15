@@ -393,6 +393,23 @@ break;
                                             ->where('account_status', '1')
                                             ->first();
 
+                                        # is account already subscribed
+                                        $is_account_subscribed = DB::table('subscription')
+                                            ->where('account_no', $validation->account_no)
+                                            ->where('msisdn', $validation->mobile_no)
+                                            ->where('account_status', '1')
+                                            ->get();
+                                        
+                                        foreach($is_account_subscribed as $account) {
+                                            $account_subscribed = $account->account_status;
+                                            if($account_subscribed === '1') {
+                                                $account_subscribed = '1';
+                                            } else {
+                                                $account_subscribed = '0';
+                                            }
+                                        }
+                                        dd($account_subscribed);
+
                                     @endphp
 
                                     {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
