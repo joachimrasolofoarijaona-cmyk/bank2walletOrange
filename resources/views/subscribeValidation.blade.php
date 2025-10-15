@@ -440,7 +440,6 @@ break;
                                             </td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
-
                                     {{-- Cas 3 : RESILIATION en attente de validation --}}
                                     @elseif($isResiliation && $isValidationPending && $hidden === '')
                                         <tr>
@@ -496,6 +495,7 @@ break;
                                         </tr>
                                         {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIF --}}
                                     @elseif($isSouscription && $isValidated && $not_subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
+                                    Ary ty pory ve mipoitra pory lelena a ?
                                         <tr>
                                             ty ve no mi s'affiche ao ? 
                                             <td><strong>{{ $validation->ticket }}</strong></td>
