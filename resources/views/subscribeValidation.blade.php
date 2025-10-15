@@ -390,7 +390,7 @@ break;
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
                                             ->first();
-                                      
+                                        
 
                                     @endphp
 
@@ -410,8 +410,9 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
-                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed->account_status === '0' && $hidden === "")
-                                        <tr>
+                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed === '0' && $hidden === "")
+                                        @php dd($account_subscribed); @endphp    
+                                    <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
                                             <td>{{ $validation->mobile_no }}</td>
@@ -488,7 +489,6 @@ break;
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
                                   
-
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
                                     @elseif($isSouscription && $isValidated && $account_subscribed && $hidden === '')
                                         <tr>
