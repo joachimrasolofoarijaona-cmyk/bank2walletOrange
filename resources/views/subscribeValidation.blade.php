@@ -495,7 +495,7 @@ break;
                                         </tr>
                                     
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIVEE --}}
-                                    @elseif($isSouscription && $isValidated && $not_subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
+                                    @elseif($isSouscription && $isValidated && $subscribed === false &&  $validation->final_status === 'activated' && $hidden === '')
                                     Ary ty pory ve mipoitra pory lelena a ?
                                         <tr>
                                             ty ve no mi s'affiche ao ? 
