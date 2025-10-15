@@ -386,6 +386,15 @@ break;
                                         $isActiveInSubscription = $validation->active;
 
                                         # function to check if account already subscribed
+                                        # ici on vérifie si l'account est déjà souscrit, si c'est dans la table subscription, on récupère l'account_status
+                                        # si account_status est 1, alors l'account est souscrit, sinon il est résilé
+                                        # si account_status est 0, alors l'account n'est pas souscrit
+
+                                        # Pourquoi ça renvoie null ?
+                                        # Parce que la variable $account_subscribed est définie dans la boucle foreach, donc elle est remplacée à chaque itération.
+                                        # Pour corriger ça, il faut définir la variable $account_subscribed en dehors de la boucle foreach.
+                                        $account_subscribed = '0';
+
                                         $account_subscribed = DB::table('subscription')
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
@@ -393,21 +402,6 @@ break;
                                             ->where('account_status', '1')
                                             ->first();
 
-                                        # is account already subscribed
-                                        $is_account_subscribed = DB::table('subscription')
-                                            ->where('account_no', $validation->account_no)
-                                            ->where('msisdn', $validation->mobile_no)
-                                            ->where('account_status', '1')
-                                            ->get();
-                                        
-                                        foreach($is_account_subscribed as $account) {
-                                            $account_subscribed = $account->account_status;
-                                            if($account_subscribed === '1') {
-                                                $account_subscribed = '1';
-                                            } else {
-                                                $account_subscribed = '0';
-                                            }
-                                        }
                                         dd($account_subscribed, $validation->account_no);
 
                                     @endphp
