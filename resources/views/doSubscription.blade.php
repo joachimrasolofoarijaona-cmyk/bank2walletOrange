@@ -88,6 +88,7 @@ use Illuminate\Support\Facades\DB;
                                                     $account_subscribed = DB::table('subscription')
                                                         ->select('account_status')
                                                         ->where('account_no', $account['accountNo'])
+                                                        ->latest('updated_at')
                                                         ->first();
                                                     dd($account_subscribed);
                                                     
@@ -96,19 +97,19 @@ use Illuminate\Support\Facades\DB;
                                                     $disable = ($account_subscribed && $account_subscribed->account_status === "1") ? 'disabled' : '';
                                                 @endphp
 
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="accounts" id="account-{{ $account['accountNo'] }}" value="{{ $account['accountNo'] }}" {{ $disable }}>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="accounts" id="account-{{ $account['accountNo'] }}" value="{{ $account['accountNo'] }}" {{ $disable }}>
 
-                                                <label class="form-check-label" for="account-{{ $account['accountNo'] }}">
-                                                    @if($account_subscribed && $account_subscribed->account_status === "1")
-                                                    <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }}<span class="badge bg-warning "> Compte déjà lié</span>
-                                                    @elseif($account_subscribed && $account_subscribed->account_status === "0")
-                                                    <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-danger "> Compte résilié</span>
-                                                    @else
-                                                    <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-success "> Disponible</span>
-                                                    @endif
-                                                </label>
-                                            </div>
+                                                    <label class="form-check-label" for="account-{{ $account['accountNo'] }}">
+                                                        @if($account_subscribed && $account_subscribed->account_status === "1")
+                                                            <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }}<span class="badge bg-warning "> Compte déjà lié</span>
+                                                        @elseif($account_subscribed && $account_subscribed->account_status === "0")
+                                                            <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-danger "> Compte résilié</span>
+                                                        @else
+                                                            <strong><i>{{ $account['accountNo'] }}</i></strong class="pe-2"> - {{ $account['productName'] }} <span class="badge bg-success "> Disponible</span>
+                                                        @endif
+                                                    </label>
+                                                </div>
                                             @endforeach
                                         @else
                                             <div class="alert alert-warning">
