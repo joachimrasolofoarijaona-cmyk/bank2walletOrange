@@ -423,6 +423,9 @@ break;
                                     <td>{{ $validation->key }}</td>
                                     <td>{{ $validation->office_name }}</td>
                                     <td>{{ $validation->validator }}</td>
+                                    {{-- Debug temporaire --}}
+                                    <td><small>{{ $validation->request_type }} | {{ $validation->status }} | {{ $account_status }}</small></td>
+
                                     <td>
                                         <form action="{{ route('activate.service') }}" method="POST">
                                             @csrf
@@ -501,6 +504,9 @@ break;
                                     <td>{{ $validation->key }}</td>
                                     <td>{{ $validation->office_name }}</td>
                                     <td>{{ $validation->validator }}</td>
+                                    {{-- Debug temporaire --}}
+                                    <td><small>{{ $validation->request_type }} | {{ $validation->status }} | {{ $account_status }}</small></td>
+
                                     <td><span class="badge bg-success">Souscrit</span></td>
                                     <td>{{ $validation->motif_validation }}</td>
                                 </tr>
@@ -516,6 +522,9 @@ break;
                                     <td>{{ $validation->key }}</td>
                                     <td>{{ $validation->office_name }}</td>
                                     <td>{{ $validation->validator }}</td>
+                                    {{-- Debug temporaire --}}
+                                    <td><small>{{ $validation->request_type }} | {{ $validation->status }} | {{ $account_status }}</small></td>
+
                                     <td><span class="badge bg-danger">Résilié</span></td>
                                     <td>{{ $validation->motif_validation }}</td>
                                 </tr>
