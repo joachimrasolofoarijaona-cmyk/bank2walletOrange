@@ -388,7 +388,7 @@ break;
                                         # function to check if account already subscribed
 
                                         $account_subscribed = DB::table('subscription')
-                                            ->select('*')
+                                            ->select('account_status')
                                             ->get();
 
                                         dd($account_subscribed, $validation->account_no);
