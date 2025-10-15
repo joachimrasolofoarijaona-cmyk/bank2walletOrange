@@ -90,8 +90,6 @@ use Illuminate\Support\Facades\DB;
                                                         ->where('account_no', $account['accountNo'])
                                                         ->latest('updated_at')
                                                         ->first();
-                                                    dd($account_subscribed);
-                                                    
 
                                                     // Si la ligne existe et que account_status vaut 1, on désactive
                                                     $disable = ($account_subscribed && $account_subscribed->account_status === "1") ? 'disabled' : '';
