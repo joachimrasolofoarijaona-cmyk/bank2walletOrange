@@ -408,7 +408,7 @@ break;
                                                 $account_subscribed = '0';
                                             }
                                         }
-                                        dd($account_subscribed);
+                                        dd($account_subscribed, $validation->account_no);
 
                                     @endphp
 
