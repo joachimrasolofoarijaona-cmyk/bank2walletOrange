@@ -390,7 +390,7 @@ break;
                                 ->where('account_no', $validation->account_no)
                                 ->first();
 
-                                $account_status = account_subscribed->account_status;
+                                $account_status = $account_subscribed->account_status;
 
                                 @endphp
 
