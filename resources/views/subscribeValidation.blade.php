@@ -489,7 +489,7 @@ break;
                                         </tr>
                                   
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
-                                    @elseif($isSouscription && $isValidated && $account_subscribed->account_status === '1' && $hidden === '')
+                                    @elseif($isSouscription && $isValidated && $account_subscribed && $account_subscribed->account_status === '1' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -504,7 +504,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 7 : VALIDEE et RESILIEE --}}
-                                    @elseif($isResiliation && $isValidated && $account_subscribed &&$account_subscribed->account_status === '0' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $account_subscribed && $account_subscribed->account_status === '0' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
