@@ -391,7 +391,7 @@ break;
                                 ->first();
 
                                 $account_status = isset($account_subscribed->account_status)
-                                ? (string) $account_subscribed->account_status
+                                ? (string) $account_subscribed->account_status;
 
                                 @endphp
 
