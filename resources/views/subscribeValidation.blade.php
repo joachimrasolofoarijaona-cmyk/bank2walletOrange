@@ -503,7 +503,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 7 : VALIDEE et RESILIEE --}}
-                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed === '0' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $validation->active && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
