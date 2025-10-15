@@ -126,7 +126,15 @@ class UnsubscribeController extends Controller
         try {
             $get_user_name = session('firstname') . ' ' . session('lastname');
             # Enregistrement des données dans la base
-            $exists = Validation::where('key', $get_sub_client->key)->exists();
+            # $exists = Validation::where('key', $get_sub_client->key)->exists();
+           
+            # Vérification si la demande existe déjà dans la table validation
+            $exists = DB::table('validation')
+                ->select('status')
+                ->where('account_no', $account_no)
+                ->where('status', '1')
+                ->first();
+            dd($exists);
 
             if ($exists) {
                 $validation = new Validation();
