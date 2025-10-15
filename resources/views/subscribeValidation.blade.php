@@ -386,12 +386,18 @@ break;
                                 $isActiveInSubscription = $validation->active;
 
                                 # function to check if account already subscribed
+                                @php
                                 $account_subscribed = DB::table('subscription')
                                 ->select('account_status')
                                 ->where('account_no', $validation->account_no)
                                 ->first();
 
-                                $account_status = $account_subscribed ? $account_subscribed->account_status : null;
+                                // Récupère la valeur réelle, en string pour homogénéiser
+                                $account_status = isset($account_subscribed->account_status)
+                                ? (string) $account_subscribed->account_status
+                                : null;
+                                @endphp
+
                                 @endphp
 
                                 {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
@@ -410,7 +416,13 @@ break;
                                 </tr>
 
                                 {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
-                                @elseif($isSouscription && $isValidated && ($account_status === null || $account_status === '0') && $hidden === '')
+                                @elseif(
+                                $isSouscription &&
+                                $isValidated &&
+                                ($account_status === null || $account_status === '0') &&
+                                $hidden === ''
+                                )
+
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
@@ -489,7 +501,13 @@ break;
                                 </tr>
 
                                 {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
-                                @elseif($isSouscription && $isValidated && in_array($account_status, [null, '0'], true) && $hidden === '')
+                                @elseif(
+                                $isSouscription &&
+                                $isValidated &&
+                                $account_status === '1' &&
+                                $hidden === ''
+                                )
+
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
@@ -504,7 +522,13 @@ break;
                                 </tr>
 
                                 {{-- Cas 7 : VALIDEE et RESILIEE --}}
-                                @elseif($isResiliation && $isValidated && $account_status === '0' && $hidden === '')
+                                @elseif(
+                                $isResiliation &&
+                                $isValidated &&
+                                $account_status === '0' &&
+                                $hidden === ''
+                                )
+
                                 <tr>
                                     <td><strong>{{ $validation->ticket }}</strong></td>
                                     <td>{{ $validation->created_at }}</td>
