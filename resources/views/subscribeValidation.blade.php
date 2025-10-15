@@ -387,17 +387,15 @@ break;
 
                                 # function to check if account already subscribed
                                 @php
-                                $account_subscribed = DB::table('subscription')
-                                ->select('account_status')
-                                ->where('account_no', $validation->account_no)
-                                ->first();
+                                    $account_subscribed = DB::table('subscription')
+                                    ->select('account_status')
+                                    ->where('account_no', $validation->account_no)
+                                    ->first();
 
-                                // Récupère la valeur réelle, en string pour homogénéiser
-                                $account_status = isset($account_subscribed->account_status)
-                                ? (string) $account_subscribed->account_status
-                                : null;
-                                @endphp
-
+                                    // Récupère la valeur réelle, en string pour homogénéiser
+                                    $account_status = isset($account_subscribed->account_status)
+                                    ? (string) $account_subscribed->account_status
+                                    : null;
                                 @endphp
 
                                 {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
