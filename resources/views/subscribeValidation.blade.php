@@ -497,6 +497,7 @@ break;
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
                                     @elseif($isSouscription && $isValidated && $account_subscribed && $account_subscribed->account_status === '1' &&  $validation->final_status === 'activated' && $hidden === '')
                                         <tr>
+                                            ty ve no mi s'affiche ao ? 
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
                                             <td>{{ $validation->mobile_no }}</td>
