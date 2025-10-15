@@ -423,7 +423,11 @@ break;
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
                                             <td>
-                                                account is {{$account_subscribed}}
+                                                @if($account_subscribed === null)
+                                                    account is null
+                                                @else
+                                                    account is not null
+                                                @endif
                                                 <form action="{{ route('activate.service') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
