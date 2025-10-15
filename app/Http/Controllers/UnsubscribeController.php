@@ -129,14 +129,7 @@ class UnsubscribeController extends Controller
             # $exists = Validation::where('key', $get_sub_client->key)->exists();
 
             # Vérification si la demande existe déjà dans la table validation
-            $exists = DB::table('validation')
-                ->select('status')
-                ->where('account_no', $account_no)
-                ->where('status', '1')
-                ->latest('updated_at')
-                ->first();
 
-            if (!$exists) {
                 $validation = new Validation();
                 $validation->client_id = $get_sub_client->client_id;
                 $validation->mobile_no = $get_sub_client->msisdn;
@@ -160,9 +153,7 @@ class UnsubscribeController extends Controller
                 $validation->origin = $origin;
 
                 $validation->save();
-            } else {
-                return redirect()->back()->with('error', 'La demande existe déjà ou vous avez actualisé la page');
-            }
+                
         } catch (\Exception $e) {
             Log::error("Erreur lors l'enregistrement de la requête : " . $e->getMessage());
             return redirect()->back()->with('error', "Erreur lors l'enregistrement de la requête.");
