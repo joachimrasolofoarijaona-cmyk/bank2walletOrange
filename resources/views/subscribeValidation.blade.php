@@ -412,6 +412,7 @@ break;
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée --}}
                                     @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null && $hidden === "")
+                                    
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -422,6 +423,7 @@ break;
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
                                             <td>
+                                                account is {{$account_subscribed}}
                                                 <form action="{{ route('activate.service') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
