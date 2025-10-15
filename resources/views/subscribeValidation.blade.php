@@ -392,10 +392,10 @@ break;
                                             ->where('account_no', $validation->account_no)
                                             ->first();
                                         
-                                        $not_subscribed = false;
+                                        $subscribed = true;
 
                                         if($account_subscribed === null || $account_subscribed === '0'){
-                                            $not_subscribed = true;
+                                            $subscribed = false;
                                         }
                                         
                                     @endphp
@@ -416,7 +416,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
-                                    @elseif($isSouscription && $isValidated && $not_subscribed === false && $validation->final_status === null && $hidden === "")
+                                    @elseif($isSouscription && $isValidated && $subscribed === true && $validation->final_status === null && $hidden === "")
                                     Mipoitra pory ve aloha ty e ???? lelena a!
                                         <tr>    
                                             <td><strong>{{ $validation->ticket }}</strong></td>
@@ -493,7 +493,8 @@ break;
                                             <td style="color: red;">Refusé</td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
-                                        {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIF --}}
+                                    
+                                    {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIVEE --}}
                                     @elseif($isSouscription && $isValidated && $not_subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
                                     Ary ty pory ve mipoitra pory lelena a ?
                                         <tr>
