@@ -418,7 +418,6 @@ break;
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
                                     @elseif($isSouscription && $isValidated && $subscribed === true && $validation->final_status === null && $hidden === "")
-                                    Mipoitra pory ve aloha ty e ???? lelena a!
                                         <tr>    
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -498,7 +497,6 @@ break;
                                     
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIVEE --}}
                                     @elseif($isSouscription && $isValidated && $subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
-                                    Ary ty pory ve mipoitra pory lelena a ?
                                         <tr>
                                             ty ve no mi s'affiche ao ? 
                                             <td><strong>{{ $validation->ticket }}</strong></td>
@@ -510,6 +508,21 @@ break;
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
                                             <td><span class="badge bg-success">Souscrit</span></td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
+                                    
+                                    {{-- Cas 7 : VALIDEE et RESILIEE et INACTIF --}}
+                                    @elseif($isResiliation && $isValidated && $subscribed === false &&  $validation->final_status === 'resiliated' && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td><span class="badge bg-danger">Résilié</span></td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
                                     @endif
