@@ -411,7 +411,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée --}}
-                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null && $hidden === "")
+                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === '0' && $hidden === "")
                                     
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
