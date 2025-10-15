@@ -498,7 +498,6 @@ break;
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIVEE --}}
                                     @elseif($isSouscription && $isValidated && $subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
                                         <tr>
-                                            ty ve no mi s'affiche ao ? 
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
                                             <td>{{ $validation->mobile_no }}</td>
@@ -512,7 +511,7 @@ break;
                                         </tr>
                                     
                                     {{-- Cas 7 : VALIDEE et RESILIEE et INACTIF --}}
-                                    @elseif($isResiliation && $isValidated && $subscribed === false &&  $validation->final_status === 'resiliated' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $account_subscribed === '0' &&  $validation->final_status === 'resiliated' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
