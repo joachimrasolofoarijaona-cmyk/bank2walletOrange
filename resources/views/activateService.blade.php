@@ -9,7 +9,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-xs-12">
-            <div class="card">
+            <div class="card text-dark">
                 <div class="card-header bg-light d-flex align-items-left">
                     <i class="ri-check-double-line fs-5"></i>
                     <h4 class="text-uppercase mb-0 px-3">Service Actif</h4>

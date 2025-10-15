@@ -31,9 +31,8 @@ use Illuminate\Support\Facades\DB;
 
 </div>
 @else
-
 <div class="container-fluid">
-    <div class="form-card">
+    <div class="card text-dark">
         <div class="card-header d-flex align-items-center">
             <i class="ri-send-plane-line fs-4 me-2"></i>
             <h4 class="text-uppercase mb-0 fw-bold">Envoie pour validation</h4>
