@@ -449,7 +449,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 4 : RESILIATION validée mais pas encore exécutée --}}
-                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed === '1' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $validation->active && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
