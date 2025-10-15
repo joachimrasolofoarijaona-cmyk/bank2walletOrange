@@ -501,6 +501,21 @@ break;
                                             <td><span class="badge bg-success">Validé</span></td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
+
+                                    {{-- Cas 7 : VALIDEE et RESILIEE --}}
+                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed === '0' && $hidden === '')
+                                        <tr>
+                                            <td><strong>{{ $validation->ticket }}</strong></td>
+                                            <td>{{ $validation->created_at }}</td>
+                                            <td>{{ $validation->mobile_no }}</td>
+                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
+                                            <td>{{ $validation->account_no }}</td>
+                                            <td>{{ $validation->key }}</td>
+                                            <td>{{ $validation->office_name }}</td>
+                                            <td>{{ $validation->validator }}</td>
+                                            <td><span class="badge bg-success">Validé</span></td>
+                                            <td>{{ $validation->motif_validation }}</td>
+                                        </tr>
                                     @endif
                                 @endforeach
                             </tbody>
