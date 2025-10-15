@@ -392,6 +392,7 @@ break;
                                             ->where('account_no', $validation->account_no)
                                             ->first();
                                         
+                                        # Check if sub or not
                                         $subscribed = true;
 
                                         if($account_subscribed === null || $account_subscribed === '0'){
@@ -440,6 +441,7 @@ break;
                                             </td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
+
                                     {{-- Cas 3 : RESILIATION en attente de validation --}}
                                     @elseif($isResiliation && $isValidationPending && $hidden === '')
                                         <tr>
@@ -495,7 +497,7 @@ break;
                                         </tr>
                                     
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIVEE --}}
-                                    @elseif($isSouscription && $isValidated && $subscribed === false &&  $validation->final_status === 'activated' && $hidden === '')
+                                    @elseif($isSouscription && $isValidated && $subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
                                     Ary ty pory ve mipoitra pory lelena a ?
                                         <tr>
                                             ty ve no mi s'affiche ao ? 
