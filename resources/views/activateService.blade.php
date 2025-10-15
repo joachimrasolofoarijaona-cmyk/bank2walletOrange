@@ -1,4 +1,4 @@
-#Log@extends('layouts.sidebar')
+Log@extends('layouts.sidebar')
 
 @section('title', ':: Service Actif ::')
 
