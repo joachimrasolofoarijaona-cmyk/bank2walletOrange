@@ -410,7 +410,6 @@ break;
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
                                     @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed === '0' && $hidden === "")
-                                    
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -421,11 +420,6 @@ break;
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
                                             <td>
-                                                @if($account_subscribed === '0')
-                                                    account {{ $validation->account_no}} is '0' 
-                                                @else
-                                                    account {{ $validation->account_no}} is not '0'
-                                                @endif
                                                 <form action="{{ route('activate.service') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
@@ -455,7 +449,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 4 : RESILIATION validée mais pas encore exécutée --}}
-                                    @elseif($isResiliation && $isValidated && $validation->active && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed === '1' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
