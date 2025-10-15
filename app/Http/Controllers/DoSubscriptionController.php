@@ -347,6 +347,7 @@ class DoSubscriptionController extends Controller
                 $validation->motif = "SOUSCRIPTION";
                 $validation->request_status = "1";
 
+
                 $validation->save();
             } catch (\Exception $e) {
                 # log 

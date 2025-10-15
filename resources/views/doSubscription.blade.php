@@ -86,12 +86,14 @@ use Illuminate\Support\Facades\DB;
                                             @foreach($customer_account as $account)
                                                 @php
                                                     $account_subscribed = DB::table('subscription')
-                                                    ->select('account_status')
-                                                    ->where('account_no', $account['accountNo'])
-                                                    ->first();
+                                                        ->select('account_status')
+                                                        ->where('account_no', $account['accountNo'])
+                                                        ->first();
+                                                    dd($account_subscribed);
+                                                    
 
-                                                // Si la ligne existe et que account_status vaut 1, on désactive
-                                                $disable = ($account_subscribed && $account_subscribed->account_status === "1") ? 'disabled' : '';
+                                                    // Si la ligne existe et que account_status vaut 1, on désactive
+                                                    $disable = ($account_subscribed && $account_subscribed->account_status === "1") ? 'disabled' : '';
                                                 @endphp
 
                                             <div class="form-check">
