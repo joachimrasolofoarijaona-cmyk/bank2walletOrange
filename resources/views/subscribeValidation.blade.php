@@ -410,7 +410,7 @@ break;
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
 
-                                    {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée --}}
+                                    {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
                                     @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === '0' && $hidden === "")
                                     
                                         <tr>
@@ -423,10 +423,10 @@ break;
                                             <td>{{ $validation->office_name }}</td>
                                             <td>{{ $validation->validator }}</td>
                                             <td>
-                                                @if($account_subscribed === null)
-                                                    account {{ $validation->account_no}} is null 
+                                                @if($account_subscribed === '0')
+                                                    account {{ $validation->account_no}} is '0' 
                                                 @else
-                                                    account {{ $validation->account_no}} is not null
+                                                    account {{ $validation->account_no}} is not '0'
                                                 @endif
                                                 <form action="{{ route('activate.service') }}" method="POST">
                                                     @csrf
