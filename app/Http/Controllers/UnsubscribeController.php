@@ -153,7 +153,7 @@ class UnsubscribeController extends Controller
                 $validation->origin = $origin;
 
                 $validation->save();
-                
+
         } catch (\Exception $e) {
             Log::error("Erreur lors l'enregistrement de la requête : " . $e->getMessage());
             return redirect()->back()->with('error', "Erreur lors l'enregistrement de la requête.");
@@ -182,12 +182,14 @@ class UnsubscribeController extends Controller
         $get_alias = DB::table('subscription')
             ->select('alias')
             ->where('account_no', $account_no)
+            ->latest('updated_at')
             ->first();
         $alias = $get_alias ? $get_alias->alias : null;
         # Get origin and motif from validation table
         $origin_motif = DB::table('validation')
             ->select('origin', 'motif')
             ->where('ticket', $ticket)
+            ->latest('updated_at')
             ->first();
 
         $origin = $origin_motif ? $origin_motif->origin : null;
