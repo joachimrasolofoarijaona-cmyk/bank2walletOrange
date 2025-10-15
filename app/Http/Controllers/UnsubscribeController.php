@@ -133,6 +133,7 @@ class UnsubscribeController extends Controller
                 ->select('status')
                 ->where('account_no', $account_no)
                 ->where('status', '1')
+                ->latest('updated_at')
                 ->first();
 
             if (!$exists) {
@@ -335,6 +336,7 @@ class UnsubscribeController extends Controller
                         'motif' => $motif,
                         'unsub_date' => $date_unsub,
                     ]);
+
                 } catch (\Exception $e) {
                     Log::error("Erreur lors de la requête BDD : " . $e->getMessage());
                     return redirect()->back()->with('error', 'Erreur lors de la requête BDD.');
