@@ -397,7 +397,7 @@ break;
                                         if($account_subscribed === null || $account_subscribed === '0'){
                                             $not_subscribed = true;
                                         }
-                                        dd($not_subscribed);
+                                        
                                     @endphp
 
                                     {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
@@ -416,7 +416,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
-                                    @elseif($isSouscription && $isValidated && $not_subscribed === true && $hidden === "")
+                                    @elseif($isSouscription && $isValidated && $not_subscribed === false && $hidden === "")
                                     {{$validation->final_status}}
                                         <tr>    
                                             <td><strong>{{ $validation->ticket }}</strong></td>
