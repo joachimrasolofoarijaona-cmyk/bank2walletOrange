@@ -391,9 +391,8 @@ break;
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
                                             ->first();
-                                        dd($account_subscribed->account_status);
                                         
-                                        # Check if sub or not
+                                        # Check if sub or not pr
                                         $subscribed = true;
 
                                         if($account_subscribed === null || $account_subscribed === '0'){
@@ -512,7 +511,7 @@ break;
                                         </tr>
                                     
                                     {{-- Cas 7 : VALIDEE et RESILIEE et INACTIF --}}
-                                    @elseif($isResiliation && $isValidated && $account_subscribed->account_status === '0' &&  $validation->final_status === 'resiliated' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $account_subscribed->account_status == '0' &&  $validation->final_status === 'resiliated' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
