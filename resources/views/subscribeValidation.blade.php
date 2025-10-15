@@ -410,7 +410,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
-                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed === '0' && $hidden === "")
+                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed->account_status === '0' && $hidden === "")
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -450,7 +450,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 4 : RESILIATION validée mais pas encore exécutée --}}
-                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed->account_status == '1' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $validation->active && $account_subscribed->account_status === '1' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
@@ -505,7 +505,7 @@ break;
                                         </tr>
 
                                     {{-- Cas 7 : VALIDEE et RESILIEE --}}
-                                    @elseif($isResiliation && $isValidated && $account_subscribed &&$account_subscribed->account_status == '0' && $hidden === '')
+                                    @elseif($isResiliation && $isValidated && $account_subscribed &&$account_subscribed->account_status === '0' && $hidden === '')
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
