@@ -390,8 +390,6 @@ break;
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
                                             ->first();
-                                        
-
                                     @endphp
 
                                     {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
@@ -409,8 +407,8 @@ break;
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
 
-                                    {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit--}}
-                                    @elseif($validation->request_type === 'SOUSCRIPTION' && $isValidated && $account_subscribed === null || $account_subscribed === '0' && $hidden === "")  
+                                    {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
+                                    @elseif($isSouscription && $isValidated && ($account_subscribed === null || $account_subscribed === '0') && $hidden === "")  
                                         <tr>    
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
