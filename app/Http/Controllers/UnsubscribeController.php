@@ -127,7 +127,7 @@ class UnsubscribeController extends Controller
             $get_user_name = session('firstname') . ' ' . session('lastname');
             # Enregistrement des données dans la base
             # $exists = Validation::where('key', $get_sub_client->key)->exists();
-           
+
             # Vérification si la demande existe déjà dans la table validation
             $exists = DB::table('validation')
                 ->select('status')
@@ -301,7 +301,7 @@ class UnsubscribeController extends Controller
                     ->select('msisdn', 'account_no', 'date_sub', 'libelle', 'officeName', 'mobile_no', 'client_cin', 'client_lastname', 'client_firstname')
                     ->where('account_no', $account_no)
                     ->get();
-                    
+
                 # Add values in table unsubscription
                 try {
                     $get_user_name = session('firstname') . ' ' . session('lastname');
@@ -322,12 +322,19 @@ class UnsubscribeController extends Controller
                     $unsubscription->date_unsub = Carbon::now();
                     $unsubscription->save();
 
+                    DB::table('validation')
+                        ->where('account_no', $account_no)
+                        ->update([
+                            'final_status' => 'resiliated',
+                            'updated_at' => now(),
+                        ]);
+
+
                     session([
                         "info_client" => $get_client,
                         'motif' => $motif,
                         'unsub_date' => $date_unsub,
                     ]);
-
                 } catch (\Exception $e) {
                     Log::error("Erreur lors de la requête BDD : " . $e->getMessage());
                     return redirect()->back()->with('error', 'Erreur lors de la requête BDD.');
@@ -336,7 +343,7 @@ class UnsubscribeController extends Controller
                 $get_data_unsub = DB::table('unsubscription')
                     ->where('account_no', $account_no)
                     ->first();
-                    
+
                 # redirect to unsubscribe view with success message
                 return redirect()->route('show.unsubscribe.form')->with([
                     'success' => 'Résiliation effectuée avec succès.',
@@ -344,18 +351,15 @@ class UnsubscribeController extends Controller
                     'motif' => $motif,
                     'unsub_date' => $date_unsub,
                 ]);
-
             } elseif (isset($errorMessages[$status])) {
                 Log::info("Erreur trouvée : " . $errorMessages[$status]);
                 return redirect()->back()->with('error', $errorMessages[$status]);
-
             } else {
                 Log::info("Code inconnu : " . $status);
                 return redirect()->back()->with('error', $errorMessages[$status]);
             }
 
             return redirect()->back()->with('error', "Erreur inconnue avec le code : " . $status);
-
         } catch (\Exception $e) {
             Log::error("Erreur lors de la requête SOAP : " . $e->getMessage());
             return redirect()->back()->with('error', 'Erreur de connexion au service.');

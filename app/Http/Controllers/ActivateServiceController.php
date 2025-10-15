@@ -249,6 +249,15 @@ class ActivateServiceController extends Controller
                         $subscription->client_firstName = $customer_firtsname;
                         $subscription->client_dob = $customer_birthdate;
                         $subscription->save();
+
+                        # Une fois l'abonnement créé avec succès :
+                        DB::table('validation')
+                            ->where('account_no', $account_no)
+                            ->update([
+                                'final_status' => 'activated',
+                                'updated_at' => now(),
+                            ]);
+                        
                     } catch (\Exception $e) {
                         Log::error("Erreur lors l'insertion dans la table subscription : " . $e->getMessage());
                         return redirect()->back()->with('error', "Erreur lors l'insertion dans la table subscription. ");
