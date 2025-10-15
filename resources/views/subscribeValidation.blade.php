@@ -487,7 +487,7 @@ break;
                                             <td style="color: red;">Refusé</td>
                                             <td>{{ $validation->motif_validation }}</td>
                                         </tr>
-                                    @endif
+                                  
 
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
                                     @elseif($isSouscription && $isValidated && $account_subscribed && $hidden === '')
