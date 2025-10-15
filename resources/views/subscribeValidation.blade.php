@@ -490,7 +490,6 @@ break;
                                   
                                     {{-- Cas 6 : VALIDEE et SOUSCRIT --}}
                                     @elseif($isSouscription && $isValidated && $account_subscribed->account_status === '1' && $hidden === '')
-                                        @php dd($account_subscribed, $hidden); @endphp
                                         <tr>
                                             <td><strong>{{ $validation->ticket }}</strong></td>
                                             <td>{{ $validation->created_at }}</td>
