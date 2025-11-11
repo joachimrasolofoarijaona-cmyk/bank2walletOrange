@@ -19,26 +19,47 @@
     $role = session('roles');
     $hierarchy = session('hierarchy');
     $parent_name = session('parent_name');
-    $clean_office_name = is_string($office_name) ? trim(str_replace(["\n","\r","\t"], '', $office_name)) : '';
-
     
-    # __create the real validator office name and put it in table__
-    if(count(explode(' - ', $clean_office_name)) > 1) {
-        $validator_officename = explode(' - ', $office_name)[0];
-    }elseif(count(explode('-', $office_name)) > 1) {
-        $validator_officename = explode('-', $office_name)[0];
-    }else{
-        $zone_id = DB::table('zones')
+    // Gestion des différents formats possibles pour $office_name
+
+    $clean_office_name = is_string($office_name) ? trim(str_replace(["\n","\r","\t"], '', $office_name)) : '';
+    $validator_officename = null;
+
+    // Cas où l'office_name contient un séparateur de zone - agence
+    if (strpos($clean_office_name, ' - ') !== false) {
+        $validator_officename = explode(' - ', $clean_office_name)[0];
+    } elseif (strpos($clean_office_name, '-') !== false) {
+        $validator_officename = explode('-', $clean_office_name)[0];
+    } else {
+        // Si $office_name est un nom composé comme "ANKADIKELY ILAFY", "PORT BERGER", etc.
+        // On cherche d'abord directement une zone avec ce nom proprement formaté
+        $zone = DB::table('zones')
             ->select('id')
             ->whereRaw("REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?", [$clean_office_name])
             ->first();
-        
-        $get_agences = DB::table('agences')
-            ->where('zone_id', $zone_id->id)
-            ->get();
-    
-        # __add the agences to the allowed_offices array__
-        $validator_officename = $get_agences->pluck('nom')->toArray();
+
+        if ($zone && isset($zone->id)) {
+            // Le nom correspond à une zone, on va chercher toutes les agences de cette zone
+            $get_agences = DB::table('agences')
+                ->where('zone_id', $zone->id)
+                ->pluck('nom')
+                ->toArray();
+
+            $validator_officename = $get_agences; // Un array d'agences associées à la zone trouvée
+        } else {
+            // Pas une zone, ça doit être une agence: on cherche alors l’agence du même nom directement
+            $agence = DB::table('agences')
+                ->select('nom')
+                ->whereRaw("REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?", [$clean_office_name])
+                ->first();
+
+            if ($agence && isset($agence->nom)) {
+                $validator_officename = $agence->nom;
+            } else {
+                // Si introuvable, par sécurité, on assigne la valeur brute (nom composé ou inconnu)
+                $validator_officename = $clean_office_name;
+            }
+        }
     }
 
 
