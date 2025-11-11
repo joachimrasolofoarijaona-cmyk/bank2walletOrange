@@ -64,14 +64,20 @@ class subscribeValidationController extends Controller
         # Récupération de toutes les clés existantes dans Subscription
         $active_keys = Subscription::pluck('key')->toArray();
 
+        // Déterminer la clé de zone de référence: parent_name si disponible, sinon officeName
         $validator_officename = session('officeName');
+        $validator_parentname = session('parent_name');
+        $zoneLookupName = $validator_parentname ?: $validator_officename;
         # Ajout d'une information "active" à chaque validation
         foreach ($validations as $validation) {
             $validation->active = in_array($validation->key, $active_keys);
         }
         $get_zone_id = DB::table('zones')
             ->select('id')
-            ->whereRaw("REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?", $validator_officename)
+            ->whereRaw(
+                "REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?",
+                $zoneLookupName
+            )
             ->first();
 
         $allowed_offices = [];

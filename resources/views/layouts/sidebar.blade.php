@@ -350,16 +350,20 @@
     @php
     $permission = "";
     foreach (session('selectedRoles') as $role) {
-    if($role['name'] === 'CREATION PRET' || $role['name'] === 'CREATION CLIENT_2'){
+    if($role['name'] === 'CREATION PRET' || $role['name'] === 'CREATION CLIENT_2' || $role['name'] === 'GESTION TENUE DE CAISSE NORMALE' ){
     $permission = 'cc';
     break;
     }
-    elseif ($role['name'] === 'APPROBATION 1 du PRET' || $role['name'] === 'APPROBATION 2 du PRET') {
+    elseif ($role['name'] === 'APPROBATION 1 du PRET' || $role['name'] === 'APPROBATION 2 du PRET' || $role['name'] === 'CHEF DAGENCE' || $role['name'] === 'DIRECTEUR DE RESEAU DAGENCES') {
     $permission = 'val';
     break;
-    } elseif ( $role['name'] === 'Super user' || $role['name'] === 'DIRECTEUR' || $role['name'] === 'INFORMATIQUE' || $role['name'] === 'CHEF DAGENCE' || $role['name'] === 'SUPER ADMIN' || $role['name'] === 'Approbation Retraits (C.O)') {
+    } elseif ( $role['name'] === 'Super user' || $role['name'] === 'INFORMATIQUE' || $role['name'] === 'SUPER ADMIN' || $role['name'] === 'DIRECTEUR') {
     $permission = 'admin';
     break;
+    }
+    elseif ($role['name'] === 'Approbation Retraits (C.O)' || $role['name'] === 'CONTROLEUR OPERATIONNEL') {
+        $permission = 'control';
+        break;
     }
     }
     @endphp
@@ -448,7 +452,7 @@
             </a>
         </nav>
 
-        @elseif($permission === 'val')
+        @elseif($permission === 'val' || $permission === 'control')
         <nav class="nav flex-column text-uppercase fw-bold">
             <a class="nav-link active" href="{{route('show.index')}}">
                 <i class="ri-home-line"></i>

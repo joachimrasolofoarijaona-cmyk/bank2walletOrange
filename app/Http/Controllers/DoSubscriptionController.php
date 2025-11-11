@@ -303,6 +303,35 @@ class DoSubscriptionController extends Controller
             ->select('key')
             ->where('key', $key)
             ->first();
+        
+
+        # __get the zone id from the office name__
+        $office_name = session('officeName');
+        $parent_office = session('parent_name');
+
+        # __Resolve zone id using parent office when available (fallback to office name)__
+        $zoneLookupName = $parent_office ?: $office_name;
+        $zoneLookupName = is_string($zoneLookupName) ? trim($zoneLookupName) : '';
+        
+        if(count(explode(' - ', $zoneLookupName)) > 1) {
+            $office = explode(' - ', $zoneLookupName)[0];
+        }elseif(count(explode('-', $zoneLookupName)) > 1) {
+            $office = explode('-', $zoneLookupName)[0];
+        }else{
+            dd("Aucune ville trouvée");
+        }
+       
+        $get_zone_id = DB::table('agences')
+            ->select('zone_id')
+            ->where('nom', $office)
+            ->first();
+
+        $get_zone_name = DB::table('zones')
+            ->select('nom')
+            ->where('id', $get_zone_id->zone_id)
+            ->first();
+        $zone_name = $get_zone_name->nom;
+
 
         # __check if the account is already subscribed__
         if (isset($account_subscribed) &&  $account_subscribed->account_status == "1") {
@@ -346,7 +375,7 @@ class DoSubscriptionController extends Controller
                 $validation->request_type = "SOUSCRIPTION";
                 $validation->motif = "SOUSCRIPTION";
                 $validation->request_status = "1";
-
+                $validation->zone = $zone_name;
 
                 $validation->save();
             } catch (\Exception $e) {

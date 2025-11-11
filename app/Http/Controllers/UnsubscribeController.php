@@ -107,9 +107,38 @@ class UnsubscribeController extends Controller
 
         # Récupération de l'alias depuis la base de donnée
         $get_sub_client = DB::table('subscription')
-            ->select('client_id', 'account_no', 'msisdn', 'alias', 'code_service', 'key', 'date_sub', 'bank_agent', 'account_status', 'libelle', 'officeName', 'mobile_no', 'client_cin', 'client_lastname', 'client_firstname', 'client_dob')
+            ->select('client_id', 'account_no', 'msisdn', 'alias', 'code_service', 'key', 'date_sub', 'bank_agent', 'account_status', 'libelle', 'mobile_no', 'client_cin', 'client_lastname', 'client_firstname', 'client_dob')
             ->where('account_no', $account_no)
             ->first();
+        $office_name = session('officeName');
+        $parent_office = session('parent_name');
+
+        # __Resolve zone id using parent office when available (fallback to office name)__
+        $zoneLookupName = $parent_office ?: $office_name;
+        $zoneLookupName = is_string($zoneLookupName) ? trim($zoneLookupName) : '';
+        $zone_id = null;
+        
+        if(count(explode(' - ', $zoneLookupName)) > 1) {
+            $office = explode(' - ', $zoneLookupName)[0];
+        }elseif(count(explode('-', $zoneLookupName)) > 1) {
+            $office = explode('-', $zoneLookupName)[0];
+        }else{
+            dd("Aucune ville trouvée");
+        }
+       
+
+
+        $get_zone_id = DB::table('agences')
+            ->select('zone_id')
+            ->where('nom', $office)
+            ->first();
+
+        $get_zone_name = DB::table('zones')
+            ->select('nom')
+            ->where('id', $get_zone_id->zone_id)
+            ->first();
+        $zone_name = $get_zone_name->nom;
+
 
         # Create a ticket number 
         $last_record = Validation::latest()->first();
@@ -130,30 +159,30 @@ class UnsubscribeController extends Controller
 
             # Vérification si la demande existe déjà dans la table validation
 
-                $validation = new Validation();
-                $validation->client_id = $get_sub_client->client_id;
-                $validation->mobile_no = $get_sub_client->msisdn;
-                $validation->om_lastname = $get_sub_client->client_lastname;
-                $validation->om_firstname = $get_sub_client->client_firstname;
-                $validation->om_birthdate = $get_sub_client->client_dob;
-                $validation->om_cin = $get_sub_client->client_cin;
-                $validation->office_name = $get_sub_client->officeName;
-                $validation->bank_agent = $get_user_name;
-                $validation->status = "0";
-                $validation->key = $get_sub_client->key;
-                $validation->ticket = $ticket;
-                $validation->account_no = $account_no;
-                $validation->code_service = $get_sub_client->code_service;
-                $validation->client_cin = $get_sub_client->client_cin;;
-                $validation->client_firstname = $get_sub_client->client_firstname;
-                $validation->client_lastname = $get_sub_client->client_lastname;
-                $validation->client_dob = $get_sub_client->client_dob;
-                $validation->motif = $motif;
-                $validation->request_type = "RESILIATION";
-                $validation->origin = $origin;
+            $validation = new Validation();
+            $validation->client_id = $get_sub_client->client_id;
+            $validation->mobile_no = $get_sub_client->msisdn;
+            $validation->om_lastname = $get_sub_client->client_lastname;
+            $validation->om_firstname = $get_sub_client->client_firstname;
+            $validation->om_birthdate = $get_sub_client->client_dob;
+            $validation->om_cin = $get_sub_client->client_cin;
+            $validation->office_name = $office_name;
+            $validation->bank_agent = $get_user_name;
+            $validation->status = "0";
+            $validation->key = $get_sub_client->key;
+            $validation->ticket = $ticket;
+            $validation->account_no = $account_no;
+            $validation->code_service = $get_sub_client->code_service;
+            $validation->client_cin = $get_sub_client->client_cin;;
+            $validation->client_firstname = $get_sub_client->client_firstname;
+            $validation->client_lastname = $get_sub_client->client_lastname;
+            $validation->client_dob = $get_sub_client->client_dob;
+            $validation->motif = $motif;
+            $validation->request_type = "RESILIATION";
+            $validation->origin = $origin;
+            $validation->zone = $zone_name;
 
-                $validation->save();
-
+            $validation->save();
         } catch (\Exception $e) {
             Log::error("Erreur lors l'enregistrement de la requête : " . $e->getMessage());
             return redirect()->back()->with('error', "Erreur lors l'enregistrement de la requête.");
@@ -329,7 +358,6 @@ class UnsubscribeController extends Controller
                         'motif' => $motif,
                         'unsub_date' => $date_unsub,
                     ]);
-
                 } catch (\Exception $e) {
                     Log::error("Erreur lors de la requête BDD : " . $e->getMessage());
                     return redirect()->back()->with('error', 'Erreur lors de la requête BDD.');
