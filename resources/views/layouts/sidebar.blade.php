@@ -354,7 +354,7 @@
     $permission = 'cc';
     break;
     }
-    elseif ($role['name'] === 'APPROBATION 1 du PRET' || $role['name'] === 'APPROBATION 2 du PRET' || $role['name'] === 'CHEF DAGENCE' || $role['name'] === 'DIRECTEUR DE RESEAU DAGENCES') {
+    elseif ($role['name'] === 'APPROBATION 1 du PRET' || $role['name'] === 'APPROBATION 2 du PRET' || $role['name'] === 'CHEF DAGENCE' || $role['name'] === 'DIRECTEUR DE RESEAU DAGENCES' || $role['name'] === 'APPROBATION 1 DU PRET_2') {
     $permission = 'val';
     break;
     } elseif ( $role['name'] === 'Super user' || $role['name'] === 'INFORMATIQUE' || $role['name'] === 'SUPER ADMIN' || $role['name'] === 'DIRECTEUR') {
