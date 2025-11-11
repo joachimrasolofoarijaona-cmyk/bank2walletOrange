@@ -157,8 +157,16 @@
 
                     {{-- if user is VALIDATOR --}}
                     @if($access === 3)
+                    @php
+                        // Palette de couleurs
+                        $colorText = "#212529";
+                        $colorPrimary = "#00574A";
+                        $colorAccent = "#50c2bb";
+                        $tdStyle = "font-size: 14pt;";
+                        $spanStyle = "font-size: 14pt;";
+                    @endphp
                     <div class="container-fluid table-responsive">
-                        <table class="table table-hover" id="validation_table" style="font-size: 9pt;">
+                        <table class="table table-hover" id="validation_table" style="font-size: 14pt;">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col"><strong>N° Demande</strong></th>
@@ -186,91 +194,95 @@
 
                                     <tr {{$hidden}}>
                                         @if(\Carbon\Carbon::parse($validation->created_at)->format('Y-m-d') === $current_date)
-                                        <td>
+                                        <td style="{{ $tdStyle }}">
                                             <strong>
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <a href="" class="nav-link mb-0 p-0"> {{$validation->ticket}}</a>
-                                                    <span class="badge bg-success">New</span>
+                                                    <a href="" class="nav-link mb-0 p-0" style="color: {{ $colorPrimary }};"> {{$validation->ticket}}</a>
+                                                    <span class="badge rounded-pill" style="background: {{ $colorAccent }}; color:#fff; {{ $spanStyle }}">New</span>
                                                 </div>
                                             </strong>
                                         </td>
                                         @else
-                                        <td>
+                                        <td style="{{ $tdStyle }}">
                                             <div class="d-flex align-items-center gap-2">
-                                                <strong><a href="" class="nav-link">{{$validation->ticket}} - test</a></strong>
+                                                <strong><a href="" class="nav-link" style="color: {{ $colorPrimary }};">{{$validation->ticket}} - test</a></strong>
                                             </div>
                                         </td>
                                         @endif
 
-                                        <td>{{$validation->created_at}}</td>
-                                        <td><strong>{{$validation->request_type}}</strong></td>
-                                        <td>{{$validation->mobile_no}}</td>
-                                        <td>{{$validation->account_no}}</td>
-                                        <td>{{$validation->key}}</td>
-                                        <td>{{$validation->office_name}}</td>
-                                        <td>{{$validation->bank_agent}}</td>
+                                        <td style="{{ $tdStyle }}">{{$validation->created_at}}</td>
+                                        <td style="{{ $tdStyle }}"><strong style="color: {{ $colorPrimary }};">{{$validation->request_type}}</strong></td>
+                                        <td style="{{ $tdStyle }}"><span style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{$validation->mobile_no}}</span></td>
+                                        <td style="{{ $tdStyle }}"><span style="color: {{ $colorAccent }}; {{ $spanStyle }}">{{$validation->account_no}}</span></td>
+                                        <td style="{{ $tdStyle }}"><code style="color: {{ $colorPrimary }}; {{ $spanStyle }}">{{$validation->key}}</code></td>
+                                        <td style="{{ $tdStyle }}">
+                                            <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{$validation->office_name}}</span>
+                                        </td>
+                                        <td style="{{ $tdStyle }}">
+                                            <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}"><i class="ri-user-line"></i> {{$validation->bank_agent}}</span>
+                                        </td>
 
                                         @if($validation->status === "0")
                                         {{-- Activate modal --}}
-                                        <td>
+                                        <td style="{{ $tdStyle }}">
                                             <!-- Bouton pour ouvrir le modal -->
-                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
+                                            <button type="button" class="btn btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}">
                                                 Détails
                                             </button>
                                             <!-- Modal -->
                                             <div class="modal fade" id="{{ $modalId }}" tabindex="-1" role="dialog" aria-labelledby="{{ $modalId }}Label" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
-                                                        <div class="modal-header bg-dark">
+                                                        <div class="modal-header" style="background: {{ $colorPrimary }}; color:#fff;">
                                                             <h5 class="modal-title" id="{{ $modalId }}Label">Détails de la demande</h5>
-                                                            <button type="button" class="btn-close " data-dismiss="modal" aria-label="Fermer" style="color:white;">
+                                                            <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Fermer">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <form action="{{route('do.validation')}}" method="POST">
                                                             @csrf
-                                                            <div class="modal-body bg-dark">
-                                                                <div class="alert alert-warning" role="alert">
+                                                            <div class="modal-body" style="background: #f8f9fa;">
+                                                                <div class="alert rounded-pill" role="alert" style="background: {{ $colorAccent }}; color:#fff; border:none;">
                                                                     <i class="ri-alert-line"></i>
                                                                     Merci de revérifier les informations client avant toute validation
                                                                 </div>
                                                                 <div class="text-left">
-                                                                    <small>Demande</small>
+                                                                    <small style="color: {{ $colorPrimary }}; font-weight:bold;">Demande</small>
                                                                     <ul class="list-group">
-                                                                        <li class="list-group-item list-group-item-secondary"><strong>Type de demande : </strong> {{$validation->request_type}}</li>
-                                                                        <li class="list-group-item list-group-item-secondary"><strong>Référence : </strong>{{ $validation->ticket }}</li>
-                                                                        <li class="list-group-item list-group-item-secondary"><strong>Demandeur : </strong>{{$validation->bank_agent}}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorPrimary }};"><strong>Type de demande : </strong> {{$validation->request_type}}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorPrimary }};"><strong>Référence : </strong>{{ $validation->ticket }}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorPrimary }};"><strong>Demandeur : </strong>{{$validation->bank_agent}}</li>
                                                                         @if($validation->request_type === 'RESILIATION')
-                                                                        <li class="list-group-item list-group-item-secondary"><strong>Motif de la demande : </strong>{{ $validation->motif }}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorPrimary }};"><strong>Motif de la demande : </strong>{{ $validation->motif }}</li>
                                                                         @endif
                                                                     </ul>
                                                                     <hr>
-                                                                    <small>Détails client</small>
+                                                                    <small style="color: {{ $colorPrimary }}; font-weight:bold;">Détails client</small>
                                                                     <ul class="list-group">
-                                                                        <li class="list-group-item list-group-item-primary"><strong>N° Mobile :</strong> {{$validation->mobile_no}}</li>
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Nom et prénoms : </strong>{{$validation->om_lastname}} {{$validation->om_firstname}}</li>
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Date de naissance : </strong>{{$validation->client_dob}}</li>
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Carte d'identité : </strong>{{$validation->om_cin}}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorAccent }};"><strong>N° Mobile :</strong> {{$validation->mobile_no}}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorAccent }};"><strong>Nom et prénoms : </strong>{{$validation->om_lastname}} {{$validation->om_firstname}}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorAccent }};"><strong>Date de naissance : </strong>{{$validation->client_dob}}</li>
+                                                                        <li class="list-group-item" style="background: #f8f9fa; border:1px solid {{ $colorAccent }};"><strong>Carte d'identité : </strong>{{$validation->om_cin}}</li>
                                                                     </ul>
                                                                 </div>
                                                                 <hr>
                                                                 <div class="form-group text-left">
-                                                                    <label for="validation"><small>État de validation</small></label>
-                                                                    <select name="validation" id="validation" class="form-select" required>
+                                                                    <label for="validation" style="color: {{ $colorText }};"><small>État de validation</small></label>
+                                                                    <select name="validation" id="validation" class="form-select" required style="border:1px solid {{ $colorPrimary }};">
                                                                         <option value="1">Validé</option>
                                                                         <option value="2">Refusé</option>
                                                                     </select>
                                                                 </div>
                                                                 <hr>
                                                                 <div class="form-group text-left">
-                                                                    <label for="commentaire"><small>Commentaires <i><strong>(10 caractères min)</strong></i></small></label>
-                                                                    <textarea class="form-control" name="commentaire" rows="3" minlength="10" required></textarea>
+                                                                    <label for="commentaire" style="color: {{ $colorText }};"><small>Commentaires <i><strong>(10 caractères min)</strong></i></small></label>
+                                                                    <textarea class="form-control" name="commentaire" rows="3" minlength="10" required style="border:1px solid {{ $colorPrimary }};"></textarea>
                                                                 </div>
                                                             </div>
-                                                            <div class="modal-footer bg-dark">
-                                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                            <div class="modal-footer" style="background: #f8f9fa;">
+                                                                <button type="button" class="btn btn-sm rounded-pill px-3" data-bs-dismiss="modal" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent;">Fermer</button>
                                                                 <input type="hidden" name="ticket" value="{{$validation->ticket}}">
-                                                                <button type="submit" class="btn btn-outline-danger">Valider</button>
+                                                                <button type="submit" class="btn btn-sm rounded-pill px-3" style="background: {{ $colorPrimary }}; color:#fff; border:none;">Valider</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -278,12 +290,16 @@
                                             </div>
                                         </td>
                                         @elseif($validation->status === "3")
-                                        <td style="color : red;"><span class="badge bg-danger">Refusé</span></td>
+                                        <td style="{{ $tdStyle }}">
+                                            <span class="badge rounded-pill px-3 py-1" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}">Refusé</span>
+                                        </td>
                                         @else
-                                        <td style="color : red;"><span class="badge bg-success">Validé</span></td>
+                                        <td style="{{ $tdStyle }}">
+                                            <span class="badge rounded-pill px-3 py-1" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}">Validé</span>
+                                        </td>
                                         @endif
 
-                                        <td>{{ $validation->motif_validation }}</td>
+                                        <td style="{{ $tdStyle }}"><span style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -293,28 +309,24 @@
                         <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header 
-                                                @if(session('success')) bg-success 
-                                                @elseif(session('info')) bg-info 
-                                                @else bg-secondary 
-                                                @endif text-white">
+                                    <div class="modal-header text-white" style="@if(session('success')) background: {{ $colorPrimary }}; @elseif(session('info')) background: {{ $colorAccent }}; @else background: {{ $colorText }}; @endif">
                                         <h5 class="modal-title" id="feedbackModalLabel">
                                             @if(session('success')) Succès
                                             @elseif(session('info')) Information
                                             @else Notification
                                             @endif
                                         </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                     </div>
-                                    <div class="modal-body bg-dark">
+                                    <div class="modal-body" style="background: #f8f9fa;">
                                         @if(session('success'))
                                         {{ session('success') }}
                                         @elseif(session('info'))
                                         {{ session('info') }}
                                         @endif
                                     </div>
-                                    <div class="modal-footer bg-dark">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                    <div class="modal-footer" style="background: #f8f9fa;">
+                                        <button type="button" class="btn btn-sm rounded-pill px-3" data-bs-dismiss="modal" style="background: {{ $colorPrimary }}; color:#fff; border:none;">Fermer</button>
                                     </div>
                                 </div>
                             </div>
@@ -333,8 +345,16 @@
 
                     {{-- if user is SUPER ADMIN --}}
                     @elseif($access === 2)
+                    @php
+                        // Palette de couleurs
+                        $colorText = "#212529";
+                        $colorPrimary = "#00574A";
+                        $colorAccent = "#50c2bb";
+                        $tdStyle = "font-size: 14pt;";
+                        $spanStyle = "font-size: 14pt;";
+                    @endphp
                     <div class="container-fluid table-responsive">
-                        <table class="table table-hover" id="validation_table" style="font-size: 9pt;">
+                        <table class="table table-hover" id="validation_table" style="font-size: 14pt;">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col"><strong>N° Demande</strong></th>
@@ -358,40 +378,49 @@
                                 @endphp
                                 <tr {{$hidden}}>
                                     @if(\Carbon\Carbon::parse($validation->created_at)->format('Y-m-d') === $current_date)
-                                    <td>
+                                    <td style="{{ $tdStyle }}">
                                         <strong>
                                             <div class="d-flex align-items-center gap-2">
-                                                <a href="" class="nav-link mb-0 p-0"> {{$validation->ticket}} </a>
-                                                <span class="badge bg-success">New</span>
+                                                <a href="" class="nav-link mb-0 p-0" style="color: {{ $colorPrimary }};"> {{$validation->ticket}} </a>
+                                                <span class="badge rounded-pill" style="background: {{ $colorAccent }}; color:#fff; {{ $spanStyle }}">New</span>
                                             </div>
                                         </strong>
                                     </td>
                                     @else
-                                    <td>
+                                    <td style="{{ $tdStyle }}">
                                         <div class="d-flex align-items-center gap-2">
-                                            <strong><a href="" class="nav-link">{{$validation->ticket}}</a></strong>
+                                            <strong><a href="" class="nav-link" style="color: {{ $colorPrimary }};">{{$validation->ticket}}</a></strong>
                                         </div>
                                     </td>
                                     @endif
 
-                                    <td>{{$validation->created_at}}</td>
-                                    <td><strong>{{$validation->request_type}}</strong></td>
-                                    <td>{{$validation->mobile_no}}</td>
-                                    <td>{{$validation->account_no}}</td>
-                                    <td>{{$validation->key}}</td>
-                                    <td>{{$validation->office_name}}</td>
-                                    <td>{{$validation->bank_agent}}</td>
+                                    <td style="{{ $tdStyle }}">{{$validation->created_at}}</td>
+                                    <td style="{{ $tdStyle }}"><strong style="color: {{ $colorPrimary }};">{{$validation->request_type}}</strong></td>
+                                    <td style="{{ $tdStyle }}"><span style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{$validation->mobile_no}}</span></td>
+                                    <td style="{{ $tdStyle }}"><span style="color: {{ $colorAccent }}; {{ $spanStyle }}">{{$validation->account_no}}</span></td>
+                                    <td style="{{ $tdStyle }}"><code style="color: {{ $colorPrimary }}; {{ $spanStyle }}">{{$validation->key}}</code></td>
+                                    <td style="{{ $tdStyle }}">
+                                        <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{$validation->office_name}}</span>
+                                    </td>
+                                    <td style="{{ $tdStyle }}">
+                                        <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}"><i class="ri-user-line"></i> {{$validation->bank_agent}}</span>
+                                    </td>
 
                                     @if($validation->status === "0")
-                                    <td style="color : red;"><span class="badge bg-warning">Pending</span></td>
+                                    <td style="{{ $tdStyle }}">
+                                        <span class="badge rounded-pill px-3 py-1" style="background: {{ $colorAccent }}; color:#fff; {{ $spanStyle }}">Pending</span>
                                     </td>
                                     @elseif($isRefused)
-                                    <td style="color : red;"><span class="badge bg-danger">Refusé</span></td>
+                                    <td style="{{ $tdStyle }}">
+                                        <span class="badge rounded-pill px-3 py-1" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}">Refusé</span>
+                                    </td>
                                     @else
-                                    <td style="color : red;"><span class="badge bg-success">Validé</span></td>
+                                    <td style="{{ $tdStyle }}">
+                                        <span class="badge rounded-pill px-3 py-1" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}">Validé</span>
+                                    </td>
                                     @endif
 
-                                    <td>{{ $validation->motif_validation }}</td>
+                                    <td style="{{ $tdStyle }}"><span style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -416,7 +445,30 @@
                                     <th scope="col">Commentaires</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody style="background-color: #f8fafb;">
+                                @php
+                                    // Définition thèmes couleur table (navbar): #212529 (titre/texte sombre), #00574A (colonne/ligne/bloc vert foncé), #50c2bb (colonne/ligne/accent vert clair)
+                                    $tablePrimary = '#00574A';
+                                    $tableAccent = '#50c2bb';
+                                    $tableHeader = '#212529';
+
+                                    $typeColors = [
+                                        'SOUSCRIPTION' => ['primary', 'ri-check-double-line'],
+                                        'RESILIATION'  => ['danger', 'ri-close-circle-line'],
+                                    ];
+                                @endphp
+
+                                @if (!function_exists('badge'))
+                                    @php
+                                        // Badge conserve l'icône SAUF pour colonne Statut (managé plus bas).
+                                        function badge($text, $color = 'secondary', $icon = null, $pill = true, $extra = '') {
+                                            $pillClass = $pill ? 'rounded-pill' : '';
+                                            $iconHtml = $icon ? '<i class="'.$icon.' me-1"></i>' : '';
+                                            return '<span class="badge '.$pillClass.' bg-'.$color.' '.$extra.'">'.$iconHtml.$text.'</span>';
+                                        }
+                                    @endphp
+                                @endif
+
                                 @foreach($validations as $validation)
                                     @php
                                         $hidden = in_array($validation->office_name, $allowed_offices) ? '' : 'hidden';
@@ -424,157 +476,239 @@
                                         $isSouscription = $validation->request_type === 'SOUSCRIPTION';
                                         $isResiliation = $validation->request_type === 'RESILIATION';
 
-                                        $isValidationPending = $validation->status === "0"; // demande en attente de validation
-                                        $isValidated = $validation->status === "1"; // demande validée
-                                        $isRefused = $validation->status === "2"; // Demande refusée
+                                        $isValidationPending = $validation->status === "0";
+                                        $isValidated = $validation->status === "1";
+                                        $isRefused = $validation->status === "2";
                                         $validation->active = in_array($validation->key, $active_keys);
-                                        
 
-                                        $isActiveInSubscription = $validation->active;
-
-                                        # function to check if account already subscribed
                                         $account_subscribed = DB::table('subscription')
                                             ->select('account_status')
                                             ->where('account_no', $validation->account_no)
                                             ->first();
-                                        
-                                        # Check if sub or not pr
+
                                         $subscribed = true;
 
-                                        if($account_subscribed === null || $account_subscribed === '0'){
+                                        if ($account_subscribed === null || $account_subscribed === '0') {
                                             $subscribed = false;
                                         }
-                                        
+
+                                        // Styles unifiés
+                                        $tdStyle = "font-size: 9pt;";
+                                        $spanStyle = "font-size: 9pt;";
+                                        $codeStyle = "font-size: 9pt;";
+
+                                        // Palette
+                                        $colorText = "#212529";   // Texte / neutre
+                                        $colorPrimary = "#00574A"; // Principal
+                                        $colorAccent = "#50c2bb";  // Accent
                                     @endphp
 
-                                    {{-- Cas 1 : si SOUSCRIPTION en attente de validation --}}
-                                    @if($validation->request_type === 'SOUSCRIPTION' && $validation->status === "0" && $hidden === '')
-                                        <tr>
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td><span class="badge bg-warning text-dark">En attente validation</span></td>
-                                            <td>{{ $validation->motif_validation }}</td>
+                                    {{-- SOUSCRIPTION - EN ATTENTE --}}
+                                    @if($isSouscription && $isValidationPending && $hidden === '')
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorPrimary }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}"><i class="ri-check-double-line"></i> SOUSCRIPTION</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span style="color: {{ $colorAccent }}; {{ $spanStyle }}" class="fw-normal">{{ $validation->account_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <code class="fw-bold" style="color: {{ $colorPrimary }}; {{ $codeStyle }}">{{ $validation->key }}</code>
+                                                @if($validation->active)
+                                                    <span class="badge rounded-pill ms-1" title="Déjà activée" style="background: {{ $colorAccent }}; color:#fff; {{ $spanStyle }}"><i class="ri-flashlight-line"></i></span>
+                                                @endif
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}"><i class="ri-user-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-3 py-1 fw-normal" style="background: {{ $colorAccent }}; color:#fff; {{ $spanStyle }}">En attente</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                         </tr>
 
-                                    {{-- Cas 2 : si SOUSCRIPTION, VALIDEE, mais pas encore activée et pas encore souscrit --}}
+                                    {{-- SOUSCRIPTION VALIDÉE non activée --}}
                                     @elseif($isSouscription && $isValidated && $subscribed === true && $validation->final_status === null && $hidden === "")
-                                        <tr>    
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td>
-                                                <form action="{{ route('activate.service') }}" method="POST">
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorPrimary }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}"><i class="ri-check-double-line"></i> SOUSCRIPTION</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="fw-normal" style="color: {{ $colorPrimary }}; {{ $spanStyle }}">{{ $validation->account_no }}</span></td>
+                                            <td style="{{ $tdStyle }}"><code class="fw-bold" style="color: {{ $colorPrimary }}; {{ $codeStyle }}">{{ $validation->key }}</code></td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}"><i class="ri-user-star-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <form action="{{ route('activate.service') }}" method="POST" class="mb-0 d-flex flex-column align-items-center">
                                                     @csrf
                                                     <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
                                                     <input type="hidden" name="mobile_no" value="{{ $validation->mobile_no }}">
                                                     <input type="hidden" name="key" value="{{ $validation->key }}">
                                                     <input type="hidden" name="account_no" value="{{ $validation->account_no }}">
-
-                                                    <button type="submit" class="btn btn-outline-success">Activer</button>
+                                                    <button type="submit" class="btn btn-sm rounded-pill px-4" title="Activer cette souscription" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}">
+                                                        <i class="ri-flashlight-line"></i> Activer
+                                                    </button>
                                                 </form>
                                             </td>
-                                            <td>{{ $validation->motif_validation }}</td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                         </tr>
-
-                                    {{-- Cas 3 : RESILIATION en attente de validation --}}
+                                    
+                                    {{-- RESILIATION - EN ATTENTE --}}
                                     @elseif($isResiliation && $isValidationPending && $hidden === '')
-                                        <tr>
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td><span class="badge bg-warning text-dark">En attente validation</span></td>
-                                            <td>{{ $validation->motif_validation }}</td>
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorText }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-close-circle-line"></i> RESILIATION</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->account_no }}</span></td>
+                                            <td style="{{ $tdStyle }}"><code class="fw-bold" style="color: {{ $colorText }}; {{ $codeStyle }}">{{ $validation->key }}</code></td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}"><i class="ri-user-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-3 py-1 fw-normal" style="background: {{ $colorAccent }}; color:#fff; {{ $spanStyle }}">En attente</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                         </tr>
 
-                                    {{-- Cas 4 : RESILIATION validée mais pas encore exécutée --}}
+                                    {{-- RESILIATION - VALIDATION --}}
                                     @elseif($isResiliation && $isValidated && $validation->active && $validation->final_status === null && $hidden === '')
-                                        <tr>
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td>
-                                                <form action="{{route('do.unsubscribe')}}" method="POST">
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorText }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-close-circle-line"></i> RESILIATION</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->account_no }}</span></td>
+                                            <td style="{{ $tdStyle }}"><code class="fw-bold" style="color: {{ $colorText }}; {{ $codeStyle }}">{{ $validation->key }}</code></td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}"><i class="ri-user-star-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <form action="{{route('do.unsubscribe')}}" method="POST" class="mb-0 d-flex flex-column align-items-center">
                                                     @csrf
                                                     <input type="hidden" name="ticket" value="{{ $validation->ticket }}">
                                                     <input type="hidden" name="key" value="{{ $validation->key }}">
                                                     <input type="hidden" name="account_no" value="{{ $validation->account_no }}">
                                                     <input type="hidden" name="msisdn" value="{{ $validation->mobile_no }}">
-                                                    <button type="submit" class="btn btn-outline-danger">Résilier</button>
+                                                    <button type="submit" class="btn btn-sm rounded-pill px-4" title="Résilier ce compte" style="border:1px solid {{ $colorText }}; color: {{ $colorText }}; background: transparent; {{ $spanStyle }}">
+                                                        <i class="ri-close-circle-line"></i> Résilier
+                                                    </button>
                                                 </form>
                                             </td>
-                                            <td>{{ $validation->motif_validation }}</td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
+                                        </tr>
+                                    
+                                    {{-- SOUSCRIPTION REFUSÉE --}}
+                                    @elseif($isSouscription && $isRefused && $hidden === '')
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorText }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-close-circle-line"></i> SOUSCRIPTION</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->account_no }}</span></td>
+                                            <td style="{{ $tdStyle }}"><code class="fw-bold" style="color: {{ $colorText }}; {{ $codeStyle }}">{{ $validation->key }}</code></td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-user-close-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-3 py-1 fw-bold" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}">Refusé</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                         </tr>
 
-                                    {{-- Cas 5 : SOUSCRIT ou RELISIE ET REFUSE --}}
-                                    @elseif($isSouscription && $isRefused && $hidden === '')
-                                        <tr>
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong>{{ $validation->request_type }}</strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td style="color: red;">Refusé</td>
-                                            <td>{{ $validation->motif_validation }}</td>
-                                        </tr>
-                                    
-                                    {{-- Cas 6 : VALIDEE et SOUSCRIT et ACTIVEE --}}
+                                    {{-- SOUSCRIPTION ACTIVÉE --}}
                                     @elseif($isSouscription && $isValidated && $subscribed === true &&  $validation->final_status === 'activated' && $hidden === '')
-                                        <tr>
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong><span class="badge bg-success">{{ $validation->request_type }}</span></strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td><span class="badge bg-success">Souscrit</span></td>
-                                            <td>{{ $validation->motif_validation }}</td>
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorPrimary }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}"><i class="ri-check-double-line"></i> SOUSCRIPTION</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="fw-normal" style="color: {{ $colorPrimary }}; {{ $spanStyle }}">{{ $validation->account_no }}</span></td>
+                                            <td style="{{ $tdStyle }}">
+                                                <code class="fw-bold" style="color: {{ $colorPrimary }}; {{ $codeStyle }}">{{ $validation->key }}</code>
+                                                <span class="badge rounded-pill ms-1" title="Souscription activée" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}"><i class="ri-checkbox-circle-fill"></i></span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}"><i class="ri-user-star-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-3 py-1 fw-bold" style="background: {{ $colorPrimary }}; color:#fff; {{ $spanStyle }}">Souscrit</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorPrimary }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                         </tr>
-                                    
-                                    {{-- Cas 7 : VALIDEE et RESILIEE et INACTIF --}}
+
+                                    {{-- RESILIATION TERMINÉE --}}
                                     @elseif($isResiliation && $isValidated && $account_subscribed->account_status == '0' &&  $validation->final_status === 'resiliated' && $hidden === '')
-                                        <tr>
-                                            <td><strong>{{ $validation->ticket }}</strong></td>
-                                            <td>{{ $validation->created_at }}</td>
-                                            <td>{{ $validation->mobile_no }}</td>
-                                            <td><strong><span class="badge bg-danger">{{ $validation->request_type }}</span></strong></td>
-                                            <td>{{ $validation->account_no }}</td>
-                                            <td>{{ $validation->key }}</td>
-                                            <td>{{ $validation->office_name }}</td>
-                                            <td>{{ $validation->validator }}</td>
-                                            <td><span class="badge bg-danger">Résilié</span></td>
-                                            <td>{{ $validation->motif_validation }}</td>
+                                        <tr class="align-middle border-0">
+                                            <td class="fw-bold" style="color: {{ $colorText }}; {{ $tdStyle }}"><i class="ri-hashtag"></i> {{ $validation->ticket }}</td>
+                                            <td style="{{ $tdStyle }}">{{ \Carbon\Carbon::parse($validation->created_at)->format('d/m/Y H:i') }}</td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}"><i class="ri-smartphone-line opacity-75"></i> {{ $validation->mobile_no }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="badge rounded-pill px-2 py-2 text-uppercase" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-close-circle-line"></i> RESILIATION</span></td>
+                                            <td style="{{ $tdStyle }}"><span class="fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->account_no }}</span></td>
+                                            <td style="{{ $tdStyle }}">
+                                                <code class="fw-bold" style="color: {{ $colorText }}; {{ $codeStyle }}">{{ $validation->key }}</code>
+                                                <span class="badge rounded-pill ms-1" title="Résilié" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-checkbox-circle-fill"></i></span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="border:1px solid {{ $colorPrimary }}; color: {{ $colorPrimary }}; background: transparent; {{ $spanStyle }}"><i class="ri-building-2-line"></i> {{ $validation->office_name }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-2" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}"><i class="ri-user-star-line"></i> {{ $validation->validator }}</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}">
+                                                <span class="badge rounded-pill px-3 py-1 fw-bold" style="background: {{ $colorText }}; color:#fff; {{ $spanStyle }}">Résilié</span>
+                                            </td>
+                                            <td style="{{ $tdStyle }}"><span class="small fw-normal" style="color: {{ $colorText }}; {{ $spanStyle }}">{{ $validation->motif_validation }}</span></td>
                                         </tr>
                                     @endif
                                 @endforeach
                             </tbody>
-
-
                         </table>
                     </div>
                     @endif
