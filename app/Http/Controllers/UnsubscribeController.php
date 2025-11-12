@@ -126,8 +126,6 @@ class UnsubscribeController extends Controller
             dd("Aucune ville trouvée");
         }
        
-
-
         $get_zone_id = DB::table('agences')
             ->select('zone_id')
             ->where('nom', $office)

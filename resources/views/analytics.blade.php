@@ -141,6 +141,61 @@
         </div>
     </div>
 
+    {{-- KPIs pour les 4 types d'opérations --}}
+    <div class="card border-0 shadow-md mb-3">
+        <div class="card-header bg-white border-bottom">
+            <h6 class="fw-bold text-dark mb-0">Opérations par type</h6>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 mt-1">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-md" style="border-left: 4px solid #00574A;">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="me-3"><i class="ri-eye-line" style="color:#00574A; font-size: 24px;"></i></div>
+                            <div>
+                                <p class="text-muted mb-1">Consultation solde</p>
+                                <h3 class="mb-0 fw-bold" style="color: #00574A;">{{ number_format($kpis['balance_consultations'] ?? 0) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-md" style="border-left: 4px solid #50c2bb;">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="me-3"><i class="ri-file-list-line" style="color:#50c2bb; font-size: 24px;"></i></div>
+                            <div>
+                                <p class="text-muted mb-1">Mini relevé</p>
+                                <h3 class="mb-0 fw-bold" style="color: #50c2bb;">{{ number_format($kpis['mini_statements'] ?? 0) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-md" style="border-left: 4px solid #198754;">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="me-3"><i class="ri-arrow-down-line" style="color:#198754; font-size: 24px;"></i></div>
+                            <div>
+                                <p class="text-muted mb-1">Dépôts</p>
+                                <h3 class="mb-0 fw-bold" style="color: #198754;">{{ number_format($kpis['deposits_count'] ?? 0) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card border-0 shadow-md" style="border-left: 4px solid #dc3545;">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="me-3"><i class="ri-arrow-up-line" style="color:#dc3545; font-size: 24px;"></i></div>
+                            <div>
+                                <p class="text-muted mb-1">Retraits</p>
+                                <h3 class="mb-0 fw-bold" style="color: #dc3545;">{{ number_format($kpis['withdrawals_count'] ?? 0) }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mt-3">
         <div class="col-lg-6">
             <div class="card border-0 shadow-md" style="height: 400px;">
@@ -189,6 +244,37 @@
                 </div>
                 <div class="card-body">
                     <canvas id="chartCharges"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Graphique des 4 types d'opérations --}}
+    <div class="row mt-3">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-md" style="height: 400px;">
+                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+                    <h6 class="fw-bold text-dark mb-0">Opérations par type vs. Mois</h6>
+                    <a href="#" id="exportOperationsSeriesBtn" class="btn btn-sm btn-outline-secondary">Exporter série</a>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="chartOperations"></canvas>
+                    </div>
+                    <small class="text-muted">Astuce: cliquez une barre pour voir les détails du mois.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-md" style="height: 400px;">
+                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+                    <h6 class="fw-bold text-dark mb-0">Répartition des opérations</h6>
+                    <a href="#" id="exportOperationsBtn" class="btn btn-sm btn-outline-secondary">Exporter</a>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center">
+                    <div style="width: 200px; height: 200px;">
+                        <canvas id="donutOperations"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -506,6 +592,150 @@
             type: 'line',
             data: { labels: chLabels, datasets: [{ label: 'Charges (MGA)', data: chValues, borderColor: '#08adcf', backgroundColor: '#0dcaf0', fill: true, tension: 0.3 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true }}}
+        });
+
+        // Graphique des 4 types d'opérations
+        const operationsSeries = @json($operationsSeries ?? []);
+        const opLabels = operationsSeries.map(s => s.month);
+        const balanceData = operationsSeries.map(s => s.balance_consultations);
+        const miniData = operationsSeries.map(s => s.mini_statements);
+        const depositsData = operationsSeries.map(s => s.deposits);
+        const withdrawalsData = operationsSeries.map(s => s.withdrawals);
+
+        const opCtx = document.getElementById('chartOperations').getContext('2d');
+        const operationsChart = new Chart(opCtx, {
+            type: 'bar',
+            data: {
+                labels: opLabels,
+                datasets: [
+                    {
+                        label: 'Consultation solde',
+                        data: balanceData,
+                        backgroundColor: '#00574A',
+                        borderRadius: 4,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Mini relevé',
+                        data: miniData,
+                        backgroundColor: '#50c2bb',
+                        borderRadius: 4,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Dépôts',
+                        data: depositsData,
+                        backgroundColor: '#198754',
+                        borderRadius: 4,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Retraits',
+                        data: withdrawalsData,
+                        backgroundColor: '#dc3545',
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Donut répartition des opérations
+        const totalBalance = @json($kpis['balance_consultations'] ?? 0);
+        const totalMini = @json($kpis['mini_statements'] ?? 0);
+        const totalDeposits = @json($kpis['deposits_count'] ?? 0);
+        const totalWithdrawals = @json($kpis['withdrawals_count'] ?? 0);
+        const donutOpCtx = document.getElementById('donutOperations').getContext('2d');
+        new Chart(donutOpCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Consultation solde', 'Mini relevé', 'Dépôts', 'Retraits'],
+                datasets: [{
+                    data: [totalBalance, totalMini, totalDeposits, totalWithdrawals],
+                    backgroundColor: ['#00574A', '#50c2bb', '#198754', '#dc3545'],
+                    borderWidth: 0,
+                    cutout: '60%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Drilldown sur clic barre Opérations
+        const opCanvas = document.getElementById('chartOperations');
+        opCanvas.onclick = async (evt) => {
+            const points = operationsChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+            if (!points.length) return;
+            const p = points[0];
+            const idx = p.index;
+            const dsIdx = p.datasetIndex; // 0: balance, 1: mini, 2: deposits, 3: withdrawals
+            const label = opLabels[idx];
+            const [monStr, yearStr] = label.split(' ');
+            const monthIndex = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(monStr) + 1;
+            const year = parseInt(yearStr, 10);
+            if (!monthIndex || !year) return;
+
+            const operationTypes = ['balance', 'mini_statement', 'deposit', 'withdrawal'];
+            const chosenOpType = operationTypes[dsIdx];
+
+            const formEl = document.querySelector('form[action$="analytics"]');
+            const params = new URLSearchParams(new FormData(formEl));
+            params.set('year', year);
+            params.set('month', monthIndex.toString());
+            params.set('operation_type', chosenOpType);
+            const url = new URL("{{ route('analytics.export.operations') }}", window.location.origin);
+            url.search = params.toString();
+            url.searchParams.set('export', '1');
+
+            // Télécharger directement l'export
+            window.location.href = url.toString();
+        };
+
+        // Configurer les liens d'export
+        const exportOperationsBtn = document.getElementById('exportOperationsBtn');
+        const exportOperationsSeriesBtn = document.getElementById('exportOperationsSeriesBtn');
+        const buildOperationsExportUrl = () => {
+            const params = new URLSearchParams(new FormData(formEl));
+            const url = new URL("{{ route('analytics.export.operations') }}", window.location.origin);
+            url.search = params.toString();
+            exportOperationsBtn.href = url.toString();
+        };
+        const buildOperationsSeriesUrl = () => {
+            const params = new URLSearchParams(new FormData(formEl));
+            const url = new URL("{{ route('analytics.export.operations.series') }}", window.location.origin);
+            url.search = params.toString();
+            exportOperationsSeriesBtn.href = url.toString();
+        };
+        buildOperationsExportUrl();
+        buildOperationsSeriesUrl();
+        formEl.addEventListener('change', () => {
+            buildOperationsExportUrl();
+            buildOperationsSeriesUrl();
         });
 
         // Volumes MGA vs. Mois (si disponible)

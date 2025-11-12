@@ -58,6 +58,23 @@ class AnalyticsController extends Controller
             $unsubsKpiQ->where('office_name', $office);
         }
 
+        // KPIs pour les 4 types d'opérations
+        $balanceQuery = DB::table('get_balance')->whereBetween('created_at', [$startDate, $endDate]);
+        $miniStatementQuery = DB::table('mini_statement')->whereBetween('created_at', [$startDate, $endDate]);
+        $depositsKpiQ = DB::table('transaction')->where('request_type', 'W2A')->whereBetween('created_at', [$startDate, $endDate]);
+        $withdrawalsKpiQ = DB::table('transaction')->where('request_type', 'A2W')->whereBetween('created_at', [$startDate, $endDate]);
+        
+        if ($office) {
+            if (Schema::hasColumn('get_balance', 'office_name')) {
+                $balanceQuery->where('office_name', $office);
+            }
+            if (Schema::hasColumn('mini_statement', 'office_name')) {
+                $miniStatementQuery->where('office_name', $office);
+            }
+            $depositsKpiQ->where('office_name', $office);
+            $withdrawalsKpiQ->where('office_name', $office);
+        }
+
         $kpis = [
             'subscriptions' => $subsKpiQ->count(),
             'unsubscriptions' => $unsubsKpiQ->count(),
@@ -65,10 +82,17 @@ class AnalyticsController extends Controller
             'charges' => (clone $transactionsQuery)->get()->sum(function ($t) {
                 return floatval($t->charge) ?? 0;
             }),
+            'balance_consultations' => $balanceQuery->count(),
+            'mini_statements' => $miniStatementQuery->count(),
+            'deposits_count' => $depositsKpiQ->count(),
+            'withdrawals_count' => $withdrawalsKpiQ->count(),
         ];
 
         // Séries mensuelles 6 mois
         $series = [];
+        // Séries pour les 4 types d'opérations (Consultation solde, Mini relevé, Retrait, Dépôt)
+        $operationsSeries = [];
+        
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
             $month = $date->format('M Y');
@@ -99,11 +123,50 @@ class AnalyticsController extends Controller
                 $monthlyUnsubsQ->where('office_name', $office);
             }
 
+            // Séries pour les 4 types d'opérations
+            $monthlyBalanceQ = DB::table('get_balance')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office && Schema::hasColumn('get_balance', 'office_name')) {
+                $monthlyBalanceQ->where('office_name', $office);
+            }
+
+            $monthlyMiniStatementQ = DB::table('mini_statement')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office && Schema::hasColumn('mini_statement', 'office_name')) {
+                $monthlyMiniStatementQ->where('office_name', $office);
+            }
+
+            $monthlyDepositsQ = DB::table('transaction')
+                ->where('request_type', 'W2A')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office) {
+                $monthlyDepositsQ->where('office_name', $office);
+            }
+
+            $monthlyWithdrawalsQ = DB::table('transaction')
+                ->where('request_type', 'A2W')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office) {
+                $monthlyWithdrawalsQ->where('office_name', $office);
+            }
+
             $series[] = [
                 'month' => $month,
                 'subscriptions' => $monthlySubsQ->count(),
                 'unsubscriptions' => $monthlyUnsubsQ->count(),
                 'transactions' => $monthlyTxQ->count(),
+            ];
+
+            $operationsSeries[] = [
+                'month' => $month,
+                'balance_consultations' => $monthlyBalanceQ->count(),
+                'mini_statements' => $monthlyMiniStatementQ->count(),
+                'deposits' => $monthlyDepositsQ->count(),
+                'withdrawals' => $monthlyWithdrawalsQ->count(),
             ];
         }
 
@@ -267,6 +330,7 @@ class AnalyticsController extends Controller
         return view('analytics', compact(
             'kpis',
             'series',
+            'operationsSeries',
             'period',
             'startStr',
             'endStr',
@@ -590,6 +654,246 @@ class AnalyticsController extends Controller
         );
 
         return $this->streamSeriesCsv($rows, ['libelle', 'total'], 'top_libelles_' . now()->format('Ymd_His') . '.csv');
+    }
+
+    public function exportOperations(Request $request)
+    {
+        [$startDate, $endDate] = $this->resolveDateRange($request);
+        $office = $request->input('office');
+        $operationType = $request->input('operation_type'); // balance, mini_statement, deposit, withdrawal
+
+        $rows = [];
+
+        // Consultation de solde
+        if (!$operationType || $operationType === 'balance') {
+            $balanceQ = DB::table('get_balance')->whereBetween('created_at', [$startDate, $endDate]);
+            if ($office && Schema::hasColumn('get_balance', 'office_name')) {
+                $balanceQ->where('office_name', $office);
+            }
+            $balanceRows = $balanceQ->get();
+            foreach ($balanceRows as $row) {
+                $rows[] = [
+                    'date' => $row->created_at ?? $row->transaction_date ?? '',
+                    'type_operation' => 'Consultation de solde',
+                    'office_name' => $row->office_name ?? $row->officeName ?? '',
+                    'msisdn' => $row->msisdn ?? '',
+                    'account_no' => $row->musoni_account_no ?? $row->account_no ?? '',
+                    'libelle' => $row->libelle ?? '',
+                    'client_lastname' => $row->client_lastname ?? '',
+                    'client_firstname' => $row->client_firstname ?? '',
+                    'operator_code' => $row->operator_code ?? '',
+                    'request_id' => $row->request_id ?? '',
+                    'response_code' => $row->acep_responde_code ?? $row->response_code ?? '',
+                    'response_message' => $row->acep_responde_message ?? $row->response_message ?? '',
+                ];
+            }
+        }
+
+        // Mini relevé
+        if (!$operationType || $operationType === 'mini_statement') {
+            $miniQ = DB::table('mini_statement')->whereBetween('created_at', [$startDate, $endDate]);
+            if ($office && Schema::hasColumn('mini_statement', 'office_name')) {
+                $miniQ->where('office_name', $office);
+            }
+            $miniRows = $miniQ->get();
+            foreach ($miniRows as $row) {
+                $rows[] = [
+                    'date' => $row->created_at ?? $row->transaction_date ?? '',
+                    'type_operation' => 'Mini relevé',
+                    'office_name' => $row->office_name ?? $row->officeName ?? '',
+                    'msisdn' => $row->msisdn ?? '',
+                    'account_no' => $row->musoni_account_no ?? $row->account_no ?? '',
+                    'libelle' => $row->libelle ?? '',
+                    'client_lastname' => $row->client_lastname ?? '',
+                    'client_firstname' => $row->client_firstname ?? '',
+                    'operator_code' => $row->operator_code ?? '',
+                    'request_id' => $row->request_id ?? '',
+                    'response_code' => $row->acep_responde_code ?? $row->response_code ?? '',
+                    'response_message' => $row->acep_responde_message ?? $row->response_message ?? '',
+                ];
+            }
+        }
+
+        // Dépôts (W2A)
+        if (!$operationType || $operationType === 'deposit') {
+            $depositQ = DB::table('transaction')
+                ->where('request_type', 'W2A')
+                ->whereBetween('created_at', [$startDate, $endDate]);
+            if ($office) {
+                $depositQ->where('office_name', $office);
+            }
+            $depositRows = $depositQ->get();
+            foreach ($depositRows as $row) {
+                $hasAmount = Schema::hasColumn('transaction', 'amount') || Schema::hasColumn('transaction', 'montant');
+                $amountColumn = $hasAmount ? (Schema::hasColumn('transaction', 'amount') ? 'amount' : 'montant') : null;
+                $rows[] = [
+                    'date' => $row->created_at ?? '',
+                    'type_operation' => 'Dépôt',
+                    'office_name' => $row->office_name ?? '',
+                    'msisdn' => $row->msisdn ?? '',
+                    'account_no' => $row->account_no ?? $row->musoni_account_no ?? '',
+                    'libelle' => $row->libelle ?? '',
+                    'client_lastname' => $row->client_lastname ?? '',
+                    'client_firstname' => $row->client_firstname ?? '',
+                    'charge' => $row->charge ?? '',
+                    'amount' => $amountColumn ? ($row->$amountColumn ?? '') : '',
+                    'request_type' => $row->request_type ?? 'W2A',
+                    'agent_name' => $row->agent_name ?? '',
+                ];
+            }
+        }
+
+        // Retraits (A2W)
+        if (!$operationType || $operationType === 'withdrawal') {
+            $withdrawalQ = DB::table('transaction')
+                ->where('request_type', 'A2W')
+                ->whereBetween('created_at', [$startDate, $endDate]);
+            if ($office) {
+                $withdrawalQ->where('office_name', $office);
+            }
+            $withdrawalRows = $withdrawalQ->get();
+            foreach ($withdrawalRows as $row) {
+                $hasAmount = Schema::hasColumn('transaction', 'amount') || Schema::hasColumn('transaction', 'montant');
+                $amountColumn = $hasAmount ? (Schema::hasColumn('transaction', 'amount') ? 'amount' : 'montant') : null;
+                $rows[] = [
+                    'date' => $row->created_at ?? '',
+                    'type_operation' => 'Retrait',
+                    'office_name' => $row->office_name ?? '',
+                    'msisdn' => $row->msisdn ?? '',
+                    'account_no' => $row->account_no ?? $row->musoni_account_no ?? '',
+                    'libelle' => $row->libelle ?? '',
+                    'client_lastname' => $row->client_lastname ?? '',
+                    'client_firstname' => $row->client_firstname ?? '',
+                    'charge' => $row->charge ?? '',
+                    'amount' => $amountColumn ? ($row->$amountColumn ?? '') : '',
+                    'request_type' => $row->request_type ?? 'A2W',
+                    'agent_name' => $row->agent_name ?? '',
+                ];
+            }
+        }
+
+        // Trier par date décroissante
+        usort($rows, function($a, $b) {
+            return strcmp($b['date'], $a['date']);
+        });
+
+        $filename = 'operations_export_' . now()->format('Ymd_His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            // En-têtes avec toutes les colonnes
+            $headersRow = [
+                'Date',
+                'Type d\'opération',
+                'Office',
+                'MSISDN',
+                'Numéro de compte',
+                'Libellé',
+                'Nom client',
+                'Prénom client',
+                'Code opérateur',
+                'ID Requête',
+                'Code réponse',
+                'Message réponse',
+                'Charge',
+                'Montant',
+                'Type requête',
+                'Agent'
+            ];
+            fputcsv($out, $headersRow);
+            foreach ($rows as $r) {
+                fputcsv($out, [
+                    $r['date'] ?? '',
+                    $r['type_operation'] ?? '',
+                    $r['office_name'] ?? '',
+                    $r['msisdn'] ?? '',
+                    $r['account_no'] ?? '',
+                    $r['libelle'] ?? '',
+                    $r['client_lastname'] ?? '',
+                    $r['client_firstname'] ?? '',
+                    $r['operator_code'] ?? '',
+                    $r['request_id'] ?? '',
+                    $r['response_code'] ?? '',
+                    $r['response_message'] ?? '',
+                    $r['charge'] ?? '',
+                    $r['amount'] ?? '',
+                    $r['request_type'] ?? '',
+                    $r['agent_name'] ?? '',
+                ]);
+            }
+            fclose($out);
+        };
+
+        logActivity(
+            session('username'),
+            'exports',
+            'export_operations',
+        );
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportOperationsSeries(Request $request)
+    {
+        [$startDate, $endDate] = $this->resolveDateRange($request);
+        $office = $request->input('office');
+
+        $rows = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $month = $date->format('M Y');
+
+            $balanceQ = DB::table('get_balance')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office && Schema::hasColumn('get_balance', 'office_name')) {
+                $balanceQ->where('office_name', $office);
+            }
+
+            $miniQ = DB::table('mini_statement')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office && Schema::hasColumn('mini_statement', 'office_name')) {
+                $miniQ->where('office_name', $office);
+            }
+
+            $depositQ = DB::table('transaction')
+                ->where('request_type', 'W2A')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office) {
+                $depositQ->where('office_name', $office);
+            }
+
+            $withdrawalQ = DB::table('transaction')
+                ->where('request_type', 'A2W')
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month);
+            if ($office) {
+                $withdrawalQ->where('office_name', $office);
+            }
+
+            $rows[] = [
+                'month' => $month,
+                'consultation_solde' => $balanceQ->count(),
+                'mini_releve' => $miniQ->count(),
+                'depot' => $depositQ->count(),
+                'retrait' => $withdrawalQ->count(),
+            ];
+        }
+
+        logActivity(
+            session('username'),
+            'exports',
+            'export_operations_series',
+        );
+
+        $filename = 'operations_series_' . now()->format('Ymd_His') . '.csv';
+        return $this->streamSeriesCsv($rows, ['month', 'consultation_solde', 'mini_releve', 'depot', 'retrait'], $filename);
     }
 
     public function transactionsList(Request $request)

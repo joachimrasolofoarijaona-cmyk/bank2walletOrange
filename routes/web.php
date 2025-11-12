@@ -98,6 +98,8 @@ Route::middleware(['check.session'])->group(function () {
     Route::get('/analytics/export/top-offices-count', [AnalyticsController::class, 'exportTopOfficesCount'])->name('analytics.export.top.offices.count');
     Route::get('/analytics/export/top-offices-amount', [AnalyticsController::class, 'exportTopOfficesAmount'])->name('analytics.export.top.offices.amount');
     Route::get('/analytics/export/top-libelles', [AnalyticsController::class, 'exportTopLibelles'])->name('analytics.export.top.libelles');
+    Route::get('/analytics/export/operations', [AnalyticsController::class, 'exportOperations'])->name('analytics.export.operations');
+    Route::get('/analytics/export/operations-series', [AnalyticsController::class, 'exportOperationsSeries'])->name('analytics.export.operations.series');
 
     # __Documentation__
     Route::get('/documentation/user-guide', [DocumentationController::class, 'userGuide'])->name('documentation.user.guide');

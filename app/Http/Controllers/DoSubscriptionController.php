@@ -307,24 +307,27 @@ class DoSubscriptionController extends Controller
 
         # __get the zone id from the office name__
         $office_name = session('officeName');
+        
         $parent_office = session('parent_name');
 
         # __Resolve zone id using parent office when available (fallback to office name)__
         $zoneLookupName = $parent_office ?: $office_name;
         $zoneLookupName = is_string($zoneLookupName) ? trim($zoneLookupName) : '';
+        // dd($zoneLookupName, $office_name, $parent_office);
         
         if(count(explode(' - ', $zoneLookupName)) > 1) {
             $office = explode(' - ', $zoneLookupName)[0];
         }elseif(count(explode('-', $zoneLookupName)) > 1) {
             $office = explode('-', $zoneLookupName)[0];
         }else{
-            dd("Aucune ville trouvée");
+            $office =  $office_name;
         }
-       
+
         $get_zone_id = DB::table('agences')
             ->select('zone_id')
             ->where('nom', $office)
             ->first();
+    
 
         $get_zone_name = DB::table('zones')
             ->select('nom')
