@@ -141,17 +141,20 @@
                         const element = document.getElementById('contract');
 
                         const options = {
-                            margin: 0.5,
+                            margin: [0.2, 0.2, 0.2, 0.2], // Marges minimales : [haut, droite, bas, gauche] en cm
                             filename: 'contrat.pdf',
                             image: {
                                 type: 'jpeg',
                                 quality: 0.98
                             },
                             html2canvas: {
-                                scale: 2
+                                scale: 2,
+                                useCORS: true,
+                                logging: false,
+                                backgroundColor: '#ffffff'
                             },
                             jsPDF: {
-                                unit: 'in',
+                                unit: 'cm',
                                 format: 'a4',
                                 orientation: 'portrait'
                             }
@@ -163,9 +166,17 @@
             </div>
 
             <div class="navbar navbar-light bg-light px-4">
-                <div class="d-flex align-items-start ">
-                    <i class="ri-file-add-line fs-5 me-2"></i>
-                    <h4 class="card-title text-uppercase">Contrat</h4>
+                <div class="d-flex align-items-start justify-content-between w-100">
+                    <div class="d-flex align-items-start">
+                        <i class="ri-file-add-line fs-5 me-2"></i>
+                        <h4 class="card-title text-uppercase">Contrat</h4>
+                    </div>
+                    @if(isset($msisdn) && isset($contract_type))
+                    <button type="button" class="btn btn-outline-primary d-flex align-items-center" onclick="downloadContract()" title="Télécharger le contrat en PDF">
+                        <i class="ri-download-line me-2"></i>
+                        Télécharger PDF
+                    </button>
+                    @endif
                 </div>
             </div>
 
@@ -267,7 +278,7 @@
                                             <p>Je déclare y adhérer sans réserve et assumer la responsabilité pleine et entière de l’utilisation du téléphone mobile mentionné supra pour effectuer des transactions au débit ou au crédit de mon (mes) compte(s), dans le cadre du service ACEP/Orange Money.</p>
                                             <p>Le service ACEP/Orange Money sera fonctionnel sous réserve de l’acceptation de la demande par Orange Money.</p><br>
 
-                                            <p class="text-end pe-5">A <strong> {{$data->officeName}} </strong>, le {{\Carbon\Carbon::parse($subscription_customer->date_sub)->translatedFormat('d F Y') }}</p><br>
+                                            <p class="text-end pe-5">A <strong> {{$data->officeName}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
                                             <p class="text-center">
                                                 Signature du titulaire ou du mandataire habilité
                                                 Précédée de la mention « Lu et approuvé »
@@ -476,7 +487,7 @@
                             </div>
                             <div class="footer-contract">
                                 <p class="text-end">
-                                <p class="text-end pe-5">A <strong> {{$data->officeName}} </strong>, le {{\Carbon\Carbon::parse($subscription_customer->date_sub)->translatedFormat('d F Y') }}</p><br>
+                                <p class="text-end pe-5">A <strong> {{$data->officeName}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
                                 </p><br><br><br><br>
                                 <p class="text-center">
                                     Signature du titulaire ou du mandataire habilité

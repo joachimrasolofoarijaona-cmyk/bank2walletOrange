@@ -37,6 +37,7 @@ Route::post('/login', [AuthenticationController::class, 'authentication'])->name
 # routes/web.php
 Route::post('/logout', [AuthenticationController::class, 'destroy'])->name('logout');
 
+
 # __Orange sandbox request route__
 # __Route::post('/omrequest', [OMRequestController::class, 'handle']);
 
@@ -50,15 +51,22 @@ Route::get('/test-accueil', [IndexController::class, 'showIndex'])->name('test.a
 Route::middleware(['check.session'])->group(function () {
     #__ index view __
     Route::get('accueil', [IndexController::class, 'showIndex'])->name('show.index');
+    #__ client search __
+    Route::get('client/search', [IndexController::class, 'showClientSearch'])->name('client.search');
+    Route::post('client/search', [IndexController::class, 'searchClient'])->name('client.search.post');
     # __validation step__ #
     # __register__
     Route::get('/subscribe', [SubscribeController::class, 'showSubscription'])->name('show.subscribe');
     # __send register__
     Route::post('/subscribe', [SubscribeController::class, 'sendSubscription'])->name('send.subscribe');
-    Route::get('/subscribe-validition', [subscribeValidationController::class, 'subscribeValidation'])->name('sub.validation');
+    # __Validation routes - Routes séparées par type d'utilisateur__
+    Route::get('/subscribe-validition', [subscribeValidationController::class, 'subscribeValidation'])->name('sub.validation'); // Route legacy - redirige
+    Route::get('/validations/cc', [subscribeValidationController::class, 'showCCValidations'])->name('validations.cc');
+    Route::get('/validations/validator', [subscribeValidationController::class, 'showValidatorValidations'])->name('validations.validator');
+    Route::get('/validations/admin', [subscribeValidationController::class, 'showAdminValidations'])->name('validations.admin');
+    Route::post('/validate', [subscribeValidationController::class, 'doValidation'])->name('do.validation');
 
     # __Validation sub__
-   
     Route::post('/subscribe/sub-confirmation', [DoSubscriptionController::class, 'getCustomerMusoni'])->name('confirm.sub');
     Route::get('/subscribe/sub-confirmation', [DoSubscriptionController::class, 'showSubscriptionForm'])->name('show.sub.form');
     Route::post('/send-validation', [DoSubscriptionController::class, 'sendValidationRequest'])->name('send.subscription.validation');
@@ -66,9 +74,6 @@ Route::middleware(['check.session'])->group(function () {
     # __activate service__
     Route::get('/activate-service', [ActivateServiceController::class, 'showActivationForm'])->name('show.activation.form');
     Route::post('/activate-service', [ActivateServiceController::class, 'activateService'])->name('activate.service');
-
-    # Route::post('/subscribe-validition', [subscribeValidationController::class, 'sendValidation'])->name('send.validation');
-    Route::post('/validate',  [subscribeValidationController::class, 'doValidation'])->name('do.validation');
 
     # __unsubscribe__
     Route::get('/unsubscribe', [UnsubscribeController::class, 'showUnsubscribeForm'])->name('show.unsubscribe.form');

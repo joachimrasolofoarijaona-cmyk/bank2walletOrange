@@ -46,10 +46,29 @@ class ActivateServiceController extends Controller
         $key = $request->input('key');
         $account_no = $request->input('account_no');
 
-        # Musoni 
-        $api_username = env('API_USERNAME');
-        $api_password = env('API_PASSWORD');
-        $api_url = env('API_URL');
+        # Musoni - Utiliser config() au lieu de env() pour éviter les problèmes de cache
+        $api_username = config('app.api_username');
+        $api_password = config('app.api_password');
+        $api_url = config('app.api_url');
+        $api_secret = config('app.api_secret');
+        $api_key = config('app.api_key');
+
+        // Vérifier que toutes les variables sont définies
+        if (!$api_username || !$api_password || !$api_url || !$api_secret || !$api_key) {
+            Log::error('ACTIVATION: Configuration API Musoni manquante', [
+                'username' => session('username'),
+                'ticket' => $request->input('ticket'),
+                'account_no' => $request->input('account_no'),
+                'missing_vars' => [
+                    'api_username' => !$api_username,
+                    'api_password' => !$api_password,
+                    'api_url' => !$api_url,
+                    'api_secret' => !$api_secret,
+                    'api_key' => !$api_key,
+                ],
+            ]);
+            return redirect()->back()->with('error', 'Erreur de configuration du serveur. Veuillez contacter l\'administrateur.');
+        }
 
         # __check if request already validated__
         $is_validated = DB::table('validation')
@@ -95,8 +114,8 @@ class ActivateServiceController extends Controller
                     $get_account_libelle = $api_url . '/savingsaccounts/' . $account_no;
                     $account_libelle_response = Http::withBasicAuth($api_username, $api_password)
                         ->withHeaders([
-                            'X-Fineract-Platform-TenantId' => env('API_SECRET'),
-                            'x-api-key' => env('API_KEY'),
+                            'X-Fineract-Platform-TenantId' => $api_secret,
+                            'x-api-key' => $api_key,
                             'Accept' => 'application/json',
                         ])
                         ->withoutVerifying()
@@ -152,7 +171,12 @@ class ActivateServiceController extends Controller
                                 throw new \Exception("Réponse XML invalide !");
                             }
                         } catch (\Exception $e) {
-                            Log::error("Erreur lors du chargement du XML : " . $e->getMessage());
+                            Log::error('ACTIVATION: Erreur lors du parsing de la réponse XML SOAP Orange Money', [
+                                'username' => session('username'),
+                                'ticket' => $ticket,
+                                'account_no' => $account_no,
+                                'error' => $e->getMessage(),
+                            ]);
                             return redirect()->back()->with('error', 'Erreur lors du traitement de la réponse XML.');
                         }
 
@@ -164,7 +188,11 @@ class ActivateServiceController extends Controller
                         $testNode = $xpath->query("//soap:Body/*[local-name()='ombRequestResponse']");
 
                         if ($testNode->length == 0) {
-                            Log::error("Le nœud ombResponse n'a pas été trouvé !");
+                            Log::error('ACTIVATION: Structure XML invalide - nœud ombRequestResponse introuvable', [
+                                'username' => session('username'),
+                                'ticket' => $ticket,
+                                'account_no' => $account_no,
+                            ]);
                             return redirect()->back()->with('error', 'Réponse invalide du service SOAP.');
                         }
 
@@ -192,15 +220,39 @@ class ActivateServiceController extends Controller
                         ];
 
                         if (isset($response_status) && $response_status === "200") {
+                            Log::info('ACTIVATION: Requête SOAP Orange Money réussie', [
+                                'username' => session('username'),
+                                'ticket' => $ticket,
+                                'account_no' => $account_no,
+                                'alias' => $alias,
+                            ]);
                         } elseif (isset($errors_messages[$response_status])) {
-                            Log::info("Erreur trouvée : " . $errors_messages[$response_status]);
+                            Log::warning('ACTIVATION: Erreur retournée par le service SOAP Orange Money', [
+                                'username' => session('username'),
+                                'ticket' => $ticket,
+                                'account_no' => $account_no,
+                                'status_code' => $response_status,
+                                'error_message' => $errors_messages[$response_status],
+                            ]);
                             return redirect()->back()->with('error', $errors_messages[$response_status]);
                         } else {
-                            Log::info("Code inconnu : " . $response_status);
-                            return redirect()->back()->with('error', $errors_messages[$response_status]);
+                            Log::warning('ACTIVATION: Code de retour inconnu du service SOAP Orange Money', [
+                                'username' => session('username'),
+                                'ticket' => $ticket,
+                                'account_no' => $account_no,
+                                'status_code' => $response_status,
+                            ]);
+                            return redirect()->back()->with('error', "Erreur inconnue avec le code : " . $response_status);
                         }
                     } catch (\Exception $e) {
-                        Log::error("Erreur lors de la requête SOAP : " . $e->getMessage());
+                        Log::error('ACTIVATION: Erreur lors de la requête SOAP vers Orange Money', [
+                            'username' => session('username'),
+                            'ticket' => $ticket,
+                            'account_no' => $account_no,
+                            'error' => $e->getMessage(),
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                        ]);
                         return redirect()->back()->with('error', 'Erreur de connexion au service.');
                     }
 
@@ -209,8 +261,8 @@ class ActivateServiceController extends Controller
 
                     $customer_data_response = Http::withBasicAuth($api_username, $api_password)
                         ->withHeaders([
-                            'X-Fineract-Platform-TenantId' => env('API_SECRET'),
-                            'x-api-key' => env('API_KEY'),
+                            'X-Fineract-Platform-TenantId' => $api_secret,
+                            'x-api-key' => $api_key,
                             'Accept' => 'application/json',
                         ])
                         ->withoutVerifying()
@@ -226,8 +278,8 @@ class ActivateServiceController extends Controller
                     }
 
                     $mobile_no = $customer['mobileNo'] ?? 'Indisponible';
-                    $office_name = $customer['officeName'] ?? 'Indisponible';
-                    $get_current_user = session('firstname') . ' ' . session('lastname');
+                    $office_name = session('officeName') ?? null;
+                    $get_current_user = (session('firstname') ?? '') . ' ' . (session('lastname') ?? '');
 
                     # __Insert into Subscription table__
                     try {
@@ -243,7 +295,7 @@ class ActivateServiceController extends Controller
                         $subscription->account_status = "1";
                         $subscription->libelle = $libelle;
                         $subscription->mobile_no = $mobile_no;
-                        $subscription->officeName = $office_name;
+                        $subscription->officeName = $office_name ?? session('officeName');
                         $subscription->client_cin = $customer_cin;
                         $subscription->client_lastname = $customer_lastname;
                         $subscription->client_firstName = $customer_firtsname;
@@ -251,19 +303,42 @@ class ActivateServiceController extends Controller
                         $subscription->save();
 
                         # Une fois l'abonnement créé avec succès :
-                        DB::table('validation')
-                            ->where('account_no', $account_no)
+                        # Mettre à jour final_status pour le ticket spécifique
+                        $updated = DB::table('validation')
+                            ->where('ticket', $ticket)
                             ->update([
                                 'final_status' => 'activated',
                                 'updated_at' => now(),
                             ]);
                         
+                        Log::info('ACTIVATION: final_status mis à jour', [
+                            'username' => session('username'),
+                            'ticket' => $ticket,
+                            'account_no' => $account_no,
+                            'rows_updated' => $updated,
+                        ]);
+                        
                     } catch (\Exception $e) {
-                        Log::error("Erreur lors l'insertion dans la table subscription : " . $e->getMessage());
+                        Log::error('ACTIVATION: Erreur lors de l\'enregistrement dans la table subscription', [
+                            'username' => session('username'),
+                            'ticket' => $ticket,
+                            'account_no' => $account_no,
+                            'alias' => $alias,
+                            'error' => $e->getMessage(),
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                        ]);
                         return redirect()->back()->with('error', "Erreur lors l'insertion dans la table subscription. ");
                     }
                 } catch (\Exception $e) {
-                    Log::error("Erreur lors du chargement du XML : " . $e->getMessage());
+                    Log::error('ACTIVATION: Erreur générale lors du traitement de la réponse XML', [
+                        'username' => session('username'),
+                        'ticket' => $ticket,
+                        'account_no' => $account_no,
+                        'error' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                    ]);
                     return redirect()->back()->with('error', 'Erreur lors du traitement de la réponse XML.');
                 }
 
@@ -274,19 +349,15 @@ class ActivateServiceController extends Controller
                     'activate_service',
                 );
 
-                return view('activateService', compact(
-                    'msisdn',
-                    'alias',
-                    'code_service',
-                    'libelle',
-                    'currency',
-                    'key',
-                    'customer_id',
-                    'customer_cin',
-                    'customer_firtsname',
-                    'customer_lastname',
-                    'customer_birthdate'
-                ));
+                Log::info('ACTIVATION: Service activé avec succès', [
+                    'username' => session('username'),
+                    'account_no' => $account_no,
+                    'ticket' => $ticket,
+                    'alias' => $alias,
+                ]);
+
+                // Rediriger vers la page des validations pour voir le badge mis à jour
+                return redirect()->route('validations.cc')->with('success', 'Service activé avec succès. Alias: ' . $alias);
             }
         }
     }

@@ -31,7 +31,9 @@ class Validation extends Model
         'validator',
         'origin',
         'motif_validation',
-        'request_status'
-        
+        'request_status',
+        'zone',
+        'motif',
+        'final_status'
     ];
 }

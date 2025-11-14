@@ -259,17 +259,30 @@ class AuthenticationController extends Controller
 
     public function destroy(Request $request)
     {
-        $request->session()->flush();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // Sauvegarder le username avant de vider la session pour le log
+        $username = session('username');
 
         # log 
-        logActivity(
-            session('username'),
-            'logout',
-            'lougout_success',
-        );
+        if ($username) {
+            logActivity(
+                $username,
+                'logout',
+                'lougout_success',
+            );
+        }
 
-        return redirect('/login');
+        // Méthode recommandée par Laravel pour la déconnexion :
+        // 1. Invalider la session (vide les données et marque la session comme invalide)
+        $request->session()->invalidate();
+        
+        // 2. Régénérer l'ID de session (crée un nouvel ID de session)
+        $request->session()->regenerate();
+        
+        // 3. Régénérer le token CSRF pour la nouvelle session
+        $request->session()->regenerateToken();
+
+        // 4. Rediriger vers login avec un message de succès
+        // La session est maintenant complètement nouvelle avec un nouveau token CSRF
+        return redirect('/login')->with('success', 'Vous avez été déconnecté avec succès.');
     }
 }

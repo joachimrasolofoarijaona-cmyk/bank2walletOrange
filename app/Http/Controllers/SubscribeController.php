@@ -22,10 +22,18 @@ class SubscribeController extends Controller
     }
     public function sendSubscription(Request $request)
     {
-        # Musoni 
-        $api_username = env('API_USERNAME');
-        $api_password = env('API_PASSWORD');
-        $api_url = env('API_URL');
+        # Musoni - Utiliser config() au lieu de env() pour éviter les problèmes de cache
+        $api_username = config('app.api_username');
+        $api_password = config('app.api_password');
+        $api_url = config('app.api_url');
+        $api_secret = config('app.api_secret');
+        $api_key = config('app.api_key');
+
+        // Vérifier que toutes les variables sont définies
+        if (!$api_username || !$api_password || !$api_url || !$api_secret || !$api_key) {
+            Log::error('Variables d\'environnement API manquantes dans SubscribeController');
+            return redirect()->back()->with('error', 'Erreur de configuration du serveur. Veuillez contacter l\'administrateur.');
+        }
 
         # Gestion des erreurs Orange Money
         $errorMessages = [
@@ -129,8 +137,8 @@ class SubscribeController extends Controller
             $url = $api_url.'/search?resource=clientidentifiers&query=11' . $om_cin;
             $response = Http::withBasicAuth($api_username, $api_password)
                 ->withHeaders([
-                    'X-Fineract-Platform-TenantId' => env('API_SECRET'),
-                    'x-api-key' => env('API_KEY'),
+                    'X-Fineract-Platform-TenantId' => $api_secret,
+                    'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
                 ->withoutVerifying()
@@ -157,8 +165,8 @@ class SubscribeController extends Controller
             $get_customer_info_by_id = $api_url.'/clients/' . $customer_id;
             $customer_info_response = Http::withBasicAuth($api_username, $api_password)
                 ->withHeaders([
-                    'X-Fineract-Platform-TenantId' => env('API_SECRET'),
-                    'x-api-key' => env('API_KEY'),
+                    'X-Fineract-Platform-TenantId' => $api_secret,
+                    'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
                 ->withoutVerifying()

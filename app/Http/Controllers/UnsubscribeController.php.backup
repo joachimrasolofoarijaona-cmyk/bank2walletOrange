@@ -102,22 +102,10 @@ class UnsubscribeController extends Controller
                 'validation_request_saved_successfully',
             );
 
-            Log::info('UNSUBSCRIBE: Demande de résiliation créée avec succès (unsubToValidation)', [
-                'username' => session('username'),
-                'account_no' => $account_no,
-                'ticket' => $ticket,
-            ]);
-
             return redirect()->route('show.unsubscribe.form')->with('success', 'Résiliation demandée avec succès.');
         } catch (\Exception $e) {
-            Log::error('UNSUBSCRIBE: Erreur lors de la création de la demande de résiliation (unsubToValidation)', [
-                'username' => session('username'),
-                'account_no' => $account_no,
-                'msisdn' => $msisdn,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            Log::error("Erreur lors l'enregistrement de la requête : " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
             return redirect()->back()->with('error', "Erreur lors l'enregistrement de la requête : " . $e->getMessage());
         }
     }
@@ -246,25 +234,10 @@ class UnsubscribeController extends Controller
             );
             
         } catch (\Exception $e) {
-            Log::error('UNSUBSCRIBE: Erreur lors de l\'enregistrement de la demande de résiliation (sendValidation)', [
-                'username' => session('username'),
-                'account_no' => $account_no,
-                'msisdn' => $msisdn,
-                'office_name' => $validation_office_name,
-                'zone' => $zone_name,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            Log::error("Erreur lors l'enregistrement de la requête : " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
             return redirect()->back()->with('error', "Erreur lors l'enregistrement de la requête : " . $e->getMessage());
         }
-
-        Log::info('UNSUBSCRIBE: Demande de résiliation enregistrée avec succès', [
-            'username' => session('username'),
-            'account_no' => $account_no,
-            'ticket' => $ticket,
-            'office_name' => $validation_office_name,
-        ]);
 
         return redirect()->route('sub.validation')->with('success', 'Demande de résiliation envoyée avec succès.');
     }
@@ -339,6 +312,7 @@ class UnsubscribeController extends Controller
 
             # Récupération et parsing de la réponse SOAP
             $xmlResponse = $response->getBody()->getContents();
+            Log::info('la réponse XML est : ' . $xmlResponse);
 
             try {
                 $dom = new DOMDocument();
@@ -347,12 +321,7 @@ class UnsubscribeController extends Controller
                     throw new \Exception("Réponse XML invalide !");
                 }
             } catch (\Exception $e) {
-                Log::error('UNSUBSCRIBE: Erreur lors du parsing de la réponse XML SOAP', [
-                    'username' => session('username'),
-                    'account_no' => $account_no,
-                    'ticket' => $ticket,
-                    'error' => $e->getMessage(),
-                ]);
+                Log::error("Erreur lors du chargement du XML : " . $e->getMessage());
                 return redirect()->back()->with('error', 'Erreur lors du traitement de la réponse XML.');
             }
 
@@ -363,12 +332,7 @@ class UnsubscribeController extends Controller
             # Vérification du nœud de réponse
             $testNode = $xpath->query("//soap:Body/*[local-name()='ombCloseResponse']");
             if ($testNode->length == 0) {
-                Log::error('UNSUBSCRIBE: Structure XML invalide - nœud ombCloseResponse introuvable', [
-                    'username' => session('username'),
-                    'account_no' => $account_no,
-                    'ticket' => $ticket,
-                    'xml_response_length' => strlen($xmlResponse),
-                ]);
+                Log::error("Le nœud ombCloseResponse n'a pas été trouvé !");
                 return redirect()->back()->with('error', 'Réponse invalide du service SOAP.');
             }
 
@@ -412,8 +376,6 @@ class UnsubscribeController extends Controller
                     ->where('account_no', $account_no)
                     ->get();
 
-                $office_name = session('officeName');
-
                 # Add values in table unsubscription
                 try {
                     $get_user_name = session('firstname') . ' ' . session('lastname');
@@ -430,24 +392,16 @@ class UnsubscribeController extends Controller
                     $unsubscription->origin = $origin;
                     $unsubscription->motif = $motif;
                     $unsubscription->bank_agent = $get_user_name;
-                    $unsubscription->office_name = $office_name;
+                    $unsubscription->office_name = $get_info_client->officeName;
                     $unsubscription->date_unsub = Carbon::now();
                     $unsubscription->save();
 
-                    # Mettre à jour final_status pour le ticket spécifique
-                    $updated = DB::table('validation')
-                        ->where('ticket', $ticket)
+                    DB::table('validation')
+                        ->where('account_no', $account_no)
                         ->update([
                             'final_status' => 'resiliated',
                             'updated_at' => now(),
                         ]);
-                    
-                    Log::info('UNSUBSCRIBE: final_status mis à jour', [
-                        'username' => session('username'),
-                        'ticket' => $ticket,
-                        'account_no' => $account_no,
-                        'rows_updated' => $updated,
-                    ]);
 
 
                     session([
@@ -456,13 +410,7 @@ class UnsubscribeController extends Controller
                         'unsub_date' => $date_unsub,
                     ]);
                 } catch (\Exception $e) {
-                    Log::error('UNSUBSCRIBE: Erreur lors de l\'enregistrement dans la table unsubscription', [
-                        'username' => session('username'),
-                        'account_no' => $account_no,
-                        'error' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]);
+                    Log::error("Erreur lors de la requête BDD : " . $e->getMessage());
                     return redirect()->back()->with('error', 'Erreur lors de la requête BDD.');
                 }
 
@@ -470,43 +418,24 @@ class UnsubscribeController extends Controller
                     ->where('account_no', $account_no)
                     ->first();
 
-                Log::info('UNSUBSCRIBE: Résiliation effectuée avec succès', [
-                    'username' => session('username'),
-                    'account_no' => $account_no,
-                    'ticket' => $ticket,
+                # redirect to unsubscribe view with success message
+                return redirect()->route('show.unsubscribe.form')->with([
+                    'success' => 'Résiliation effectuée avec succès.',
+                    'get_data_unsub' => $get_data_unsub,
+                    'motif' => $motif,
+                    'unsub_date' => $date_unsub,
                 ]);
-
-                // Rediriger vers la page des validations pour voir le badge mis à jour
-                return redirect()->route('validations.cc')->with('success', 'Résiliation effectuée avec succès.');
             } elseif (isset($errorMessages[$status])) {
-                Log::warning('UNSUBSCRIBE: Erreur retournée par le service SOAP Orange Money', [
-                    'username' => session('username'),
-                    'account_no' => $account_no,
-                    'ticket' => $ticket,
-                    'status_code' => $status,
-                    'error_message' => $errorMessages[$status],
-                ]);
+                Log::info("Erreur trouvée : " . $errorMessages[$status]);
                 return redirect()->back()->with('error', $errorMessages[$status]);
             } else {
-                Log::warning('UNSUBSCRIBE: Code de retour inconnu du service SOAP', [
-                    'username' => session('username'),
-                    'account_no' => $account_no,
-                    'ticket' => $ticket,
-                    'status_code' => $status,
-                ]);
-                return redirect()->back()->with('error', "Erreur inconnue avec le code : " . $status);
+                Log::info("Code inconnu : " . $status);
+                return redirect()->back()->with('error', $errorMessages[$status]);
             }
 
             return redirect()->back()->with('error', "Erreur inconnue avec le code : " . $status);
         } catch (\Exception $e) {
-            Log::error('UNSUBSCRIBE: Erreur lors de la requête SOAP vers Orange Money', [
-                'username' => session('username'),
-                'account_no' => $account_no,
-                'ticket' => $ticket,
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            Log::error("Erreur lors de la requête SOAP : " . $e->getMessage());
             return redirect()->back()->with('error', 'Erreur de connexion au service.');
         }
     }

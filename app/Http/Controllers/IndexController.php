@@ -229,4 +229,62 @@ class IndexController extends Controller
             'total_all_transactions'
         ));
     }
+
+    public function showClientSearch()
+    {
+        logActivity(
+            session('username'),
+            'client_search',
+            'client_search_page_visit',
+        );
+        
+        return view('clientSearch');
+    }
+
+    public function searchClient(Request $request)
+    {
+        $msisdn = $request->input('msisdn');
+        
+        if (empty($msisdn)) {
+            return redirect()->route('client.search')->with('error', 'Veuillez saisir un numéro de ligne.');
+        }
+
+        logActivity(
+            session('username'),
+            'client_search',
+            'client_search_performed',
+        );
+
+        // Rechercher les clients par numéro de ligne (msisdn ou mobile_no)
+        $clients = DB::table('subscription')
+            ->where(function($query) use ($msisdn) {
+                $query->where('msisdn', $msisdn)
+                      ->orWhere('mobile_no', $msisdn);
+            })
+            ->select(
+                'client_id',
+                'account_no',
+                'msisdn',
+                'mobile_no',
+                'account_status',
+                'client_firstName',
+                'client_lastname',
+                'officeName',
+                'libelle',
+                'alias',
+                'key',
+                'date_sub',
+                'bank_agent',
+                'client_cin',
+                'client_dob',
+                'code_service'
+            )
+            ->get();
+
+        if ($clients->isEmpty()) {
+            return redirect()->route('client.search')->with('error', 'Aucun client trouvé pour le numéro : ' . $msisdn);
+        }
+
+        return view('clientSearch', compact('clients', 'msisdn'));
+    }
 }

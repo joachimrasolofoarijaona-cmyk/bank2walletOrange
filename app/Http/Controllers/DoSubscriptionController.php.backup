@@ -33,28 +33,9 @@ class DoSubscriptionController extends Controller
 
         // Récupérer les comptes du client depuis l'API Musoni
         try {
-            // Utiliser config() au lieu de env() pour éviter les problèmes de cache
-            $api_username = config('app.api_username');
-            $api_password = config('app.api_password');
-            $api_url = config('app.api_url');
-            $api_secret = config('app.api_secret');
-            $api_key = config('app.api_key');
-
-            // Vérifier que toutes les variables sont définies
-            if (!$api_username || !$api_password || !$api_url || !$api_secret || !$api_key) {
-                Log::error('SUBSCRIPTION: Configuration API Musoni manquante (getCustomerMusoni)', [
-                    'username' => session('username'),
-                    'client_id' => session('client_id'),
-                    'missing_vars' => [
-                        'api_username' => !$api_username,
-                        'api_password' => !$api_password,
-                        'api_url' => !$api_url,
-                        'api_secret' => !$api_secret,
-                        'api_key' => !$api_key,
-                    ],
-                ]);
-                return redirect()->back()->with('error', 'Erreur de configuration du serveur. Veuillez contacter l\'administrateur.');
-            }
+            $api_username = env('API_USERNAME');
+            $api_password = env('API_PASSWORD');
+            $api_url = env('API_URL');
 
             $customer_id = session('client_id');
 
@@ -72,8 +53,8 @@ class DoSubscriptionController extends Controller
 
             $customer_accounts_response = Http::withBasicAuth($api_username, $api_password)
                 ->withHeaders([
-                    'X-Fineract-Platform-TenantId' => $api_secret,
-                    'x-api-key' => $api_key,
+                    'X-Fineract-Platform-TenantId' => env('API_SECRET'),
+                    'x-api-key' => env('API_KEY'),
                     'Accept' => 'application/json',
                 ])
                 ->withoutVerifying()
@@ -86,13 +67,7 @@ class DoSubscriptionController extends Controller
                 $customer_account = [];
             }
         } catch (\Exception $e) {
-            Log::error('SUBSCRIPTION: Erreur lors de la récupération des comptes client depuis Musoni', [
-                'username' => session('username'),
-                'client_id' => session('client_id'),
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            Log::error("Erreur lors de la récupération des comptes : " . $e->getMessage());
             $customer_account = [];
         }
 
@@ -107,28 +82,9 @@ class DoSubscriptionController extends Controller
     public function getCustomerMusoni(Request $request)
     {
         # Musoni 
-        // Utiliser config() au lieu de env() pour éviter les problèmes de cache
-        $api_username = config('app.api_username');
-        $api_password = config('app.api_password');
-        $api_url = config('app.api_url');
-        $api_secret = config('app.api_secret');
-        $api_key = config('app.api_key');
-
-        // Vérifier que toutes les variables sont définies
-        if (!$api_username || !$api_password || !$api_url || !$api_secret || !$api_key) {
-            Log::error('SUBSCRIPTION: Configuration API Musoni manquante (sendValidationRequest)', [
-                'username' => session('username'),
-                'account_no' => $request->input('account_no'),
-                'missing_vars' => [
-                    'api_username' => !$api_username,
-                    'api_password' => !$api_password,
-                    'api_url' => !$api_url,
-                    'api_secret' => !$api_secret,
-                    'api_key' => !$api_key,
-                ],
-            ]);
-            return redirect()->back()->with('error', 'Erreur de configuration du serveur. Veuillez contacter l\'administrateur.');
-        }
+        $api_username = env('API_USERNAME');
+        $api_password = env('API_PASSWORD');
+        $api_url = env('API_URL');
 
         # Gestion des erreurs Orange Money
         $errorMessages = [
@@ -159,8 +115,8 @@ class DoSubscriptionController extends Controller
         try {
             $response = Http::withBasicAuth($api_username, $api_password)
                 ->withHeaders([
-                    'X-Fineract-Platform-TenantId' => $api_secret,
-                    'x-api-key' => $api_key,
+                    'X-Fineract-Platform-TenantId' => env('API_SECRET'),
+                    'x-api-key' => env('API_KEY'),
                     'Accept' => 'application/json',
                 ])
                 ->withoutVerifying()
@@ -179,8 +135,8 @@ class DoSubscriptionController extends Controller
 
                     $customer_id_response = Http::withBasicAuth($api_username, $api_password)
                         ->withHeaders([
-                            'X-Fineract-Platform-TenantId' => $api_secret,
-                            'x-api-key' => $api_key,
+                            'X-Fineract-Platform-TenantId' => env('API_SECRET'),
+                            'x-api-key' => env('API_KEY'),
                             'Accept' => 'application/json',
                         ])
                         ->withoutVerifying()
@@ -191,8 +147,8 @@ class DoSubscriptionController extends Controller
 
                     $customer_accounts_response = Http::withBasicAuth($api_username, $api_password)
                         ->withHeaders([
-                            'X-Fineract-Platform-TenantId' => $api_secret,
-                            'x-api-key' => $api_key,
+                            'X-Fineract-Platform-TenantId' => env('API_SECRET'),
+                            'x-api-key' => env('API_KEY'),
                             'Accept' => 'application/json',
                         ])
                         ->withoutVerifying()
@@ -263,13 +219,7 @@ class DoSubscriptionController extends Controller
                         'subscription',
                         'error_sub_missing_informations',
                     );
-                    Log::error('SUBSCRIPTION: Erreur lors de la récupération des informations client depuis Musoni', [
-                        'username' => session('username'),
-                        'cin' => $request->input('cin'),
-                        'error' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                    ]);
+                    Log::error("Erreur lors de la récupération des informations client : " . $e->getMessage());
                     return view('kycControl', ['error' => 'Erreur de connexion à l\'API']);
                 }
             } else {
@@ -288,13 +238,7 @@ class DoSubscriptionController extends Controller
                 'subscription',
                 'error_sub_client_not_found',
             );
-            Log::error('SUBSCRIPTION: Erreur lors de la recherche du client par CIN', [
-                'username' => session('username'),
-                'cin' => $request->input('cin'),
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ]);
+            Log::error("Erreur lors de la recherche du client : " . $e->getMessage());
             return view('kycControl', ['error' => 'Erreur de connexion à l\'API']);
         }
     }
@@ -478,15 +422,8 @@ class DoSubscriptionController extends Controller
                     'subscription',
                     'error_linking_error_save_request',
                 );
-                Log::error('SUBSCRIPTION: Erreur lors de l\'enregistrement de la demande de validation', [
-                    'username' => session('username'),
-                    'account_no' => $account_no,
-                    'ticket' => $ticket,
-                    'office_name' => $validation_office_name,
-                    'error' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                ]);
+                Log::error("Erreur lors de l'insertion : " . $e->getMessage());
+                Log::error("Stack trace: " . $e->getTraceAsString());
                 return redirect()->back()->with('error', 'Erreur lors de l\'enregistrement de la demande : ' . $e->getMessage());
             }
         }

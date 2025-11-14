@@ -81,7 +81,6 @@
                             <a class="btn btn-sm btn-outline-secondary pt-1 " id="exportSeriesBtn" href="#">Exporter série</a>
                         </div>
                     </div>
-                    
                 </div>
             </form>
         </div>

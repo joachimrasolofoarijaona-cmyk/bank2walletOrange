@@ -188,7 +188,8 @@
             border-bottom: 1px solid #495057;
         }
 
-        .submenu-link:hover {
+        .submenu-link:hover,
+        .submenu-link.active {
             background-color: #50c2bb;
             color: white;
         }
@@ -199,7 +200,8 @@
             flex-shrink: 0;
         }
 
-        .submenu-link:hover i {
+        .submenu-link:hover i,
+        .submenu-link.active i {
             color: white;
         }
 
@@ -417,13 +419,17 @@
     <div class="sidebar" id="sidebar">
         @if($permission === 'cc')
         <nav class="nav flex-column text-uppercase fw-bold">
-            <a class="nav-link active" href="{{route('show.index')}}">
+            <a class="nav-link" href="{{route('client.search')}}">
                 <i class="ri-home-line"></i>
                 <span class="nav-text">Accueil</span>
             </a>
-            <a class="nav-link" href="{{route('sub.validation')}}">
+            <a class="nav-link" href="{{route('show.index')}}">
+                <i class="ri-dashboard-line"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-link" href="{{route('validations.cc')}}">
                 <i class="ri-shield-check-line"></i>
-                <span class="nav-text">Validations</span>
+                <span class="nav-text">Mes Demandes</span>
             </a>
             <div class="nav-submenu">
                 <a class="submenu-toggle" href="#" onclick="toggleSubmenu(this)">
@@ -454,11 +460,15 @@
 
         @elseif($permission === 'val' || $permission === 'control')
         <nav class="nav flex-column text-uppercase fw-bold">
-            <a class="nav-link active" href="{{route('show.index')}}">
+            <a class="nav-link" href="{{route('client.search')}}">
                 <i class="ri-home-line"></i>
                 <span class="nav-text">Accueil</span>
             </a>
-            <a class="nav-link" href="{{ route('sub.validation') }}">
+            <a class="nav-link" href="{{route('show.index')}}">
+                <i class="ri-dashboard-line"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-link" href="{{ route('validations.validator') }}">
                 <i class="ri-shield-check-line"></i>
                 <span class="nav-text">Validations</span>
             </a>
@@ -470,11 +480,15 @@
 
         @elseif($permission === 'admin')
         <nav class="nav flex-column text-uppercase fw-bold">
-            <a class="nav-link active" href="{{route('show.index')}}">
+            <a class="nav-link" href="{{route('client.search')}}">
                 <i class="ri-home-line"></i>
                 <span class="nav-text">Accueil</span>
             </a>
-            <a class="nav-link" href="{{ route('sub.validation') }}">
+            <a class="nav-link" href="{{route('show.index')}}">
+                <i class="ri-dashboard-line"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a class="nav-link" href="{{ route('validations.admin') }}">
                 <i class="ri-shield-check-line"></i>
                 <span class="nav-text">Validations</span>
             </a>
@@ -634,7 +648,52 @@
                 });
             }
         });
+
+        // Gérer l'état actif des liens de navigation
+        function setActiveNavLink() {
+            const currentPath = window.location.pathname;
+            const currentUrl = window.location.href;
+            
+            // Retirer la classe active de tous les liens
+            document.querySelectorAll('.nav-link, .submenu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Trouver le lien correspondant à l'URL actuelle
+            document.querySelectorAll('.nav-link, .submenu-link').forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref && linkHref !== '#') {
+                    try {
+                        // Construire le chemin complet si c'est un chemin relatif
+                        const linkUrl = new URL(linkHref, window.location.origin);
+                        const linkPath = linkUrl.pathname;
+                        
+                        // Comparer les chemins exacts
+                        if (currentPath === linkPath) {
+                            link.classList.add('active');
+                            
+                            // Si c'est un lien de submenu, ouvrir le submenu parent
+                            const submenuContent = link.closest('.submenu-content');
+                            if (submenuContent) {
+                                const submenuToggle = submenuContent.previousElementSibling;
+                                if (submenuToggle && submenuToggle.classList.contains('submenu-toggle')) {
+                                    submenuToggle.classList.add('active');
+                                    submenuContent.classList.add('show');
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Si l'URL est invalide, ignorer
+                        console.warn('Invalid URL:', linkHref);
+                    }
+                }
+            });
+        }
+
+        // Appeler la fonction au chargement de la page
+        setActiveNavLink();
     </script>
+
 
 </body>
 
