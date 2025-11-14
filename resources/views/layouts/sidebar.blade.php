@@ -36,7 +36,21 @@
     @stack('styles')
 
     <style>
-        /* Styles for dark mode, applied when the system prefers dark */
+        /* Modern Design Variables */
+        :root {
+            --primary-color: #02564A;
+            --accent-color: #4FC9C0;
+            --bg-light: #F8F9FA;
+            --text-primary: #212529;
+            --text-secondary: #6C757D;
+            --border-color: #E9ECEF;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --sidebar-bg: #02564A;
+            --sidebar-hover: #033d35;
+            --navbar-bg: #02564A;
+        }
+
+        /* Body Styles */
         .body {
             background-color: #f5f6fa;
             color: black;
@@ -49,11 +63,12 @@
             left: 0;
             height: calc(100vh - 60px);
             width: 300px;
-            background-color: #212529;
-            transition: all 0.3s;
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, #033d35 100%);
+            transition: all 0.3s ease;
             z-index: 1000;
             overflow-y: auto;
             transform: translateX(0);
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
         }
 
         /* Mobile : sidebar cachée par défaut */
@@ -102,30 +117,45 @@
         }
 
         .sidebar .nav-link {
-            color: whitesmoke;
-            padding: 15px 20px;
-            border-bottom: 1px solid #343a40;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
         }
 
-        .sidebar .nav-link:hover,
+        .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding-left: 28px;
+        }
+
         .sidebar .nav-link.active {
-            background-color: #50c2bb;
-            color: #00574A;
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border-left: 4px solid white;
         }
 
         .sidebar .nav-link i {
-            color: #50c2bb;
-            width: 20px;
-            margin-right: 10px;
+            color: var(--accent-color);
+            width: 22px;
+            margin-right: 12px;
             flex-shrink: 0;
+            font-size: 20px;
+            transition: all 0.3s ease;
         }
 
-        .sidebar .nav-link:hover i,
-        .sidebar .nav-link.active i {
+        .sidebar .nav-link:hover i {
             color: white;
+            transform: scale(1.1);
+        }
+
+        .sidebar .nav-link.active i {
+            color: var(--primary-color);
         }
 
         /* Styles pour les submenus */
@@ -134,29 +164,40 @@
         }
 
         .submenu-toggle {
-            color: whitesmoke !important;
-            padding: 15px 20px;
-            border-bottom: 1px solid #343a40;
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             text-decoration: none;
             cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 14px;
         }
 
         .submenu-toggle:hover {
-            background-color: #50c2bb;
+            background: rgba(255, 255, 255, 0.1);
             color: white !important;
+            padding-left: 28px;
+        }
+
+        .submenu-toggle.active {
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .submenu-toggle i:first-child {
-            color: #50c2bb;
-            width: 20px;
-            margin-right: 10px;
+            color: var(--accent-color);
+            width: 22px;
+            margin-right: 12px;
             flex-shrink: 0;
+            font-size: 20px;
+            transition: all 0.3s ease;
         }
 
         .submenu-toggle:hover i:first-child {
             color: white;
+            transform: scale(1.1);
         }
 
         .submenu-arrow {
@@ -172,7 +213,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
-            background-color: #343a40;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .submenu-content.show {
@@ -180,29 +221,44 @@
         }
 
         .submenu-link {
-            color: whitesmoke;
-            padding: 10px 20px 10px 50px;
+            color: rgba(255, 255, 255, 0.85);
+            padding: 12px 24px 12px 56px;
             display: flex;
             align-items: center;
             text-decoration: none;
-            border-bottom: 1px solid #495057;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 400;
         }
 
-        .submenu-link:hover,
-        .submenu-link.active {
-            background-color: #50c2bb;
+        .submenu-link:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
+            padding-left: 60px;
+        }
+
+        .submenu-link.active {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border-left: 3px solid white;
         }
 
         .submenu-link i {
-            color: #50c2bb;
-            margin-right: 10px;
+            color: var(--accent-color);
+            margin-right: 12px;
             flex-shrink: 0;
+            font-size: 18px;
+            transition: all 0.3s ease;
         }
 
-        .submenu-link:hover i,
-        .submenu-link.active i {
+        .submenu-link:hover i {
             color: white;
+            transform: scale(1.1);
+        }
+
+        .submenu-link.active i {
+            color: var(--primary-color);
         }
 
         /* Flyout des submenus quand sidebar est collapsed (desktop) */
@@ -214,9 +270,11 @@
                 width: 230px;
                 max-height: none;
                 display: none;
-                border-left: 1px solid #343a40;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                border-left: 3px solid var(--accent-color);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
                 z-index: 1002;
+                background: linear-gradient(180deg, var(--sidebar-bg) 0%, #033d35 100%);
+                border-radius: 0 8px 8px 0;
             }
 
             .sidebar.collapsed .submenu-content.show {
@@ -259,15 +317,27 @@
             left: 0;
             right: 0;
             z-index: 1001;
-            background-color: #212529;
+            background: linear-gradient(135deg, var(--navbar-bg) 0%, #033d35 100%);
             height: 60px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-toggle {
             background: none;
             border: none;
-            color: #50c2bb;
-            font-size: 20px;
+            color: var(--accent-color);
+            font-size: 22px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: scale(1.1);
         }
 
         .sidebar .nav-text {
@@ -283,18 +353,63 @@
             }
         }
 
-        i {
-            color: #50c2bb;
+        /* Navbar Brand */
+        .navbar-brand {
+            transition: all 0.3s ease;
         }
 
-        h4 {
-            color: #00564b;
-            font-weight: bold;
+        .navbar-brand:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* Dropdown User */
+        .navbar .dropdown .nav-link {
+            color: var(--accent-color) !important;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .navbar .dropdown .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white !important;
+        }
+
+        .dropdown-menu-dark {
+            background: var(--sidebar-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-top: 8px;
+        }
+
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dropdown-item i {
+            color: var(--accent-color);
+            font-size: 18px;
+        }
+
+        .dropdown-item:hover i {
+            color: white;
         }
 
         .custom-navbar .nav-link:hover,
         .custom-navbar .dropdown-item:hover {
-            color: #50c2bb !important;
+            color: var(--accent-color) !important;
         }
 
         /* Overlay pour mobile */
@@ -345,6 +460,24 @@
                 display: none;
             }
         }
+
+        /* Custom Scrollbar for Sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 201, 192, 0.8);
+        }
     </style>
 </head>
 
@@ -387,26 +520,31 @@
 
             <div class="d-flex align-items-center">
                 <div class="dropdown">
-                    <a class="nav-link dropdown-toggle text-uppercase d-flex align-items-center" href="#" id="navbarDropdownUser" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false" style="color: #4FC9C0;">
-                        <i class="ri-user-2-line me-2"></i>
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdownUser" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--accent-color); font-weight: 500;">
+                        <i class="ri-user-2-line me-2" style="font-size: 20px;"></i>
                         <span>{{ session('username') }}</span>
+                        <i class="ri-arrow-down-s-line ms-2" style="font-size: 16px;"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="navbarDropdownUser">
                         @if($permission === 'admin')
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="{{route('show.settings')}}">
-                                <i class="ri-tools-fill me-2"></i> Paramètres
+                            <a class="dropdown-item" href="{{route('show.settings')}}">
+                                <i class="ri-settings-3-line"></i>
+                                <span>Paramètres</span>
                             </a>
                         </li>
                         <li>
-                            <hr class="dropdown-divider">
+                            <hr class="dropdown-divider" style="border-color: rgba(255, 255, 255, 0.1);">
                         </li>
                         @endif
-                        <li class="dropdown-item">
+                        <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="btn btn-outline-danger w-100" type="submit">Déconnexion</button>
+                                <button class="dropdown-item text-danger" type="submit" style="border: none; background: none; width: 100%; text-align: left; padding: 10px 16px;">
+                                    <i class="ri-logout-box-line"></i>
+                                    <span>Déconnexion</span>
+                                </button>
                             </form>
                         </li>
                     </ul>
@@ -548,9 +686,11 @@
         </nav>
         @endif
 
-        <div class="fixed-bottom">
-            <hr class="dropdown-divider text-white">
-            <p class="text-xs text-end pe-2 text-white py-0" style="font-size: 8px;"><small>Dev by Joachim.</small></p>
+        <div class="fixed-bottom" style="background: rgba(0, 0, 0, 0.2); padding: 12px 0;">
+            <hr class="dropdown-divider" style="margin: 0; border-color: rgba(255, 255, 255, 0.1);">
+            <p class="text-xs text-end pe-3 text-white py-2 mb-0" style="font-size: 10px; opacity: 0.7;">
+                <small>Dev by Joachim.</small>
+            </p>
         </div>
     </div>
 

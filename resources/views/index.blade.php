@@ -4,338 +4,581 @@
 
 @section('content')
 <style>
-    .bg-opacity-10 {
-        height: 100px;
-        width: 100px;
-        background-color: #f2ebfb;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    :root {
+        --primary-color: #02564A;
+        --accent-color: #4FC9C0;
+        --bg-light: #F8F9FA;
+        --text-primary: #212529;
+        --text-secondary: #6C757D;
+        --border-color: #E9ECEF;
+        --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
+    body {
+        background-color: var(--bg-light);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Header Section */
+    .page-header {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--border-color);
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+    }
+
+    /* Metric Cards - Style moderne et sobre */
     .metric-card {
-        transition: transform 0.2s ease-in-out;
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary-color);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .metric-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: var(--accent-color);
+    }
+
+    .metric-card:hover::before {
+        opacity: 1;
+    }
+
+    .metric-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        color: white;
+        font-size: 24px;
+    }
+
+    .metric-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .metric-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    .metric-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-top: 8px;
+    }
+
+    .metric-badge.success {
+        background: rgba(25, 135, 84, 0.1);
+        color: #198754;
+        border: 1px solid rgba(25, 135, 84, 0.2);
+    }
+
+    .metric-badge.danger {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    /* Chart Cards */
+    .chart-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .chart-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-color);
+        background: white;
+    }
+
+    .chart-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .chart-card-body {
+        padding: 24px;
     }
 
     .chart-container {
         position: relative;
         height: 300px;
     }
+
+    /* Content Cards */
+    .content-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-color);
+        background: white;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .content-card-header i {
+        color: var(--primary-color);
+        font-size: 20px;
+    }
+
+    .content-card-header span {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .content-card-body {
+        padding: 20px 24px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    /* Summary Card */
+    .summary-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        padding: 24px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .summary-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .summary-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .summary-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .summary-total {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    /* Dark Card */
+    .dark-card {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #033d35 100%);
+        border-radius: 12px;
+        border: none;
+        box-shadow: var(--card-shadow-hover);
+        padding: 24px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .dark-card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+
+    .dark-card-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--accent-color);
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .dark-card-label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+    }
+
+    /* Buttons - Outline Style */
+    .btn-outline-primary {
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        background: transparent;
+        font-weight: 500;
+        padding: 8px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(2, 86, 74, 0.3);
+    }
+
+    .btn-outline-accent {
+        border: 2px solid var(--accent-color);
+        color: var(--accent-color);
+        background: transparent;
+        font-weight: 500;
+        padding: 8px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-accent:hover {
+        background: var(--accent-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 201, 192, 0.3);
+    }
+
+    /* List Items */
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        background: var(--bg-light);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+
+    .list-item:hover {
+        background: white;
+        border-color: var(--accent-color);
+        transform: translateX(4px);
+    }
+
+    .list-item-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .list-item-badge {
+        background: var(--primary-color);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 24px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+        }
+
+        .chart-container {
+            height: 250px;
+        }
+    }
+
+    /* Spacing */
+    .section-spacing {
+        margin-bottom: 24px;
+    }
 </style>
 
 <div class="container-fluid">
-    <div class="row pt-1">
-        {{-- subs chart --}}
-        <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card bg-light metric-card card-fade-in">
-                <div class="card-body d-flex align-items-center">
-                    <div class="icon-container icon-primary me-3">
-                        <i class="ri-login-circle-line fs-4"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h3 class="fw-bold text-dark mb-1">{{ number_format($total_subscriptions) }}</h3>
-                        <p class="text-muted mb-0 fs-6">Souscriptions</p>
-                        <small class="text-success fw-semibold">+{{ $daily_subscriptions }} aujourd'hui</small>
-                    </div>
-                    <div class="ms-auto">
-                        <i class="ri-more-2-line text-muted fs-5"></i>
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Tableau de bord</h1>
+        <p class="page-subtitle">Vue d'ensemble de vos statistiques et activités</p>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="row section-spacing">
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="ri-login-circle-line"></i>
+                </div>
+                <h3 class="metric-value">{{ number_format($total_subscriptions) }}</h3>
+                <p class="metric-label">Souscriptions</p>
+                <span class="metric-badge success">
+                    <i class="ri-arrow-up-line"></i>
+                    +{{ $daily_subscriptions }} aujourd'hui
+                </span>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="ri-file-list-line"></i>
+                </div>
+                <h3 class="metric-value">{{ number_format($total_balance) }}</h3>
+                <p class="metric-label">Mini Relevés</p>
+                <span class="metric-badge success">
+                    <i class="ri-arrow-up-line"></i>
+                    +{{ number_format($daily_balance) }} aujourd'hui
+                </span>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="ri-logout-circle-line"></i>
+                </div>
+                <h3 class="metric-value">{{ number_format($total_unsubscriptions) }}</h3>
+                <p class="metric-label">Désabonnements</p>
+                <span class="metric-badge danger">
+                    <i class="ri-arrow-up-line"></i>
+                    +{{ $daily_unsubscriptions }} aujourd'hui
+                </span>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="ri-eye-line"></i>
+                </div>
+                <h3 class="metric-value">{{ number_format($total_transactions) }}</h3>
+                <p class="metric-label">Consultations Solde</p>
+                <span class="metric-badge success">
+                    <i class="ri-arrow-up-line"></i>
+                    +{{ $daily_transactions }} aujourd'hui
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row section-spacing">
+        <div class="col-lg-6 col-md-6 col-xs-12 mb-4">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h6 class="chart-card-title">Souscription vs. Mois</h6>
+                </div>
+                <div class="chart-card-body">
+                    <div class="chart-container">
+                        <canvas id="monthly_subs"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-        {{-- balance chart --}}
-        <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card bg-light metric-card card-fade-in">
-                <div class="card-body d-flex align-items-center">
-                    <div class="icon-container icon-info me-3">
-                        <i class="ri-file-list-line fs-4"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h3 class="fw-bold text-dark mb-1">{{ number_format($total_balance) }}</h3>
-                        <p class="text-muted mb-0 fs-6">Mini Relevés</p>
-                        <small class="text-success fw-semibold">+{{ number_format($daily_balance) }} aujourd'hui</small>
-                    </div>
-                    <div class="ms-auto">
-                        <i class="ri-more-2-line text-muted fs-5"></i>
-                    </div>
+
+        <div class="col-lg-6 col-md-6 col-xs-12 mb-4">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <h6 class="chart-card-title">Transaction vs. Mois</h6>
                 </div>
-            </div>
-        </div>
-        {{-- statement chart --}}
-        <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card bg-light metric-card card-fade-in">
-                <div class="card-body d-flex align-items-center">
-                    <div class="icon-container icon-danger me-3">
-                        <i class="ri-logout-circle-line fs-4"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h3 class="fw-bold text-dark mb-1">{{ number_format($total_unsubscriptions) }}</h3>
-                        <p class="text-muted mb-0 fs-6">Désabonnements</p>
-                        <small class="text-danger fw-semibold">+{{ $daily_unsubscriptions }} aujourd'hui</small>
-                    </div>
-                    <div class="ms-auto">
-                        <i class="ri-more-2-line text-muted fs-5"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- transactions chart --}}
-        <div class="col-lg-3 col-md-6 col-xs-12 gap-3">
-            <div class="card bg-light metric-card card-fade-in">
-                <div class="card-body d-flex align-items-center">
-                    <div class="icon-container icon-success me-3">
-                        <i class="ri-eye-line fs-4"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h3 class="fw-bold text-dark mb-1">{{ number_format($total_transactions) }}</h3>
-                        <p class="text-muted mb-0 fs-6">Consultations Solde</p>
-                        <small class="text-success fw-semibold">+{{ $daily_transactions }} aujourd'hui</small>
-                    </div>
-                    <div class="ms-auto">
-                        <i class="ri-more-2-line text-muted fs-5"></i>
+                <div class="chart-card-body">
+                    <div class="chart-container">
+                        <canvas id="monthly_transactions"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container-fluid pt-2">
-    <div class="row pt-1">
-        {{-- Souscription vs. Mois --}}
-        <div class="col-lg-6 col-md-6 col-xs-6">
-            <div class="card border-0 shadow-md" style="height: 400px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-1 text-start pt-2 pb-1 ps-2">Souscription vs. Mois</h6>
+    <!-- Additional Sections Row -->
+    <div class="row section-spacing">
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <i class="ri-building-line"></i>
+                    <span>Transactions par Office</span>
                 </div>
-                <div class="card-body">
-                    {{-- chart monthly subs --}}
-                    <div class="chart-container">
-                        <canvas id="monthly_subs" height="100"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Transaction vs. Mois --}}
-        <div class="col-lg-6 col-md-6 col-xs-6">
-            <div class="card border-0 shadow-md" style="height: 400px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-1 text-start pt-2 pb-1 ps-2">Transaction vs. Mois</h6>
-                </div>
-                <div class="card-body">
-                    {{-- chart monthly transactions --}}
-                    <div class="chart-container">
-                        <canvas id="monthly_transactions" height="100"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Nouvelles sections -->
-<div class="row mt-4">
-    <!-- Graphique par office_name -->
-    <div class="col-lg-3">
-        <div class="card bg-light content-card card-fade-in" style="height: 300px;">
-            <div class="card-header bg-light fw-bold">
-                <i class="ri-building-line me-2"></i>
-                <span>Transactions par Office</span>
-            </div>
-            <div class="card-body d-flex flex-column">
-                <div class="flex-grow-1 overflow-auto" style="max-height: 250px;">
+                <div class="content-card-body">
                     <div id="officeContent">
                         <!-- Le contenu sera inséré ici par JavaScript -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Liste des libelle -->
-    <div class="col-lg-3">
-        <div class="card bg-light content-card card-fade-in" style="height: 300px;">
-            <div class="card-header bg-light fw-bold">
-                <i class="ri-list-check me-2"></i>
-                <span>Top Libellés</span>
-            </div>
-            <div class="card-body d-flex flex-column">
-                <div class="flex-grow-1 overflow-auto" style="max-height: 250px;">
-                    <div class="account-list">
-                        @if(isset($account_names) && count($account_names) > 0)
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="content-card">
+                <div class="content-card-header">
+                    <i class="ri-list-check"></i>
+                    <span>Top Libellés</span>
+                </div>
+                <div class="content-card-body">
+                    @if(isset($account_names) && count($account_names) > 0)
                         @foreach($account_names->take(8) as $libelle)
-                        <div class="d-flex align-items-center justify-content-between mb-2 p-2 rounded bg-light">
-                            <span class="text-muted small">{{ $libelle->libelle ?? 'N/A' }}</span>
-                            <span class="badge bg-primary">{{ $libelle->transaction_count }}</span>
+                        <div class="list-item">
+                            <span class="list-item-label">{{ $libelle->libelle ?? 'N/A' }}</span>
+                            <span class="list-item-badge">{{ $libelle->transaction_count }}</span>
                         </div>
                         @endforeach
-                        @else
+                    @else
                         <p class="text-muted text-center">Aucun libellé trouvé</p>
-                        @endif
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Résumé des Charges -->
-    <div class="col-lg-3">
-        <div class="card border-0 shadow-md" style="height: 300px;">
-            <div class="card-body text-center d-flex flex-column justify-content-between">
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="summary-card">
+                <h6 class="summary-title">Résumé des Charges</h6>
                 <div>
-                    <h6 class="fw-bold text-dark mb-3">Résumé des Charges</h6>
-                    <div class="mb-3">
-                        <hr>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="text-muted">Dépôts (W2A)</span>
-                            <span class="fw-bold" style="color: #ff6b35;">{{ number_format($current_month_deposits ?? 0) }}</span>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="text-muted">Retraits (A2W)</span>
-                            <span class="fw-bold" style="color: #6f42c1;">{{ number_format($current_month_withdrawals ?? 0) }}</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <span class="text-muted fw-bold">Total Charges</span>
-                            <span class="fw-bold fs-5 text-success">{{ number_format($current_month_charges ?? 0) }} MGA</span>
-                        </div>
-                        <hr>
+                    <div class="summary-item">
+                        <span class="summary-label">Dépôts (W2A)</span>
+                        <span class="summary-value" style="color: #ff6b35;">{{ number_format($current_month_deposits ?? 0) }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Retraits (A2W)</span>
+                        <span class="summary-value" style="color: #6f42c1;">{{ number_format($current_month_withdrawals ?? 0) }}</span>
+                    </div>
+                    <hr style="margin: 16px 0; border-color: var(--border-color);">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Charges</span>
+                        <span class="summary-total">{{ number_format($current_month_charges ?? 0) }} MGA</span>
                     </div>
                 </div>
-
-                <!-- Mini graphique en anneau -->
-                    <div class="mt-4" style="width: 140px; height: 140px; margin: 0 auto;">
-                        <canvas id="miniDonut" style="width: 140px !important; height: 140px !important;"></canvas>
-                    </div>
+                <div class="mt-4" style="width: 140px; height: 140px; margin: 0 auto;">
+                    <canvas id="miniDonut"></canvas>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Total des transactions avec mini graphique -->
-    <div class="col-lg-3">
-        <div class="card border-0 shadow-md  bg-dark text-white" style="height: 300px;">
-            <div class="card-body text-center d-flex flex-column justify-content-between">
+        <div class="col-lg-3 col-md-6 col-xs-12 mb-4">
+            <div class="dark-card">
+                <h6 class="dark-card-title">Total Transactions</h6>
                 <div>
-                    <h6 class="fw-bold text-white mb-3">Total Transactions</h6>
-                    <div class="mb-3">
-                        <h2 class="fw-bold text-primary mb-0">{{ number_format($total_all_transactions ?? 0) }}</h2>
-                        <small class="text-muted">Toutes les transactions</small>
-                    </div>
+                    <h2 class="dark-card-value">{{ number_format($total_all_transactions ?? 0) }}</h2>
+                    <p class="dark-card-label">Toutes les transactions</p>
                 </div>
-                <!-- Mini graphique en anneau -->
-                <div class="" style="width: 140px; height: 140px; margin: 0 auto;">
-                    <canvas id="transactionsDonut" style="width: 140px !important; height: 140px !important;"></canvas>
+                <div style="width: 140px; height: 140px; margin: 0 auto;">
+                    <canvas id="transactionsDonut"></canvas>
                 </div>
             </div>
         </div>
     </div>
-    
 </div>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-    /* Organisation du dashboard */
-    .dashboard-container {
-        padding: 20px;
-    }
-
-    /* Cartes métriques du haut - hauteur fixe */
-    .metric-row .card {
-        height: 120px;
-        margin-bottom: 20px;
-    }
-
-    /* Ligne des graphiques - hauteur alignée */
-    .chart-row .card {
-        height: 400px;
-        margin-bottom: 20px;
-    }
-
-    /* Ligne des nouvelles sections - hauteur alignée */
-    .sections-row .card {
-        height: 400px;
-        margin-bottom: 20px;
-    }
-
-    /* Espacement entre les sections */
-    .container-fluid {
-        margin-bottom: 20px;
-    }
-
-    .row {
-        margin-bottom: 20px;
-    }
-
-    /* Style des cartes */
-    .card {
-        border: none;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        border-radius: 0.5rem;
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    /* Canvas des graphiques */
-    canvas {
-        max-height: 100%;
-        width: 100% !important;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-
-        .chart-row .card,
-        .sections-row .card {
-            height: auto;
-            min-height: 300px;
-        }
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Données pour le graphique principal
         const monthlyData = @json($monthly_data);
-
         const labels = monthlyData.map(item => item.month);
         const subscriptionsData = monthlyData.map(item => item.subscriptions);
         const unsubscriptionsData = monthlyData.map(item => item.unsubscriptions);
 
-        // Configuration du graphique
+        // Configuration du graphique Souscriptions
         const ctx = document.getElementById('monthly_subs').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                        label: 'Souscriptions',
-                        data: subscriptionsData,
-                        backgroundColor: '#6f42c1', // Couleur primaire existante
-                        borderColor: '#6f42c1',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        borderSkipped: false,
-                    },
-                    {
-                        label: 'Désabonnements',
-                        data: unsubscriptionsData,
-                        backgroundColor: '#ff6b35', // Orange Money
-                        borderColor: '#ff6b35',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        borderSkipped: false,
-                    }
-                ]
+                    label: 'Souscriptions',
+                    data: subscriptionsData,
+                    backgroundColor: '#02564A',
+                    borderColor: '#02564A',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                },
+                {
+                    label: 'Désabonnements',
+                    data: unsubscriptionsData,
+                    backgroundColor: '#4FC9C0',
+                    borderColor: '#4FC9C0',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                }]
             },
             options: {
                 responsive: true,
@@ -347,7 +590,8 @@
                             usePointStyle: true,
                             padding: 20,
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Poppins'
                             }
                         }
                     },
@@ -355,20 +599,23 @@
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         titleColor: '#fff',
                         bodyColor: '#fff',
-                        borderColor: '#6f42c1',
-                        borderWidth: 1
+                        borderColor: '#02564A',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.1)',
+                            color: 'rgba(0, 0, 0, 0.05)',
                             drawBorder: false
                         },
                         ticks: {
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Poppins'
                             }
                         }
                     },
@@ -378,14 +625,11 @@
                         },
                         ticks: {
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Poppins'
                             }
                         }
                     }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
                 }
             }
         });
@@ -401,11 +645,10 @@
                 datasets: [{
                     label: 'Transactions',
                     data: transactionsData,
-                    backgroundColor: '#198754', // Couleur info
-                    borderColor: '#17a2b8',
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false,
+                    backgroundColor: '#4FC9C0',
+                    borderColor: '#02564A',
+                    borderWidth: 2,
+                    borderRadius: 6,
                 }]
             },
             options: {
@@ -418,7 +661,8 @@
                             usePointStyle: true,
                             padding: 20,
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Poppins'
                             }
                         }
                     },
@@ -426,20 +670,23 @@
                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                         titleColor: '#fff',
                         bodyColor: '#fff',
-                        borderColor: '#17a2b8',
-                        borderWidth: 1
+                        borderColor: '#4FC9C0',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 8
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.1)',
+                            color: 'rgba(0, 0, 0, 0.05)',
                             drawBorder: false
                         },
                         ticks: {
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Poppins'
                             }
                         }
                     },
@@ -449,14 +696,11 @@
                         },
                         ticks: {
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Poppins'
                             }
                         }
                     }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
                 }
             }
         });
@@ -472,7 +716,7 @@
                 labels: ['Souscriptions', 'Désabonnements'],
                 datasets: [{
                     data: [currentMonthSubs, currentMonthUnsubs],
-                    backgroundColor: ['#6f42c1', '#ff6b35'],
+                    backgroundColor: ['#02564A', '#4FC9C0'],
                     borderWidth: 0,
                     cutout: '70%'
                 }]
@@ -485,35 +729,31 @@
                         display: false
                     },
                     tooltip: {
-                        enabled: false
+                        enabled: true,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 8,
+                        cornerRadius: 6
                     }
                 }
             }
         });
 
-        // Affichage simple des données office (sans graphique pour éviter le crash)
-        console.log('=== AFFICHAGE SIMPLE OFFICE ===');
+        // Affichage des données office
         const officeData = @json($office_data ?? []);
-        console.log('Données office reçues:', officeData);
+        const officeContent = document.getElementById('officeContent');
 
         if (officeData.length > 0) {
-            // Insérer le contenu dans le nouveau conteneur avec scroll
-            const officeContent = document.getElementById('officeContent');
             officeContent.innerHTML = officeData.map(item => `
-                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                    <span class="fw-bold">${item.office_name || 'N/A'}</span>
-                    <span class="badge bg-primary fs-6">${item.total_transactions}</span>
+                <div class="list-item">
+                    <span class="list-item-label">${item.office_name || 'N/A'}</span>
+                    <span class="list-item-badge">${item.total_transactions}</span>
                 </div>
             `).join('');
-
-            console.log('Affichage simple créé avec succès !');
         } else {
-            const officeContent = document.getElementById('officeContent');
             officeContent.innerHTML = '<p class="text-muted text-center">Aucune donnée office trouvée</p>';
-            console.log('AUCUNE DONNÉE OFFICE TROUVÉE !');
         }
 
-        // Mini graphique en anneau pour les transactions (Dépôts vs Retraits)
+        // Mini graphique en anneau pour les transactions
         const transactionsDonutCtx = document.getElementById('transactionsDonut').getContext('2d');
         const deposits = @json($current_month_deposits ?? 0);
         const withdrawals = @json($current_month_withdrawals ?? 0);
@@ -524,20 +764,24 @@
                 labels: ['Dépôts', 'Retraits'],
                 datasets: [{
                     data: [deposits, withdrawals],
-                    backgroundColor: ['#ff6b35', '#6f42c1'],
+                    backgroundColor: ['#4FC9C0', '#ff6b35'],
                     borderWidth: 0,
                     cutout: '70%'
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         display: false
                     },
                     tooltip: {
-                        enabled: true
+                        enabled: true,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 8,
+                        cornerRadius: 6,
+                        bodyColor: '#fff'
                     }
                 }
             }

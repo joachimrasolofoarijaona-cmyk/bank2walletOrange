@@ -143,10 +143,30 @@ class subscribeValidationController extends Controller
      * Récupère toutes les agences d'une zone depuis la base de données
      */
     private function getAgencesFromZone($zone_name) {
+        $cleaned_zone = $this->cleanOfficeName($zone_name);
+        
+        // Essayer d'abord une correspondance exacte
         $zone = DB::table('zones')
-            ->select('id')
-            ->whereRaw("REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?", [$this->cleanOfficeName($zone_name)])
+            ->select('id', 'nom')
+            ->whereRaw("REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?", [$cleaned_zone])
             ->first();
+        
+        // Si pas trouvé, essayer une correspondance insensible à la casse
+        if (!$zone) {
+            $zone = DB::table('zones')
+                ->select('id', 'nom')
+                ->whereRaw("UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))) = ?", [strtoupper($cleaned_zone)])
+                ->first();
+        }
+        
+        // Si toujours pas trouvé, essayer une correspondance partielle
+        if (!$zone) {
+            $zone = DB::table('zones')
+                ->select('id', 'nom')
+                ->whereRaw("UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))) LIKE ?", ['%' . strtoupper($cleaned_zone) . '%'])
+                ->orWhereRaw("UPPER(?) LIKE CONCAT('%', UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))), '%')", [$cleaned_zone])
+                ->first();
+        }
         
         if ($zone && isset($zone->id)) {
             $agences = DB::table('agences')
@@ -200,12 +220,26 @@ class subscribeValidationController extends Controller
             if ($is_network_director_or_chef) {
                 // Pour DIRECTEUR DE RESEAU DAGENCES/CHEF DAGENCE, récupérer les agences de la zone
                 $zone_name = $clean_office_name ?: $clean_parent_name;
+                
+                // Essayer de récupérer les agences de la zone
                 $zone_agences = $this->getAgencesFromZone($zone_name);
+                
                 if (!empty($zone_agences)) {
+                    // Agences trouvées, les retourner
                     return $zone_agences;
                 }
-                // Si pas d'agences trouvées, retourner le nom de la zone pour matching
-                return [$zone_name];
+                
+                // Si pas d'agences trouvées, essayer aussi avec parent_name si différent
+                if (!empty($clean_parent_name) && $clean_parent_name !== $zone_name) {
+                    $zone_agences = $this->getAgencesFromZone($clean_parent_name);
+                    if (!empty($zone_agences)) {
+                        return $zone_agences;
+                    }
+                }
+                
+                // Si toujours pas d'agences, utiliser *ALL* pour permettre de voir toutes les demandes
+                // car c'est un DIRECTEUR DE RESEAU DAGENCES avec une zone spéciale
+                return ['*ALL*'];
             } else {
                 // Pour les autres (Admin), voir tout
                 return ['*ALL*']; // Marqueur spécial pour "toutes les agences"
@@ -366,51 +400,80 @@ class subscribeValidationController extends Controller
             // Normaliser le nom du rôle (insensible à la casse)
             $role_name_upper = strtoupper(trim($role_name));
             
+            // IMPORTANT: Détection Validateur AVANT Admin pour éviter que "DIRECTEUR DE RESEAU DAGENCES" soit classé comme Admin
+            // Détection Validateur - rôles spécifiques en premier
+            if ($role_name_upper === 'DIRECTEUR DE RESEAU DAGENCES' || 
+                    $role_name_upper === 'CHEF DAGENCE' || 
+                    $role_name_upper === 'CHEF D AGENCE' ||
+                    $role_name_upper === 'CHEF D\'AGENCE' ||
+                    $role_name_upper === "APPROBATION 2 DU PRET_CHEF D'AGENCE" ||
+                    $role_name_upper === "APPROBATION 2 DU PRET_CHEF D AGENCE" ||
+                    $role_name_upper === 'APPROBATION 1 du PRET' || 
+                    $role_name_upper === 'APPROBATION 2 du PRET' ||
+                    $role_name_upper === 'APPROBATION 1 DU PRET_2' ||
+                    $role_name_upper === "APPROBATION COMPTE" ||
+                    $role_name_upper === "APPROBATION OPERATION DE CAISSE" ||
+                    $role_name_upper === "ATTENTE APPROBATION 2 DU PRET" ||
+                    $role_name_upper === 'VERIFICATEURS CENTRALISES' ||
+                    stripos($role_name, 'directeur de reseau') !== false ||
+                    stripos($role_name, 'directeur de reseau d\'agences') !== false ||
+                    stripos($role_name, 'directeur de reseau dagences') !== false ||
+                    stripos($role_name, 'chef d\'agence') !== false ||
+                    stripos($role_name, 'chef dagence') !== false ||
+                    stripos($role_name, 'chef d agence') !== false ||
+                    (stripos($role_name, 'chef') !== false && stripos($role_name, 'agence') !== false) ||
+                    (stripos($role_name, 'pret_chef') !== false && stripos($role_name, 'agence') !== false) ||
+                    stripos($role_name, 'approbation') !== false ||
+                    stripos($role_name, 'verificateur') !== false ||
+                    stripos($role_name, 'juriste') !== false) {
+                $access = 3; // Validateur
+                
+                // Vérifier si c'est DIRECTEUR DE RESEAU DAGENCES ou CHEF DAGENCE
+                if ($role_name_upper === 'DIRECTEUR DE RESEAU DAGENCES' || 
+                    $role_name_upper === 'CHEF DAGENCE' || 
+                    $role_name_upper === 'CHEF D AGENCE' ||
+                    $role_name_upper === 'CHEF D\'AGENCE' ||
+                    $role_name_upper === "APPROBATION 2 DU PRET_CHEF D'AGENCE" ||
+                    $role_name_upper === "APPROBATION 2 DU PRET_CHEF D AGENCE" ||
+                    stripos($role_name, 'directeur de reseau') !== false ||
+                    stripos($role_name, 'directeur de reseau d\'agences') !== false ||
+                    stripos($role_name, 'directeur de reseau dagences') !== false ||
+                    stripos($role_name, 'chef d\'agence') !== false ||
+                    stripos($role_name, 'chef dagence') !== false ||
+                    stripos($role_name, 'chef d agence') !== false ||
+                    (stripos($role_name, 'chef') !== false && stripos($role_name, 'agence') !== false) ||
+                    (stripos($role_name, 'pret_chef') !== false && stripos($role_name, 'agence') !== false)) {
+                    $is_network_director_or_chef = true;
+                }
+                // Ne pas break ici, continuer à vérifier les autres rôles pour s'assurer qu'on détecte bien CHEF DAGENCE
+            }
             // Détection CC - plusieurs variantes possibles
-            if ($role_name_upper === 'CREATION CLIENT' || 
+            elseif ($role_name_upper === 'CREATION CLIENT' ||
+                $role_name_upper === 'CREATION CLIENT_2' ||
+                $role_name_upper === 'CREATION COMPTE CAV' ||
+                $role_name_upper === 'CREATION PRET' ||
+                $role_name_upper === 'CREATION PRET_2' ||
                 $role_name_upper === 'CC' || 
                 stripos($role_name, 'creation') !== false || 
                 stripos($role_name, 'client') !== false) {
                 $access = 1; // CC
                 break;
             } 
-            // Détection Admin
+            // Détection Admin - APRÈS Validateur pour éviter les faux positifs
             elseif ($role_name_upper === 'DIRECTEUR' || 
                     $role_name_upper === 'INFORMATIQUE' || 
                     $role_name_upper === 'SUPER ADMIN' ||
-                    stripos($role_name, 'admin') !== false ||
-                    stripos($role_name, 'directeur') !== false) {
-                $access = 2; // Admin
-                if ($role_name_upper === 'SUPER ADMIN' || stripos($role_name, 'super admin') !== false) {
-                    $is_super_admin = true;
+                    stripos($role_name, 'admin') !== false) {
+                // Vérifier que ce n'est PAS un "DIRECTEUR DE RESEAU DAGENCES" (déjà traité ci-dessus)
+                if (stripos($role_name, 'directeur de reseau') === false && 
+                    stripos($role_name, 'directeur de reseau d\'agences') === false &&
+                    stripos($role_name, 'directeur de reseau dagences') === false) {
+                    $access = 2; // Admin
+                    if ($role_name_upper === 'SUPER ADMIN' || stripos($role_name, 'super admin') !== false) {
+                        $is_super_admin = true;
+                    }
+                    break;
                 }
-                break;
-            } 
-            // Détection Validateur
-            elseif ($role_name_upper === 'APPROBATION 1 du PRET' || 
-                    $role_name_upper === 'APPROBATION 2 du PRET' ||
-                    $role_name_upper === 'CHEF DAGENCE' || 
-                    $role_name_upper === 'DIRECTEUR DE RESEAU DAGENCES' || 
-                    $role_name_upper === 'CHEF D AGENCE' ||
-                    stripos($role_name, 'approbation') !== false ||
-                    stripos($role_name, 'chef') !== false ||
-                    stripos($role_name, 'val') !== false ||
-                    stripos($role_name, 'verificateur') !== false ||
-                    stripos($role_name, 'juriste') !== false) {
-                $access = 3; // Validateur
-                
-                // Vérifier si c'est DIRECTEUR DE RESEAU DAGENCES ou CHEF DAGENCE
-                // Vérifier d'abord les correspondances exactes, puis les correspondances partielles
-                if ($role_name_upper === 'DIRECTEUR DE RESEAU DAGENCES' || 
-                    $role_name_upper === 'CHEF DAGENCE' || 
-                    $role_name_upper === 'CHEF D AGENCE' ||
-                    stripos($role_name, 'directeur de reseau') !== false ||
-                    stripos($role_name, 'chef d\'agence') !== false ||
-                    stripos($role_name, 'chef dagence') !== false ||
-                    (stripos($role_name, 'chef') !== false && stripos($role_name, 'agence') !== false)) {
-                    $is_network_director_or_chef = true;
-                }
-                // Ne pas break ici, continuer à vérifier les autres rôles pour s'assurer qu'on détecte bien CHEF DAGENCE
             }
         }
 
@@ -446,8 +509,15 @@ class subscribeValidationController extends Controller
                     if ($is_network_director_or_chef) {
                         // Utiliser allowed_offices qui contient déjà toutes les agences de leur zone/agence
                         if (in_array('*ALL*', $allowed_offices)) {
-                            // Office spécial - voir toutes les demandes
-                            $should_show = true;
+                            // Office spécial (zone comme Centre, Sud, Nord) - voir toutes les demandes
+                            // Pour les DIRECTEURS DE RESEAU DAGENCES, ils doivent voir toutes les demandes en attente
+                            // mais aussi les validées/refusées pour l'historique
+                            $status = $validation->status ?? null;
+                            $is_pending = ($status === "0" || $status === 0 || $status == 0);
+                            $is_validated_or_refused = ($status === "1" || $status === 1 || $status == 1 || 
+                                                        $status === "2" || $status === 2 || $status == 2);
+                            // Voir toutes les demandes (en attente, validées, refusées)
+                            $should_show = $is_pending || $is_validated_or_refused;
                         } else {
                             // Vérifier si validation->office_name correspond à une des agences autorisées
                             $matches_office = false;
@@ -458,7 +528,7 @@ class subscribeValidationController extends Controller
                             foreach ($allowed_offices as $allowed_office) {
                                 $clean_allowed = $this->cleanOfficeName($allowed_office);
                                 
-                                // Pour CHEF DAGENCE, utiliser un matching plus flexible (pas strict)
+                                // Pour CHEF DAGENCE/DIRECTEUR DE RESEAU DAGENCES, utiliser un matching plus flexible (pas strict)
                                 if ($this->officeNameMatches($validation_office, $allowed_office, false)) {
                                     $matches_office = true;
                                     break;
@@ -659,6 +729,31 @@ class subscribeValidationController extends Controller
         $current_user = session('username');
         $access_info = $this->getUserAccess();
         
+        // Debug temporaire - à retirer après résolution
+        if (request()->has('debug')) {
+            $roles_detail = [];
+            foreach (session('selectedRoles') ?? [] as $role) {
+                if (is_array($role)) {
+                    $roles_detail[] = [
+                        'name' => $role['name'] ?? 'N/A',
+                        'name_upper' => isset($role['name']) ? strtoupper(trim($role['name'])) : 'N/A',
+                    ];
+                } else {
+                    $roles_detail[] = [
+                        'name' => $role,
+                        'name_upper' => strtoupper(trim($role)),
+                    ];
+                }
+            }
+            dd([
+                'access_info' => $access_info,
+                'selectedRoles' => session('selectedRoles'),
+                'roles_detail' => $roles_detail,
+                'office_name' => session('officeName'),
+                'parent_name' => session('parent_name'),
+            ]);
+        }
+        
         // Vérifier que l'utilisateur est bien validateur
         if ($access_info['access'] !== 3) {
             if ($access_info['access'] === 1) {
@@ -693,6 +788,23 @@ class subscribeValidationController extends Controller
             $access_info['is_super_admin'],
             $access_info['is_network_director_or_chef'] ?? false
         );
+        
+        // Debug temporaire - vérifier les validations filtrées
+        if (request()->has('debug_validations')) {
+            $sample = !empty($filtered_validations) ? $filtered_validations[0] : null;
+            dd([
+                'total_all' => count($all_validations),
+                'total_filtered' => count($filtered_validations),
+                'allowed_offices' => $allowed_offices,
+                'is_network_director_or_chef' => $access_info['is_network_director_or_chef'] ?? false,
+                'sample_validation' => $sample ? [
+                    'ticket' => $sample['ticket'] ?? null,
+                    'status' => $sample['status'] ?? null,
+                    'status_type' => gettype($sample['status'] ?? null),
+                    'office_name' => $sample['office_name'] ?? null,
+                ] : null,
+            ]);
+        }
 
         // Créer une pagination manuelle avec les résultats filtrés
         $currentPage = request()->get('page', 1);
@@ -701,10 +813,16 @@ class subscribeValidationController extends Controller
         $items = array_slice($filtered_validations, $offset, $perPage);
         
         // Convertir les items en objets stdClass pour compatibilité avec la vue
+        // Normaliser le statut pour garantir la cohérence (peut être 0, "0", etc.)
         $items = array_map(function($item) {
             $obj = new \stdClass();
             foreach ($item as $key => $value) {
-                $obj->$key = $value;
+                // Normaliser le statut en chaîne pour cohérence (la vue gère les deux formats)
+                if ($key === 'status' && $value !== null) {
+                    $obj->$key = (string)$value;
+                } else {
+                    $obj->$key = $value;
+                }
             }
             return $obj;
         }, $items);
@@ -784,10 +902,58 @@ class subscribeValidationController extends Controller
             'validation' => 'required|string',
         ]);
 
+        // Vérifier que l'utilisateur est bien un validateur
+        $access_info = $this->getUserAccess();
+        if ($access_info['access'] !== 3) {
+            logActivity(session('username'), 'validation', 'validation_unauthorized_attempt');
+            return redirect()->back()->with('error', 'Vous n\'avez pas les droits pour valider des demandes.');
+        }
+
         $ticket = $request->input('ticket');
         $commentaire = $request->input('commentaire');
         $status = $request->input('validation');
         $get_current_user = session('firstname') . ' ' . session('lastname');
+
+        // Vérifier que la demande existe et est en attente
+        $validation_record = DB::table('validation')
+            ->where('ticket', $ticket)
+            ->first();
+
+        if (!$validation_record) {
+            logActivity(session('username'), 'validation', 'validation_ticket_not_found', ['ticket' => $ticket]);
+            return redirect()->back()->with('error', 'Demande introuvable.');
+        }
+
+        // Vérifier que la demande est en attente (status = 0)
+        if ($validation_record->status !== "0" && $validation_record->status !== 0) {
+            logActivity(session('username'), 'validation', 'validation_already_processed', ['ticket' => $ticket, 'status' => $validation_record->status]);
+            return redirect()->back()->with('error', 'Cette demande a déjà été traitée.');
+        }
+
+        // Vérifier que l'utilisateur a le droit de valider cette demande (vérification des offices)
+        $allowed_offices = $this->getAllowedOffices($access_info['is_network_director_or_chef'] ?? false);
+        $validation_office = $this->cleanOfficeName($validation_record->office_name ?? '');
+        
+        $has_permission = false;
+        if (in_array('*ALL*', $allowed_offices)) {
+            $has_permission = true;
+        } else {
+            foreach ($allowed_offices as $allowed_office) {
+                if ($this->officeNameMatches($validation_office, $allowed_office, $access_info['is_network_director_or_chef'] ? false : true)) {
+                    $has_permission = true;
+                    break;
+                }
+            }
+        }
+
+        if (!$has_permission) {
+            logActivity(session('username'), 'validation', 'validation_office_not_authorized', [
+                'ticket' => $ticket,
+                'validation_office' => $validation_office,
+                'allowed_offices' => $allowed_offices
+            ]);
+            return redirect()->back()->with('error', 'Vous n\'avez pas les droits pour valider les demandes de cette agence.');
+        }
 
         try {
             $validation_update = DB::table('validation')

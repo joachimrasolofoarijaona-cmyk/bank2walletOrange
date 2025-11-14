@@ -5,7 +5,202 @@
 @section('content')
 <div class="container-fluid">
     <style>
-        .chart-container { position: relative; height: 320px; }
+        /* Page Styles - Modern Design */
+        :root {
+            --primary-color: #02564A;
+            --accent-color: #4FC9C0;
+            --bg-light: #F8F9FA;
+            --text-primary: #212529;
+            --text-secondary: #6C757D;
+            --border-color: #E9ECEF;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title i {
+            color: var(--primary-color);
+        }
+
+        /* Filter Card */
+        .filter-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .filter-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-card-header i {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .filter-card-header h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .filter-card-body {
+            padding: 24px;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(2, 86, 74, 0.1);
+            outline: none;
+        }
+
+        /* Buttons - Outline Style */
+        .btn-outline-primary,
+        .btn-outline-secondary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(2, 86, 74, 0.3);
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--text-secondary);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--text-secondary);
+            color: white;
+        }
+
+        /* Card Styles */
+        .modern-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .modern-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modern-card-header h6 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modern-card-header i {
+            color: var(--primary-color);
+        }
+
+        .modern-card-body {
+            padding: 24px;
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .kpi-card-border {
+            border-left: 4px solid;
+        }
+
+        /* Chart Container */
+        .chart-container { 
+            position: relative; 
+            height: 320px; 
+        }
+
         /* Compact DataTable styles inside modal */
         #txModal .dataTables_wrapper .row { margin-left: 0; margin-right: 0; }
         #txModal .dataTables_wrapper .dataTables_paginate .pagination { margin: 0; gap: 0; }
@@ -19,12 +214,63 @@
         #txModal .dataTables_wrapper .dataTables_filter { margin: 0 0 .25rem 0; }
         #txModal .dataTables_wrapper .dataTables_paginate .page-link { padding: .15rem .4rem; font-size: .8rem; }
         #txModal thead th { position: sticky; top: 0; background: #ffffff; z-index: 1; }
+
+        /* List Group */
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .table {
+            font-size: 14px;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg-light);
+        }
     </style>
-    <div class="card border-0 shadow-md mb-3">
-        <div class="card-header bg-white border-bottom">
-            <h6 class="fw-bold text-dark mb-0">Filtres</h6>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="ri-bar-chart-line"></i>
+            Analytics
+        </h1>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <div class="filter-card-header">
+            <i class="ri-filter-line"></i>
+            <h4>Filtres</h4>
         </div>
-        <div class="card-body">
+        <div class="filter-card-body">
             <form method="get" action="{{ route('analytics.index') }}" class="row g-2 align-items-end">
                 <div class="col-auto">
                     <label class="form-label mb-0">Période</label>
@@ -64,8 +310,14 @@
                     </div>
                 </div>
                 <div class="col-auto d-flex align-items-end gap-2">
-                    <button class="btn btn-sm btn-primary" type="submit">Appliquer</button>
-                    <a class="btn btn-sm btn-outline-secondary" id="exportBtn" href="#">Exporter CSV</a>
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="ri-check-line"></i>
+                        Appliquer
+                    </button>
+                    <a class="btn btn-outline-secondary" id="exportBtn" href="#">
+                        <i class="ri-download-line"></i>
+                        Exporter CSV
+                    </a>
                     <div class="d-flex align-items-end gap-2">
                         <div>
                             <label class="form-label mb-0">Série</label>
@@ -78,7 +330,10 @@
                             </select>
                         </div>
                         <div class="p-0">
-                            <a class="btn btn-sm btn-outline-secondary pt-1 " id="exportSeriesBtn" href="#">Exporter série</a>
+                            <a class="btn btn-outline-secondary" id="exportSeriesBtn" href="#">
+                                <i class="ri-download-line"></i>
+                                Exporter série
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -86,52 +341,56 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-md mb-3">
-        <div class="card-header bg-white border-bottom">
-            <h6 class="fw-bold text-dark mb-0">Indicateurs</h6>
+    <!-- KPIs Card -->
+    <div class="modern-card">
+        <div class="modern-card-header">
+            <h6>
+                <i class="ri-dashboard-line"></i>
+                Indicateurs
+            </h6>
         </div>
-        <div class="card-body">
-            <div class="row g-3 mt-1">
+        <div class="modern-card-body">
+            <div class="row g-3">
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #6f42c1;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-login-circle-line" style="color:#6f42c1; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #6f42c1;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-login-circle-line" style="color:#6f42c1; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Souscriptions</p>
-                                <h3 class="mb-0 fw-bold" style="color: #6f42c1;">{{ number_format($kpis['subscriptions'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Souscriptions</p>
+                                <h3 class="mb-0 fw-bold" style="color: #6f42c1; font-size: 24px;">{{ number_format($kpis['subscriptions'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #ff6b35;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-logout-circle-line" style="color:#ff6b35; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #ff6b35;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-logout-circle-line" style="color:#ff6b35; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Désabonnements</p>
-                                <h3 class="mb-0 fw-bold" style="color: #ff6b35;">{{ number_format($kpis['unsubscriptions'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Désabonnements</p>
+                                <h3 class="mb-0 fw-bold" style="color: #ff6b35; font-size: 24px;">{{ number_format($kpis['unsubscriptions'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #198754;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-exchange-dollar-line" style="color:#198754; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #198754;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-exchange-dollar-line" style="color:#198754; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Transactions</p>
-                                <h3 class="mb-0 fw-bold" style="color: #198754;">{{ number_format($kpis['transactions'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Transactions</p>
+                                <h3 class="mb-0 fw-bold" style="color: #198754; font-size: 24px;">{{ number_format($kpis['transactions'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #0dcaf0;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-money-dollar-circle-line" style="color:#0dcaf0; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #0dcaf0;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-money-dollar-circle-line" style="color:#0dcaf0; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Charges (MGA)</p>
-                                <h3 class="mb-0 fw-bold" style="color: #0dcaf0;">{{ number_format($kpis['charges'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Charges (MGA)</p>
+                                <h3 class="mb-0 fw-bold" style="color: #0dcaf0; font-size: 24px;">{{ number_format($kpis['charges'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
@@ -140,53 +399,56 @@
         </div>
     </div>
 
-    {{-- KPIs pour les 4 types d'opérations --}}
-    <div class="card border-0 shadow-md mb-3">
-        <div class="card-header bg-white border-bottom">
-            <h6 class="fw-bold text-dark mb-0">Opérations par type</h6>
+    <!-- Operations KPIs Card -->
+    <div class="modern-card">
+        <div class="modern-card-header">
+            <h6>
+                <i class="ri-stack-line"></i>
+                Opérations par type
+            </h6>
         </div>
-        <div class="card-body">
-            <div class="row g-3 mt-1">
+        <div class="modern-card-body">
+            <div class="row g-3">
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #00574A;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-eye-line" style="color:#00574A; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #00574A;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-eye-line" style="color:#00574A; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Consultation solde</p>
-                                <h3 class="mb-0 fw-bold" style="color: #00574A;">{{ number_format($kpis['balance_consultations'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Consultation solde</p>
+                                <h3 class="mb-0 fw-bold" style="color: #00574A; font-size: 24px;">{{ number_format($kpis['balance_consultations'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #50c2bb;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-file-list-line" style="color:#50c2bb; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #50c2bb;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-file-list-line" style="color:#50c2bb; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Mini relevé</p>
-                                <h3 class="mb-0 fw-bold" style="color: #50c2bb;">{{ number_format($kpis['mini_statements'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Mini relevé</p>
+                                <h3 class="mb-0 fw-bold" style="color: #50c2bb; font-size: 24px;">{{ number_format($kpis['mini_statements'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #198754;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-arrow-down-line" style="color:#198754; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #198754;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-arrow-down-line" style="color:#198754; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Dépôts</p>
-                                <h3 class="mb-0 fw-bold" style="color: #198754;">{{ number_format($kpis['deposits_count'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Dépôts</p>
+                                <h3 class="mb-0 fw-bold" style="color: #198754; font-size: 24px;">{{ number_format($kpis['deposits_count'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-md" style="border-left: 4px solid #dc3545;">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="me-3"><i class="ri-arrow-up-line" style="color:#dc3545; font-size: 24px;"></i></div>
+                    <div class="kpi-card kpi-card-border" style="border-left-color: #e74c3c;">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3"><i class="ri-arrow-up-line" style="color:#e74c3c; font-size: 28px;"></i></div>
                             <div>
-                                <p class="text-muted mb-1">Retraits</p>
-                                <h3 class="mb-0 fw-bold" style="color: #dc3545;">{{ number_format($kpis['withdrawals_count'] ?? 0) }}</h3>
+                                <p class="text-muted mb-1" style="font-size: 13px; font-weight: 500;">Retraits</p>
+                                <h3 class="mb-0 fw-bold" style="color: #e74c3c; font-size: 24px;">{{ number_format($kpis['withdrawals_count'] ?? 0) }}</h3>
                             </div>
                         </div>
                     </div>
@@ -195,13 +457,17 @@
         </div>
     </div>
 
+    <!-- Charts Row 1 -->
     <div class="row mt-3">
         <div class="col-lg-6">
-            <div class="card border-0 shadow-md" style="height: 400px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-0">Souscriptions vs. Mois</h6>
+            <div class="modern-card" style="height: 400px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-line-chart-line"></i>
+                        Souscriptions vs. Mois
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <div class="chart-container">
                         <canvas id="chartSubs"></canvas>
                     </div>
@@ -209,27 +475,34 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card border-0 shadow-md" style="height: 400px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-0">Transactions vs. Mois</h6>
+            <div class="modern-card" style="height: 400px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-bar-chart-line"></i>
+                        Transactions vs. Mois
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <div class="chart-container">
                         <canvas id="chartTx"></canvas>
                     </div>
-                    <small class="text-muted">Astuce: cliquez une barre pour voir les transactions du mois.</small>
+                    <small class="text-muted" style="font-size: 12px;">Astuce: cliquez une barre pour voir les transactions du mois.</small>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Charts Row 2 -->
     <div class="row mt-3">
         <div class="col-lg-4">
-            <div class="card border-0 shadow-md" style="height: 320px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-0">Dépôts vs Retraits</h6>
+            <div class="modern-card" style="height: 320px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-pie-chart-line"></i>
+                        Dépôts vs Retraits
+                    </h6>
                 </div>
-                <div class="card-body d-flex justify-content-center align-items-center">
+                <div class="modern-card-body d-flex justify-content-center align-items-center">
                     <div style="width: 180px; height: 180px;">
                         <canvas id="donutDw"></canvas>
                     </div>
@@ -237,40 +510,55 @@
             </div>
         </div>
         <div class="col-lg-8">
-            <div class="card border-0 shadow-md" style="height: 320px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-0">Charges vs. Mois</h6>
+            <div class="modern-card" style="height: 320px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-line-chart-line"></i>
+                        Charges vs. Mois
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <canvas id="chartCharges"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Graphique des 4 types d'opérations --}}
+    <!-- Operations Charts -->
     <div class="row mt-3">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-md" style="height: 400px;">
-                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold text-dark mb-0">Opérations par type vs. Mois</h6>
-                    <a href="#" id="exportOperationsSeriesBtn" class="btn btn-sm btn-outline-secondary">Exporter série</a>
+            <div class="modern-card" style="height: 400px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-stack-line"></i>
+                        Opérations par type vs. Mois
+                    </h6>
+                    <a href="#" id="exportOperationsSeriesBtn" class="btn btn-outline-secondary btn-sm">
+                        <i class="ri-download-line"></i>
+                        Exporter série
+                    </a>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <div class="chart-container">
                         <canvas id="chartOperations"></canvas>
                     </div>
-                    <small class="text-muted">Astuce: cliquez une barre pour voir les détails du mois.</small>
+                    <small class="text-muted" style="font-size: 12px;">Astuce: cliquez une barre pour voir les détails du mois.</small>
                 </div>
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card border-0 shadow-md" style="height: 400px;">
-                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold text-dark mb-0">Répartition des opérations</h6>
-                    <a href="#" id="exportOperationsBtn" class="btn btn-sm btn-outline-secondary">Exporter</a>
+            <div class="modern-card" style="height: 400px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-pie-chart-2-line"></i>
+                        Répartition des opérations
+                    </h6>
+                    <a href="#" id="exportOperationsBtn" class="btn btn-outline-secondary btn-sm">
+                        <i class="ri-download-line"></i>
+                        Exporter
+                    </a>
                 </div>
-                <div class="card-body d-flex justify-content-center align-items-center">
+                <div class="modern-card-body d-flex justify-content-center align-items-center">
                     <div style="width: 200px; height: 200px;">
                         <canvas id="donutOperations"></canvas>
                     </div>
@@ -280,13 +568,17 @@
     </div>
 
     @if($hasAmount ?? false)
+    <!-- Amounts Charts -->
     <div class="row mt-3">
         <div class="col-lg-6">
-            <div class="card border-0 shadow-md" style="height: 380px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-0">Volumes (MGA) vs. Mois</h6>
+            <div class="modern-card" style="height: 380px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-money-dollar-circle-line"></i>
+                        Volumes (MGA) vs. Mois
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <div class="chart-container" style="height: 320px;">
                         <canvas id="chartAmounts"></canvas>
                     </div>
@@ -294,11 +586,14 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card border-0 shadow-md" style="height: 380px;">
-                <div class="card-header bg-white border-bottom">
-                    <h6 class="fw-bold text-dark mb-0">Montants Dépôts vs Retraits (MGA)</h6>
+            <div class="modern-card" style="height: 380px;">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-exchange-dollar-line"></i>
+                        Montants Dépôts vs Retraits (MGA)
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <div class="chart-container" style="height: 320px;">
                         <canvas id="chartAmountsSplit"></canvas>
                     </div>
@@ -308,13 +603,17 @@
     </div>
     @endif
 
+    <!-- Heatmap -->
     <div class="row mt-3">
         <div class="col-12">
-            <div class="card border-0 shadow-md">
-                <div class="card-header bg-white border-bottom d-flex align-items-center">
-                    <h6 class="fw-bold text-dark mb-0">Activité (Jour × Heure)</h6>
+            <div class="modern-card">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-calendar-line"></i>
+                        Activité (Jour × Heure)
+                    </h6>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered text-center align-middle mb-0" id="heatTable" style="table-layout: fixed;">
                             <thead>
@@ -359,19 +658,26 @@
         </div>
     </div>
 
+    <!-- Top Lists -->
     <div class="row mt-3">
         <div class="col-lg-4">
-            <div class="card border-0 shadow-md h-100">
-                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold text-dark mb-0">Top Offices (Nombre)</h6>
-                    <a href="#" id="exportTopOfficesCount" class="btn btn-sm btn-outline-secondary">Exporter</a>
+            <div class="modern-card h-100">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-building-line"></i>
+                        Top Offices (Nombre)
+                    </h6>
+                    <a href="#" id="exportTopOfficesCount" class="btn btn-outline-secondary btn-sm">
+                        <i class="ri-download-line"></i>
+                        Exporter
+                    </a>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <ul class="list-group list-group-flush">
                         @forelse(($topOfficesCount ?? []) as $row)
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="#" class="link-secondary text-decoration-none drill-office" data-office="{{ $row->office_name }}">{{ $row->office_name ?? 'N/A' }}</a>
-                                <span class="badge bg-primary rounded-pill">{{ $row->total }}</span>
+                                <a href="#" class="link-secondary text-decoration-none drill-office" data-office="{{ $row->office_name }}" style="color: var(--primary-color); font-weight: 500;">{{ $row->office_name ?? 'N/A' }}</a>
+                                <span class="badge" style="background: var(--primary-color); color: white;">{{ $row->total }}</span>
                             </li>
                         @empty
                             <li class="list-group-item px-0 text-muted">Aucune donnée</li>
@@ -381,17 +687,23 @@
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card border-0 shadow-md h-100">
-                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold text-dark mb-0">Top Offices (Montants)</h6>
-                    <a href="#" id="exportTopOfficesAmount" class="btn btn-sm btn-outline-secondary">Exporter</a>
+            <div class="modern-card h-100">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-money-dollar-circle-line"></i>
+                        Top Offices (Montants)
+                    </h6>
+                    <a href="#" id="exportTopOfficesAmount" class="btn btn-outline-secondary btn-sm">
+                        <i class="ri-download-line"></i>
+                        Exporter
+                    </a>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <ul class="list-group list-group-flush">
                         @forelse(($topOfficesAmount ?? []) as $row)
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="#" class="link-secondary text-decoration-none drill-office" data-office="{{ $row->office_name }}">{{ $row->office_name ?? 'N/A' }}</a>
-                                <span class="badge bg-success rounded-pill">{{ number_format($row->total_amount ?? 0) }}</span>
+                                <a href="#" class="link-secondary text-decoration-none drill-office" data-office="{{ $row->office_name }}" style="color: var(--primary-color); font-weight: 500;">{{ $row->office_name ?? 'N/A' }}</a>
+                                <span class="badge" style="background: #198754; color: white;">{{ number_format($row->total_amount ?? 0) }}</span>
                             </li>
                         @empty
                             <li class="list-group-item px-0 text-muted">Aucune donnée</li>
@@ -401,17 +713,23 @@
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card border-0 shadow-md h-100">
-                <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold text-dark mb-0">Top Libellés</h6>
-                    <a href="#" id="exportTopLibelles" class="btn btn-sm btn-outline-secondary">Exporter</a>
+            <div class="modern-card h-100">
+                <div class="modern-card-header">
+                    <h6>
+                        <i class="ri-file-list-line"></i>
+                        Top Libellés
+                    </h6>
+                    <a href="#" id="exportTopLibelles" class="btn btn-outline-secondary btn-sm">
+                        <i class="ri-download-line"></i>
+                        Exporter
+                    </a>
                 </div>
-                <div class="card-body">
+                <div class="modern-card-body">
                     <ul class="list-group list-group-flush">
                         @forelse(($topLibelles ?? []) as $row)
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="#" class="link-secondary text-decoration-none drill-libelle" data-libelle="{{ $row->libelle }}">{{ $row->libelle ?? 'N/A' }}</a>
-                                <span class="badge bg-info rounded-pill">{{ $row->total }}</span>
+                                <a href="#" class="link-secondary text-decoration-none drill-libelle" data-libelle="{{ $row->libelle }}" style="color: var(--primary-color); font-weight: 500;">{{ $row->libelle ?? 'N/A' }}</a>
+                                <span class="badge" style="background: var(--accent-color); color: white;">{{ $row->total }}</span>
                             </li>
                         @empty
                             <li class="list-group-item px-0 text-muted">Aucune donnée</li>
@@ -631,7 +949,7 @@
                     {
                         label: 'Retraits',
                         data: withdrawalsData,
-                        backgroundColor: '#dc3545',
+                        backgroundColor: '#e74c3c',
                         borderRadius: 4,
                         borderSkipped: false
                     }
@@ -669,7 +987,7 @@
                 labels: ['Consultation solde', 'Mini relevé', 'Dépôts', 'Retraits'],
                 datasets: [{
                     data: [totalBalance, totalMini, totalDeposits, totalWithdrawals],
-                    backgroundColor: ['#00574A', '#50c2bb', '#198754', '#dc3545'],
+                    backgroundColor: ['#00574A', '#50c2bb', '#198754', '#e74c3c'],
                     borderWidth: 0,
                     cutout: '60%'
                 }]

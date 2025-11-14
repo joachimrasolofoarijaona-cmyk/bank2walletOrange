@@ -3,7 +3,12 @@
 @section('title', ':: Contrat ::')
 
 @section('content')
-
+@php
+$office_name = session('officeName');
+if($office_name === "Head Office"){
+    $office_name = "Faravohitra";
+}
+@endphp
 <div class="container-fluid">
     {{-- Style section --}}
     <style>
@@ -39,6 +44,42 @@
                 left: 0;
                 top: 10px;
                 width: 100%;
+                background: white !important;
+            }
+
+            /* Force tous les backgrounds à être blancs pour l'impression */
+            #contract * {
+                background: white !important;
+                background-color: white !important;
+            }
+
+            #contract .card,
+            #contract .card-body,
+            #contract .card-header,
+            #contract table,
+            #contract thead,
+            #contract tbody,
+            #contract tr,
+            #contract td,
+            #contract th {
+                background: white !important;
+                background-color: white !important;
+            }
+
+            /* Force le texte à être noir pour l'impression (sauf les éléments avec couleur spécifique) */
+            #contract,
+            #contract p,
+            #contract span,
+            #contract td,
+            #contract th,
+            #contract li {
+                color: #000000 !important;
+            }
+            
+            /* Garde les couleurs importantes */
+            #contract strong,
+            #contract u {
+                color: #000000 !important;
             }
 
             /* Ton autre style reste correct */
@@ -48,6 +89,7 @@
                 width: 100%;
                 max-width: 100%;
                 font-size: 10 pt;
+                background: white !important;
             }
 
             h6,
@@ -94,33 +136,301 @@
 
         #contract {
             font-size: 12px;
+            background: white !important;
+        }
+
+        /* Force les backgrounds blancs pour le PDF */
+        #contract,
+        #contract .card,
+        #contract .card-body,
+        #contract .card-header,
+        #contract table,
+        #contract thead,
+        #contract tbody,
+        #contract tr,
+        #contract td,
+        #contract th,
+        #contract .bg-secondary,
+        #contract .bg-dark,
+        #contract [class*="bg-"] {
+            background: white !important;
+            background-color: white !important;
+        }
+
+        /* Force le texte noir pour le PDF (sauf éléments avec couleur spécifique) */
+        #contract,
+        #contract p,
+        #contract span,
+        #contract td,
+        #contract th,
+        #contract li {
+            color: #000000 !important;
+        }
+        
+        /* Garde les couleurs importantes */
+        #contract strong,
+        #contract u {
+            color: #000000 !important;
+        }
+
+        #contract .bg-secondary,
+        #contract .bg-dark {
+            background: white !important;
+            background-color: white !important;
+        }
+
+        /* Page Styles - Modern Design */
+        :root {
+            --primary-color: #02564A;
+            --accent-color: #4FC9C0;
+            --bg-light: #F8F9FA;
+            --text-primary: #212529;
+            --text-secondary: #6C757D;
+            --border-color: #E9ECEF;
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title i {
+            color: var(--primary-color);
+        }
+
+        /* Filter Card */
+        .filter-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .filter-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-card-header i {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .filter-card-header h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .filter-card-body {
+            padding: 24px;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(2, 86, 74, 0.1);
+            outline: none;
+        }
+
+        /* Buttons - Outline Style */
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(2, 86, 74, 0.3);
+        }
+
+        /* Contract Header */
+        .contract-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .contract-header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contract-header-title i {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .contract-header-title h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Alerts */
+        .alert-modern {
+            border-radius: 8px;
+            border: none;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-modern.alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-modern.alert-success {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            border-left: 4px solid #198754;
+        }
+
+        .alert-modern.alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        /* Contract Container */
+        .contract-container {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .contract-wrapper {
+            padding: 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Container spacing */
+        .container-fluid {
+            padding: 0 15px;
         }
     </style>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="ri-file-paper-line"></i>
+            Contrat
+        </h1>
+    </div>
+
     <div class="row">
         {{-- filter by number and the conctract type / Subscription or Unsubscription --}}
-        <div class="col-lg-4 col-md-6 col-xs-12 fixed">
-            <div class="card text-dark bg-light">
-                <div class="card-header d-flex align-items-start ">
-                    <i class="ri-filter-line fs-5 me-2"></i>
-                    <h4 class="card-title text-uppercase">Filtre</h4>
+        <div class="col-lg-4 col-md-6 col-xs-12">
+            <div class="filter-card">
+                <div class="filter-card-header">
+                    <i class="ri-filter-line"></i>
+                    <h4>Filtre</h4>
                 </div>
-                <div class="card-body text-dark">
+                <div class="filter-card-body">
                     <form action="{{ route('generate.contract') }}" method="POST">
                         @csrf
-                        <div class="mb-3">
-                            <label for="msisdn" class="form-label">Numéro de ligne</label>
-                            <input type="text" class="form-control text-dark" id="msisdn" name="msisdn" placeholder="Numéro Orange ..." required>
+                        <div class="mb-4">
+                            <label for="msisdn" class="form-label">
+                                <i class="ri-smartphone-line"></i>
+                                Numéro de ligne
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="msisdn" 
+                                   name="msisdn" 
+                                   placeholder="Numéro Orange ..." 
+                                   required>
                         </div>
-                        <div class="mb-3">
-                            {{-- dropdown for contract type --}}
-                            <label for="contract_type" class="form-label">Type de contrat</label>
-                            <select class="form-select text-dark" id="contract_type" name="contract_type" required>
+                        <div class="mb-4">
+                            <label for="contract_type" class="form-label">
+                                <i class="ri-file-list-line"></i>
+                                Type de contrat
+                            </label>
+                            <select class="form-select" id="contract_type" name="contract_type" required>
                                 <option value="" disabled selected>Choisissez le type de contrat</option>
                                 <option value="1">Souscription</option>
                                 <option value="0">Résiliation</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-outline-success">Filtrer</button>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="ri-search-line"></i>
+                                Filtrer
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -165,19 +475,21 @@
                 </script>
             </div>
 
-            <div class="navbar navbar-light bg-light px-4">
-                <div class="d-flex align-items-start justify-content-between w-100">
-                    <div class="d-flex align-items-start">
-                        <i class="ri-file-add-line fs-5 me-2"></i>
-                        <h4 class="card-title text-uppercase">Contrat</h4>
-                    </div>
-                    @if(isset($msisdn) && isset($contract_type))
-                    <button type="button" class="btn btn-outline-primary d-flex align-items-center" onclick="downloadContract()" title="Télécharger le contrat en PDF">
-                        <i class="ri-download-line me-2"></i>
-                        Télécharger PDF
-                    </button>
-                    @endif
+            <!-- Contract Header -->
+            <div class="contract-header">
+                <div class="contract-header-title">
+                    <i class="ri-file-add-line"></i>
+                    <h4>Contrat</h4>
                 </div>
+                @if(isset($msisdn) && isset($contract_type))
+                <button type="button" 
+                        class="btn btn-outline-primary" 
+                        onclick="downloadContract()" 
+                        title="Télécharger le contrat en PDF">
+                    <i class="ri-download-line"></i>
+                    Télécharger PDF
+                </button>
+                @endif
             </div>
 
             {{-- IF SUBSCRIPTION REQUEST --}}
@@ -185,19 +497,27 @@
             @if(isset($msisdn) && $contract_type == 1)
             {{-- Error message if no data found --}}
             @if ($errors->any())
-            <div class="alert alert-danger mt-3">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="alert-modern alert-danger">
+                <i class="ri-error-warning-line"></i>
+                <div>
+                    <strong>Erreur !</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
             @endif
             {{-- Success message if data found --}}
-            <div class="alert alert-success mt-3">
-                <strong>Contrat de souscription généré avec succès pour le numéro : {{ $msisdn }}</strong>
+            <div class="alert-modern alert-success">
+                <i class="ri-checkbox-circle-line"></i>
+                <div>
+                    <strong>Succès !</strong> Contrat de souscription généré avec succès pour le numéro : {{ $msisdn }}
+                </div>
             </div>
-            <div class="border rounded p-0 overflow-auto vh-100">
+            <div class="contract-container">
+                <div class="contract-wrapper">
                 <div class="card" id="contract">
                     <div class="card-body" style="font-size: 12px;">
                         <div class="contract">
@@ -278,7 +598,7 @@
                                             <p>Je déclare y adhérer sans réserve et assumer la responsabilité pleine et entière de l’utilisation du téléphone mobile mentionné supra pour effectuer des transactions au débit ou au crédit de mon (mes) compte(s), dans le cadre du service ACEP/Orange Money.</p>
                                             <p>Le service ACEP/Orange Money sera fonctionnel sous réserve de l’acceptation de la demande par Orange Money.</p><br>
 
-                                            <p class="text-end pe-5">A <strong> {{$data->officeName}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
+                                            <p class="text-end pe-5">A <strong> {{$office_name}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
                                             <p class="text-center">
                                                 Signature du titulaire ou du mandataire habilité
                                                 Précédée de la mention « Lu et approuvé »
@@ -396,7 +716,7 @@
                                     11.2 Le client peut contacter à tout moment le service client ORANGE MONEY pour obtenir des informations concernant le service et le portefeuille électronique ORANGE MONEY.
                                 </p>
                                 <table class="table table-stripped text-center table-responsive">
-                                    <thead class="bg-secondary">
+                                    <thead style="background: white !important; background-color: white !important;">
                                         <tr>
                                             <th scope="col" rowspan="2">Type de compte</th>
                                             <th scope="col">Plafond Unitaire</th>
@@ -487,7 +807,7 @@
                             </div>
                             <div class="footer-contract">
                                 <p class="text-end">
-                                <p class="text-end pe-5">A <strong> {{$data->officeName}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
+                                <p class="text-end pe-5">A <strong> {{$office_name}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
                                 </p><br><br><br><br>
                                 <p class="text-center">
                                     Signature du titulaire ou du mandataire habilité
@@ -497,6 +817,7 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
             {{-- IF UNSUBSCRIPTION REQUEST --}}
@@ -504,19 +825,27 @@
             @elseif(isset($msisdn) && $contract_type == 0)
             {{-- Error message if no data found --}}
             @if ($errors->any())
-            <div class="alert alert-danger mt-3">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="alert-modern alert-danger">
+                <i class="ri-error-warning-line"></i>
+                <div>
+                    <strong>Erreur !</strong>
+                    <ul class="mb-0 mt-2">
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
             @endif
             {{-- Success message if data found --}}
-            <div class="alert alert-success mt-3">
-                <strong>Contrat de résiliation généré avec succès pour le numéro : {{ $msisdn }}</strong>
+            <div class="alert-modern alert-success">
+                <i class="ri-checkbox-circle-line"></i>
+                <div>
+                    <strong>Succès !</strong> Contrat de résiliation généré avec succès pour le numéro : {{ $msisdn }}
+                </div>
             </div>
-            <div class="border rounded p-0 overflow-auto vh-100">
+            <div class="contract-container">
+                <div class="contract-wrapper">
                 <div class="card" id="contract">
                     <div class="card-body" style="font-size: 12px;">
                         <div class="contract">
@@ -543,7 +872,7 @@
                                 </div>
                                 <div class="body-contract justify-content-center">
                                     <p><strong>Informations du client :</strong></p>
-                                    <div class="card p-3 mb-3">
+                                    <div class="card p-3 mb-3" style="background: white !important; background-color: white !important;">
                                         <!-- Infos client (affichées une seule fois) -->
                                         <p><strong>Nom :</strong> {{$unsubscription_customer->client_firstname}}</p>
                                         <p><strong>Prénom :</strong> {{$unsubscription_customer->client_lastname}}</p>
@@ -583,8 +912,8 @@
                                         </div>
                                         <div class="form-check d-flex align-content-start">
                                             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                            <label for="msisdn" class="form-label ps-2">Autre (précisez) : </label>
-                                            <input type="text" class="border-0 mb-3 pb-2 ps-2 w-50" id="msisdn" name="msisdn" placeholder=".............................................................................................................................................." required>
+                                            <label for="msisdn" class="form-label ps-2">Autre (précisez) :  .............................................. </label> 
+                                            <!-- <input type="text" class="border-0 mb-3 pb-2 ps-2 w-50" id="msisdn" name="msisdn" placeholder=".............................................................................................................................................." required> -->
 
                                         </div>
                                     </div>
@@ -592,8 +921,8 @@
                                     <div class="declaration p-0 ">
                                         <p><strong>Déclaration du Client :</strong></p>
                                         <div class="soussigne">
-                                            Je soussigné(e)<input type="text" class="border-0 ps-2 w-50" id="msisdn" name="msisdn" placeholder=".............................................................................................................................................." required>
-                                            , titulaire du compte ACEP susmentionné, déclare souhaiter la résiliation de mon accès au service
+                                            <!-- Je soussigné(e)<input type="text" class="border-0 ps-2 w-50" id="msisdn" name="msisdn" placeholder=".............................................................................................................................................." required> -->
+                                            Je soussigné(e) ........................................................................................................................................................................................................................................................................... , titulaire du compte ACEP susmentionné, déclare souhaiter la résiliation de mon accès au service
                                             Bank to Wallet / Wallet to Bank lié à mon compte ACEP et mon numéro Orange Money.
                                             J'atteste avoir pris connaissance que cette résiliation est définitive et qu'une nouvelle souscription nécessitera une nouvelle
                                             demande d'adhésion.
@@ -603,7 +932,7 @@
                             </div> <br><br><br>
                             <div class="footer-contract px-4">
                                 <div class="done-at">
-                                    <p class="text-end pe-5">A <strong> {{$data->office_name}} </strong>, le {{\Carbon\Carbon::parse($unsubscription_customer->date_unsub)->translatedFormat('d F Y') }}</p><br>
+                                    <p class="text-end pe-5">A <strong> {{$office_name}} </strong>, le {{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</p><br>
                                 </div>
                                 <div class="customer-sign">
                                     <p>Signature du client :</p>
@@ -612,20 +941,26 @@
                                     <p><strong>Partie Réservée à l'Agence ACEP :</strong></p>
                                 </div>
                                 <div class="agent-sign" style="line-height: 0.5em;">
-                                    <p>Date de réception de la demande : <strong>{{\Carbon\Carbon::parse($unsubscription_customer->date_unsub)->translatedFormat('d F Y') }}</strong> </p>
+                                    <p>Date de réception de la demande : <strong>{{\Carbon\Carbon::parse(now())->translatedFormat('d F Y') }}</strong> </p>
                                     <p>Nom et signature de l'agent ACEP : ……………………………………………………………</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
             @else
             {{-- alerte for none to show --}}
-            <div class="border rounded px-0 pt-3 py-0 overflow-auto vh-50">
-                <div class="alert alert-warning text-center">
-                    <strong class="text-uppercase">Aucun contrat à afficher.</strong>
-                    <p>Veuillez vérifier les informations saisies ou contacter le support si le problème persiste.</p>
+            <div class="contract-container">
+                <div class="contract-wrapper">
+                    <div class="alert-modern alert-warning text-center">
+                        <i class="ri-information-line"></i>
+                        <div>
+                            <strong>Aucun contrat à afficher.</strong>
+                            <p class="mb-0 mt-2">Veuillez vérifier les informations saisies ou contacter le support si le problème persiste.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             @endif

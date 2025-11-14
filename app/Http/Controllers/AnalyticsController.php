@@ -383,13 +383,50 @@ class AnalyticsController extends Controller
             $q->where('request_type', $type);
         }
 
-        $rows = $q->select('created_at', 'office_name', 'request_type', 'charge')->get();
-
+        // Sélectionner toutes les colonnes disponibles
+        $selectColumns = ['created_at', 'office_name', 'request_type', 'charge'];
+        
+        // Ajouter les colonnes optionnelles si elles existent
+        if (Schema::hasColumn('transaction', 'msisdn')) {
+            $selectColumns[] = 'msisdn';
+        }
+        if (Schema::hasColumn('transaction', 'account_no')) {
+            $selectColumns[] = 'account_no';
+        } elseif (Schema::hasColumn('transaction', 'musoni_account_no')) {
+            $selectColumns[] = 'musoni_account_no as account_no';
+        }
+        if (Schema::hasColumn('transaction', 'libelle')) {
+            $selectColumns[] = 'libelle';
+        }
+        if (Schema::hasColumn('transaction', 'client_lastname')) {
+            $selectColumns[] = 'client_lastname';
+        }
+        if (Schema::hasColumn('transaction', 'client_firstname')) {
+            $selectColumns[] = 'client_firstname';
+        }
+        if (Schema::hasColumn('transaction', 'agent_name')) {
+            $selectColumns[] = 'agent_name';
+        }
+        if (Schema::hasColumn('transaction', 'operator_code')) {
+            $selectColumns[] = 'operator_code';
+        }
+        if (Schema::hasColumn('transaction', 'request_id')) {
+            $selectColumns[] = 'request_id';
+        }
+        if (Schema::hasColumn('transaction', 'response_code')) {
+            $selectColumns[] = 'response_code';
+        }
+        if (Schema::hasColumn('transaction', 'response_message')) {
+            $selectColumns[] = 'response_message';
+        }
+        
         $hasAmount = Schema::hasColumn('transaction', 'amount') || Schema::hasColumn('transaction', 'montant');
         if ($hasAmount) {
             $amountColumn = Schema::hasColumn('transaction', 'amount') ? 'amount' : 'montant';
-            $rows = $q->select('created_at', 'office_name', 'request_type', 'charge', $amountColumn . ' as amount')->get();
+            $selectColumns[] = DB::raw($amountColumn . ' as amount');
         }
+
+        $rows = $q->select($selectColumns)->get();
 
         $filename = 'analytics_export_' . now()->format('Ymd_His') . '.csv';
         $headers = [
@@ -399,22 +436,45 @@ class AnalyticsController extends Controller
 
         $callback = function () use ($rows) {
             $out = fopen('php://output', 'w');
-            // Entêtes
-            $headers = ['created_at', 'office_name', 'request_type', 'charge'];
-            if (count($rows) > 0 && property_exists($rows[0], 'amount')) {
-                $headers[] = 'amount';
+            // Entêtes avec toutes les colonnes disponibles
+            $headerRow = [];
+            if (count($rows) > 0) {
+                $firstRow = $rows[0];
+                if (property_exists($firstRow, 'created_at')) $headerRow[] = 'Date';
+                if (property_exists($firstRow, 'office_name')) $headerRow[] = 'Office';
+                if (property_exists($firstRow, 'request_type')) $headerRow[] = 'Type requête';
+                if (property_exists($firstRow, 'msisdn')) $headerRow[] = 'MSISDN';
+                if (property_exists($firstRow, 'account_no')) $headerRow[] = 'Numéro de compte';
+                if (property_exists($firstRow, 'libelle')) $headerRow[] = 'Libellé';
+                if (property_exists($firstRow, 'client_lastname')) $headerRow[] = 'Nom client';
+                if (property_exists($firstRow, 'client_firstname')) $headerRow[] = 'Prénom client';
+                if (property_exists($firstRow, 'operator_code')) $headerRow[] = 'Code opérateur';
+                if (property_exists($firstRow, 'request_id')) $headerRow[] = 'ID Requête';
+                if (property_exists($firstRow, 'response_code')) $headerRow[] = 'Code réponse';
+                if (property_exists($firstRow, 'response_message')) $headerRow[] = 'Message réponse';
+                if (property_exists($firstRow, 'charge')) $headerRow[] = 'Charge';
+                if (property_exists($firstRow, 'amount')) $headerRow[] = 'Montant';
+                if (property_exists($firstRow, 'agent_name')) $headerRow[] = 'Agent';
             }
-            fputcsv($out, $headers);
+            fputcsv($out, $headerRow);
+            
             foreach ($rows as $r) {
-                $line = [
-                    $r->created_at,
-                    $r->office_name,
-                    $r->request_type,
-                    $r->charge,
-                ];
-                if (property_exists($r, 'amount')) {
-                    $line[] = $r->amount;
-                }
+                $line = [];
+                if (property_exists($r, 'created_at')) $line[] = $r->created_at ?? '';
+                if (property_exists($r, 'office_name')) $line[] = $r->office_name ?? '';
+                if (property_exists($r, 'request_type')) $line[] = $r->request_type ?? '';
+                if (property_exists($r, 'msisdn')) $line[] = $r->msisdn ?? '';
+                if (property_exists($r, 'account_no')) $line[] = $r->account_no ?? '';
+                if (property_exists($r, 'libelle')) $line[] = $r->libelle ?? '';
+                if (property_exists($r, 'client_lastname')) $line[] = $r->client_lastname ?? '';
+                if (property_exists($r, 'client_firstname')) $line[] = $r->client_firstname ?? '';
+                if (property_exists($r, 'operator_code')) $line[] = $r->operator_code ?? '';
+                if (property_exists($r, 'request_id')) $line[] = $r->request_id ?? '';
+                if (property_exists($r, 'response_code')) $line[] = $r->response_code ?? '';
+                if (property_exists($r, 'response_message')) $line[] = $r->response_message ?? '';
+                if (property_exists($r, 'charge')) $line[] = $r->charge ?? '';
+                if (property_exists($r, 'amount')) $line[] = $r->amount ?? '';
+                if (property_exists($r, 'agent_name')) $line[] = $r->agent_name ?? '';
                 fputcsv($out, $line);
             }
             fclose($out);
@@ -937,7 +997,43 @@ class AnalyticsController extends Controller
             $q->where('agent_name', $request->input('agent'));
         }
 
+        // Sélectionner toutes les colonnes disponibles
         $select = ['created_at', 'office_name', 'request_type', 'charge'];
+        
+        // Ajouter les colonnes optionnelles si elles existent
+        if (Schema::hasColumn('transaction', 'msisdn')) {
+            $select[] = 'msisdn';
+        }
+        if (Schema::hasColumn('transaction', 'account_no')) {
+            $select[] = 'account_no';
+        } elseif (Schema::hasColumn('transaction', 'musoni_account_no')) {
+            $select[] = 'musoni_account_no as account_no';
+        }
+        if (Schema::hasColumn('transaction', 'libelle')) {
+            $select[] = 'libelle';
+        }
+        if (Schema::hasColumn('transaction', 'client_lastname')) {
+            $select[] = 'client_lastname';
+        }
+        if (Schema::hasColumn('transaction', 'client_firstname')) {
+            $select[] = 'client_firstname';
+        }
+        if (Schema::hasColumn('transaction', 'agent_name')) {
+            $select[] = 'agent_name';
+        }
+        if (Schema::hasColumn('transaction', 'operator_code')) {
+            $select[] = 'operator_code';
+        }
+        if (Schema::hasColumn('transaction', 'request_id')) {
+            $select[] = 'request_id';
+        }
+        if (Schema::hasColumn('transaction', 'response_code')) {
+            $select[] = 'response_code';
+        }
+        if (Schema::hasColumn('transaction', 'response_message')) {
+            $select[] = 'response_message';
+        }
+        
         $hasAmount = Schema::hasColumn('transaction', 'amount') || Schema::hasColumn('transaction', 'montant');
         if ($hasAmount) {
             $amountColumn = Schema::hasColumn('transaction', 'amount') ? 'amount' : 'montant';
@@ -955,12 +1051,45 @@ class AnalyticsController extends Controller
             ];
             $callback = function () use ($rows) {
                 $out = fopen('php://output', 'w');
-                $headersRow = ['created_at', 'office_name', 'request_type', 'charge'];
-                if (count($rows) > 0 && property_exists($rows[0], 'amount')) $headersRow[] = 'amount';
-                fputcsv($out, $headersRow);
+                // Entêtes avec toutes les colonnes disponibles
+                $headerRow = [];
+                if (count($rows) > 0) {
+                    $firstRow = $rows[0];
+                    if (property_exists($firstRow, 'created_at')) $headerRow[] = 'Date';
+                    if (property_exists($firstRow, 'office_name')) $headerRow[] = 'Office';
+                    if (property_exists($firstRow, 'request_type')) $headerRow[] = 'Type requête';
+                    if (property_exists($firstRow, 'msisdn')) $headerRow[] = 'MSISDN';
+                    if (property_exists($firstRow, 'account_no')) $headerRow[] = 'Numéro de compte';
+                    if (property_exists($firstRow, 'libelle')) $headerRow[] = 'Libellé';
+                    if (property_exists($firstRow, 'client_lastname')) $headerRow[] = 'Nom client';
+                    if (property_exists($firstRow, 'client_firstname')) $headerRow[] = 'Prénom client';
+                    if (property_exists($firstRow, 'operator_code')) $headerRow[] = 'Code opérateur';
+                    if (property_exists($firstRow, 'request_id')) $headerRow[] = 'ID Requête';
+                    if (property_exists($firstRow, 'response_code')) $headerRow[] = 'Code réponse';
+                    if (property_exists($firstRow, 'response_message')) $headerRow[] = 'Message réponse';
+                    if (property_exists($firstRow, 'charge')) $headerRow[] = 'Charge';
+                    if (property_exists($firstRow, 'amount')) $headerRow[] = 'Montant';
+                    if (property_exists($firstRow, 'agent_name')) $headerRow[] = 'Agent';
+                }
+                fputcsv($out, $headerRow);
+                
                 foreach ($rows as $r) {
-                    $line = [$r->created_at, $r->office_name, $r->request_type, $r->charge];
-                    if (property_exists($r, 'amount')) $line[] = $r->amount;
+                    $line = [];
+                    if (property_exists($r, 'created_at')) $line[] = $r->created_at ?? '';
+                    if (property_exists($r, 'office_name')) $line[] = $r->office_name ?? '';
+                    if (property_exists($r, 'request_type')) $line[] = $r->request_type ?? '';
+                    if (property_exists($r, 'msisdn')) $line[] = $r->msisdn ?? '';
+                    if (property_exists($r, 'account_no')) $line[] = $r->account_no ?? '';
+                    if (property_exists($r, 'libelle')) $line[] = $r->libelle ?? '';
+                    if (property_exists($r, 'client_lastname')) $line[] = $r->client_lastname ?? '';
+                    if (property_exists($r, 'client_firstname')) $line[] = $r->client_firstname ?? '';
+                    if (property_exists($r, 'operator_code')) $line[] = $r->operator_code ?? '';
+                    if (property_exists($r, 'request_id')) $line[] = $r->request_id ?? '';
+                    if (property_exists($r, 'response_code')) $line[] = $r->response_code ?? '';
+                    if (property_exists($r, 'response_message')) $line[] = $r->response_message ?? '';
+                    if (property_exists($r, 'charge')) $line[] = $r->charge ?? '';
+                    if (property_exists($r, 'amount')) $line[] = $r->amount ?? '';
+                    if (property_exists($r, 'agent_name')) $line[] = $r->agent_name ?? '';
                     fputcsv($out, $line);
                 }
                 fclose($out);
