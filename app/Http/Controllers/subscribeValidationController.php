@@ -143,29 +143,49 @@ class subscribeValidationController extends Controller
      * Récupère toutes les agences d'une zone depuis la base de données
      */
     private function getAgencesFromZone($zone_name) {
-        $cleaned_zone = $this->cleanOfficeName($zone_name);
-        
-        // Essayer d'abord une correspondance exacte
-        $zone = DB::table('zones')
-            ->select('id', 'nom')
-            ->whereRaw("REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '') = ?", [$cleaned_zone])
-            ->first();
-        
-        // Si pas trouvé, essayer une correspondance insensible à la casse
-        if (!$zone) {
-            $zone = DB::table('zones')
-                ->select('id', 'nom')
-                ->whereRaw("UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))) = ?", [strtoupper($cleaned_zone)])
-                ->first();
+        if (empty($zone_name)) {
+            return [];
         }
         
-        // Si toujours pas trouvé, essayer une correspondance partielle
-        if (!$zone) {
-            $zone = DB::table('zones')
-                ->select('id', 'nom')
-                ->whereRaw("UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))) LIKE ?", ['%' . strtoupper($cleaned_zone) . '%'])
-                ->orWhereRaw("UPPER(?) LIKE CONCAT('%', UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))), '%')", [$cleaned_zone])
-                ->first();
+        $cleaned_zone = $this->cleanOfficeName($zone_name);
+        
+        if (empty($cleaned_zone)) {
+            return [];
+        }
+        
+        // Utiliser DB::select() avec une requête brute pour garantir le binding correct
+        try {
+            // Essayer d'abord une correspondance exacte
+            $sql = "SELECT id, nom FROM zones WHERE REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), '')) = ? LIMIT 1";
+            $results = DB::select($sql, [$cleaned_zone]);
+            $zone = !empty($results) ? (object)$results[0] : null;
+            
+            // Si pas trouvé, essayer une correspondance insensible à la casse
+            if (!$zone) {
+                $upper_cleaned = strtoupper($cleaned_zone);
+                $sql = "SELECT id, nom FROM zones WHERE UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))) = ? LIMIT 1";
+                $results = DB::select($sql, [$upper_cleaned]);
+                $zone = !empty($results) ? (object)$results[0] : null;
+            }
+            
+            // Si toujours pas trouvé, essayer une correspondance partielle
+            if (!$zone) {
+                $upper_cleaned = strtoupper($cleaned_zone);
+                $like_pattern = '%' . $upper_cleaned . '%';
+                $sql = "SELECT id, nom FROM zones WHERE (
+                    UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))) LIKE ? 
+                    OR UPPER(?) LIKE CONCAT('%', UPPER(REPLACE(REPLACE(REPLACE(TRIM(nom), CHAR(13), ''), CHAR(10), ''), CHAR(9), ''))), '%')
+                ) LIMIT 1";
+                $results = DB::select($sql, [$like_pattern, $upper_cleaned]);
+                $zone = !empty($results) ? (object)$results[0] : null;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in getAgencesFromZone: ' . $e->getMessage(), [
+                'zone_name' => $zone_name,
+                'cleaned_zone' => $cleaned_zone,
+                'error' => $e->getTraceAsString()
+            ]);
+            return [];
         }
         
         if ($zone && isset($zone->id)) {
