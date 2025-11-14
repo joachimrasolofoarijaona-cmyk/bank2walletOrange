@@ -387,20 +387,20 @@
                     <tbody>
                         @foreach($validations as $validation)
                         @php
-                        use Illuminate\Support\Facades\DB;
-                        $isSouscription = $validation->request_type === 'SOUSCRIPTION';
-                        $isResiliation = $validation->request_type === 'RESILIATION';
-                        $isValidationPending = ($validation->status === "0" || $validation->status === 0);
-                        $isValidated = ($validation->status === "1" || $validation->status === 1);
-                        $isRefused = ($validation->status === "2" || $validation->status === 2);
+                            #use Illuminate\Support\Facades\DB;
+                            $isSouscription = $validation->request_type === 'SOUSCRIPTION';
+                            $isResiliation = $validation->request_type === 'RESILIATION';
+                            $isValidationPending = ($validation->status === "0" || $validation->status === 0);
+                            $isValidated = ($validation->status === "1" || $validation->status === 1);
+                            $isRefused = ($validation->status === "2" || $validation->status === 2);
 
-                        $account_subscribed = DB::table('subscription')
-                            ->select('account_status')
-                            ->where('account_no', $validation->account_no)
-                            ->first();
+                            $account_subscribed = DB::table('subscription')
+                                ->select('account_status')
+                                ->where('account_no', $validation->account_no)
+                                ->first();
 
-                        $subscribed = ($account_subscribed && $account_subscribed->account_status == '1');
-                        $final_status = $validation->final_status ?? null;
+                            $subscribed = ($account_subscribed && $account_subscribed->account_status == '1');
+                            $final_status = $validation->final_status ?? null;
                         @endphp
 
                         <tr>
