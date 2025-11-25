@@ -31,7 +31,6 @@ class AuthenticationController extends Controller
                 'x-api-key' => $api_key,
                 'Accept' => 'application/json',
             ])
-            ->withoutVerifying()
             ->timeout(30) // Ajouter un timeout
             ->get($api_url . '/offices/' . $office_id);
 
@@ -84,7 +83,6 @@ class AuthenticationController extends Controller
                     'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
-                ->withoutVerifying()
                 ->timeout(30) // Ajouter un timeout
                 ->post($api_url . '/authentication', [
                     'username' => $user_matricule,
@@ -103,7 +101,6 @@ class AuthenticationController extends Controller
                         'x-api-key' => $api_key,
                         'Accept' => 'application/json',
                     ])
-                    ->withoutVerifying()
                     ->timeout(30) // Ajouter un timeout
                     ->get($api_url . '/users/' . $data['userId']);
 

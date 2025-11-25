@@ -76,7 +76,6 @@ class DoSubscriptionController extends Controller
                     'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
-                ->withoutVerifying()
                 ->get($get_customer_accounts);
 
             if ($customer_accounts_response->successful()) {
@@ -163,7 +162,6 @@ class DoSubscriptionController extends Controller
                     'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
-                ->withoutVerifying()
                 ->get($cin_url);
 
             if ($response->successful()) {
@@ -183,7 +181,6 @@ class DoSubscriptionController extends Controller
                             'x-api-key' => $api_key,
                             'Accept' => 'application/json',
                         ])
-                        ->withoutVerifying()
                         ->get($get_customer_by_id);
 
                     # __Get customer accounts by id__
@@ -195,7 +192,6 @@ class DoSubscriptionController extends Controller
                             'x-api-key' => $api_key,
                             'Accept' => 'application/json',
                         ])
-                        ->withoutVerifying()
                         ->get($get_customer_accounts);
 
                     $customer_accounts = $customer_accounts_response->json();

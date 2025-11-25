@@ -141,7 +141,6 @@ class SubscribeController extends Controller
                     'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
-                ->withoutVerifying()
                 ->get($url);
 
             if (!$response->successful()) {
@@ -169,7 +168,6 @@ class SubscribeController extends Controller
                     'x-api-key' => $api_key,
                     'Accept' => 'application/json',
                 ])
-                ->withoutVerifying()
                 ->get($get_customer_info_by_id);
 
             if (!$customer_info_response->successful()) {

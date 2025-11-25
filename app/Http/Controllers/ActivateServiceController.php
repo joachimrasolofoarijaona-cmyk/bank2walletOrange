@@ -118,7 +118,6 @@ class ActivateServiceController extends Controller
                             'x-api-key' => $api_key,
                             'Accept' => 'application/json',
                         ])
-                        ->withoutVerifying()
                         ->get($get_account_libelle);
 
                     # __Check if the response is successful__
@@ -265,7 +264,6 @@ class ActivateServiceController extends Controller
                             'x-api-key' => $api_key,
                             'Accept' => 'application/json',
                         ])
-                        ->withoutVerifying()
                         ->get($get_customer_data);
 
                     if (!$customer_data_response->successful()) {

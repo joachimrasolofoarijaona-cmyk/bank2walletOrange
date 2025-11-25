@@ -50,7 +50,6 @@ class OMRequestController extends Controller
                 'x-api-key' => $this->musoni_key,
                 'Accept' => 'application/json',
             ])
-            ->withoutVerifying()
             ->get($this->musoni_url . '/clients');
 
         // Exemple d'appel avec les variables N8N
@@ -354,23 +353,23 @@ class OMRequestController extends Controller
 
         $orangeResponse =
             '<?xml version="1.0" encoding="UTF-8"?> 
-        <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"> 
-            <S:Body> 
-                <ns2:AccountToWalletTransferResponse xmlns:ns2="http://b2w.banktowallet.com/b2w"> 
-                    <return> 
-                        <mmHeaderInfo> 
-                        <operatorCode>' . $data['operatorCode'] . '</operatorCode> 
-                        <requestId>' . $data['requestId'] . '</requestId> 
-                        <affiliateCode>' . $data['affiliateCode'] . '</affiliateCode> 
-                        <responseCode>' . $responseCode . '</responseCode> 
-                        <responseMessage>' . $responseMessage . '</responseMessage> 
-                        </mmHeaderInfo> 
-                        <externalRefNo>' . $data['externalRefNo'] . '</externalRefNo> 
-                        <CBAReferenceNo>' . $CBAReferenceNo . '</CBAReferenceNo> 
-                    </return> 
-                </ns2:AccountToWalletTransferResponse> 
-            </S:Body> 
-        </S:Envelope>';
+            <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"> 
+                <S:Body> 
+                    <ns2:AccountToWalletTransferResponse xmlns:ns2="http://b2w.banktowallet.com/b2w"> 
+                        <return> 
+                            <mmHeaderInfo> 
+                            <operatorCode>' . $data['operatorCode'] . '</operatorCode> 
+                            <requestId>' . $data['requestId'] . '</requestId> 
+                            <affiliateCode>' . $data['affiliateCode'] . '</affiliateCode> 
+                            <responseCode>' . $responseCode . '</responseCode> 
+                            <responseMessage>' . $responseMessage . '</responseMessage> 
+                            </mmHeaderInfo> 
+                            <externalRefNo>' . $data['externalRefNo'] . '</externalRefNo> 
+                            <CBAReferenceNo>' . $CBAReferenceNo . '</CBAReferenceNo> 
+                        </return> 
+                    </ns2:AccountToWalletTransferResponse> 
+                </S:Body> 
+            </S:Envelope>';
 
         Log::info('Orange Sent Response is : ' . $orangeResponse);
 
@@ -678,7 +677,6 @@ class OMRequestController extends Controller
             if ($resourceId && $officeId && $clientId && $savingId && $chargeId) {
                 $cancel_transfer_url = 'https://acepmg.it4life.org/webhook/cancel_transfert?compte=' . $account_no . '&trasanctionId=' . $resourceId . '&officeId=' . $officeId . '&clientId=' . $clientId . '&savingId=' . $savingId . '&chargeId=' . $chargeId . '&amount=' . $amount;
                 $response = Http::withBasicAuth($username, $password)
-                    ->withoutVerifying()
                     ->get($cancel_transfer_url);
 
                 if ($response->successful()) {
@@ -742,7 +740,6 @@ class OMRequestController extends Controller
                             $savings_accounts_url = 'https://acepmg.it4life.org/webhook/getAccBal?compte=' . $account_no . '&date=' . $balance_dateNow;
 
                             $response = Http::withBasicAuth($username, $password)
-                                ->withoutVerifying()
                                 ->get($savings_accounts_url);
 
                             $clientData = $response->json();
@@ -840,7 +837,6 @@ class OMRequestController extends Controller
                     $withdraw_url = "https://acepmg.it4life.org/webhook/withdraw_account?compte=" . $account_no . "&amount=" . $amount . "&date=" . $withdraw_dateNow . "&receipt=" . $receipt;
 
                     $response = Http::withBasicAuth($username, $password)
-                        ->withoutVerifying()
                         ->get($withdraw_url);
 
                     $clientData = $response->json();
@@ -939,7 +935,6 @@ class OMRequestController extends Controller
             } else {
                 $deposit_url = "https://acepmg.it4life.org/webhook/deposit_account?compte=" . $account_no . "&amount=" . $amount . "&date=" . $deposit_dateNow . "&receipt=" . $receipt;
                 $response = Http::withBasicAuth($username, $password)
-                    ->withoutVerifying()
                     ->get($deposit_url);
 
                 $clientData = $response->json();
@@ -1040,7 +1035,6 @@ class OMRequestController extends Controller
                 Log::info('URL is : ' . $statement_url);
 
                 $response = Http::withBasicAuth($username, $password)
-                    ->withoutVerifying()
                     ->get($statement_url);
 
                 $clientData = $response->json();
