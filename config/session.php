@@ -31,7 +31,7 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120), // 2 heures par défaut
+    'lifetime' => env('SESSION_LIFETIME', 15), // 15 minutes d'inactivité (recommandé pour application bancaire)
 
     'expire_on_close' => false, // La session persiste après fermeture du navigateur
 
