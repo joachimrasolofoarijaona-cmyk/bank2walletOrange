@@ -184,6 +184,13 @@ class AuthenticationController extends Controller
 
 
                 if ($data_user['isEnabled'] === true) {
+                    // Protection contre session fixation : régénérer l'ID de session après authentification
+                    $request->session()->invalidate();
+                    $request->session()->regenerate();
+                    
+                    // Générer un fingerprint de session pour détecter le session hijacking
+                    $sessionFingerprint = hash('sha256', $request->ip() . '|' . $request->userAgent() . '|' . config('app.key'));
+                    
                     session([
                         'id' => $data_user['id'],
                         'username' => $data_user['username'],
@@ -195,6 +202,9 @@ class AuthenticationController extends Controller
                         'parent_name' => $parent_name,
                         'hierarchy' => $hierarchy,
                         'api_token' => $data['base64EncodedAuthenticationKey'] ?? null, // optionnel
+                        'last_activity' => time(), // Timestamp de dernière activité
+                        'session_fingerprint' => $sessionFingerprint, // Fingerprint pour détecter hijacking
+                        'login_time' => time(), // Timestamp de connexion
                     ]);
                     
 

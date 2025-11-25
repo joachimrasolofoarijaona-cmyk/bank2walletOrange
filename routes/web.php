@@ -30,9 +30,11 @@ Route::get('/', function () {
     return view('authentication');
 });
 
-# __Login routes 
+# __Login routes avec rate limiting
 Route::get('/login', [AuthenticationController::class, 'login']);
-Route::post('/login', [AuthenticationController::class, 'authentication'])->name('login');
+Route::post('/login', [AuthenticationController::class, 'authentication'])
+    ->middleware('throttle:5,15') // 5 tentatives par 15 minutes
+    ->name('login');
 
 # routes/web.php
 Route::post('/logout', [AuthenticationController::class, 'destroy'])->name('logout');
